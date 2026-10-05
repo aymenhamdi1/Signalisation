@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd
 
-# Répertoire de travail unique
+# Répertoire de travail
 WORKDIR /var/www
 
 # Installation de Composer
@@ -26,17 +26,17 @@ COPY . /var/www
 # Installation des dépendances Composer
 RUN composer install --no-dev --optimize-autoloader
 
-# Correction des permissions
+# Permissions de stockage et de cache
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
-# Copie de la configuration Nginx
+# Configuration Nginx
 COPY nginx.conf /etc/nginx/sites-available/default
 
 EXPOSE 80
 
-# Script de démarrage
+# Lancement des caches Laravel et des services (PHP-FPM + Nginx)
 CMD php artisan config:cache && \
     php artisan route:cache && \
     php artisan view:cache && \
-    php-fpm -D -p /var/www && \
+    php-fpm -D && \
     nginx -g 'daemon off;'
