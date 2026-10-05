@@ -858,6 +858,42 @@
         font-size: 1rem;
     }
 }
+.btn-recenter-map {
+    position: absolute;
+    right: 16px;
+    bottom: 100px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.18);
+    color: #2563EB;
+    font-size: 1.15rem;
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+.btn-recenter-map:hover {
+    background: #EFF6FF;
+    transform: scale(1.08);
+}
+.btn-recenter-map.active {
+    background: linear-gradient(135deg, #2563EB, #1E40AF);
+    color: #fff !important;
+    border-color: transparent;
+}
+@media (max-width: 768px) {
+    .btn-recenter-map {
+        right: 12px;
+        bottom: 150px;
+        width: 44px;
+        height: 44px;
+    }
+}
 </style>
 </head>
 <body>
@@ -894,16 +930,24 @@ console.log('📍 Bounds zones :', window.__zonesBounds);
         </div>
 
         <div class="topbar-right">
+            {{-- ✅ Bouton "Ma position" AJOUTÉ --}}
+            <button type="button" class="btn-topbar btn-topbar-locate" id="btnLocateMe" onclick="locateMe()">
+                <i class="fa-solid fa-location-crosshairs"></i> <span>Ma position</span>
+            </button>
+
             <button type="button" class="btn-topbar" onclick="toggleFiltersPanel()">
                 <i class="fa-solid fa-filter"></i> <span>Filtres</span>
                 <span id="filtersCountBadge" style="display:none; background:#DC2626; color:#fff; border-radius:100px; padding:0 6px; font-size:0.65rem; font-weight:800; margin-left:2px;">0</span>
             </button>
+
             <a href="{{ route('signalisation.index') }}" class="btn-topbar">
                 <i class="fa-solid fa-list"></i> <span>Liste</span>
             </a>
+
             <button type="button" class="btn-topbar btn-topbar-success" onclick="startNewPanneauPlacement()">
                 <i class="fa-solid fa-plus"></i> <span>Nouveau panneau</span>
             </button>
+
             <button type="button" class="btn-topbar btn-topbar-primary" onclick="fitAllMarkers()">
                 <i class="fa-solid fa-expand"></i> <span>Tout voir</span>
             </button>
@@ -940,17 +984,26 @@ console.log('📍 Bounds zones :', window.__zonesBounds);
 
     <div class="carte-main">
         <div id="carte-globale"></div>
-<button type="button"
-        id="btnRecenter"
-        class="btn-recenter-map"
-        onclick="centerOnMyPosition()"
-        title="Recentrer sur ma position"
-        style="display: none;">
-    <i class="fa-solid fa-location-crosshairs"></i>
-</button>
 
-{{-- BANDEAU INFO POSITION --}}
-<div class="user-location-banner" id="userLocationBanner">
+        {{-- ✅ BOUTON FLOTTANT DE RECENTRAGE --}}
+        <button type="button"
+                id="btnRecenter"
+                class="btn-recenter-map"
+                onclick="centerOnMyPosition()"
+                title="Recentrer sur ma position"
+                style="display: none;">
+            <i class="fa-solid fa-location-crosshairs"></i>
+        </button>
+
+        {{-- ✅ BANDEAU INFO POSITION (correctement fermé !) --}}
+        <div class="user-location-banner" id="userLocationBanner">
+            <span class="loc-dot"></span>
+            <span class="loc-text" id="userLocationText">Position en cours...</span>
+            <button type="button" class="loc-close" onclick="hideUserLocationBanner()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
         {{-- PANNEAU DE FILTRES AVANCÉS --}}
         <div class="filters-panel" id="filtersPanel">
             <div class="filters-header">
