@@ -9,16 +9,13 @@
             <div class="d-flex align-items-center gap-2">
                 <!-- Logo Light -->
                 <a href="{{ route('dashboard') }}" class="logo-light d-none d-lg-block">
-    <img src="{{ asset('Backend/assets/images/logo3.png') }}"
-         alt="DBR Logo"
-         class="main-logo">
-</a>
+                    <img src="{{ asset('Backend/assets/images/logo3.png') }}" alt="DBR Logo" class="main-logo">
+                </a>
 
-<a href="{{ route('dashboard') }}" class="logo-dark d-block d-lg-none">
-    <img src="{{ asset('Backend/assets/images/logo-sm.png') }}"
-         alt="DBR Logo"
-         class="mobile-logo">
-</a>
+                <!-- Logo Dark -->
+                <a href="{{ route('dashboard') }}" class="logo-dark d-block d-lg-none">
+                    <img src="{{ asset('Backend/assets/images/logo-sm.png') }}" alt="DBR Logo" class="mobile-logo">
+                </a>
 
                 <!-- Boutons de Menu -->
                 <button class="button-toggle-menu menu-toggle-btn" title="{{ __('Réduire le menu') }}">
@@ -70,7 +67,7 @@
                     </div>
                     <i class="fa-solid fa-chevron-down dropdown-arrow d-none d-xl-inline-block"></i>
                 </a>
-
+                
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown">
                     <div class="dropdown-header">
                         <div class="d-flex align-items-center gap-3">
@@ -118,17 +115,17 @@
         --bg-glass-card: rgba(18, 26, 43, 0.85);
         --border-glass: rgba(255, 255, 255, 0.08);
         --border-glass-hover: rgba(255, 255, 255, 0.2);
-
+        
         --text-main: #f3f4f6;
         --text-muted: #9ca3af;
-
+        
         --accent-amber: #f59e0b;
         --accent-amber-glow: rgba(245, 158, 11, 0.3);
         --accent-blue: #3b82f6;
         --accent-blue-glow: rgba(59, 130, 246, 0.3);
         --accent-emerald: #10b981;
         --accent-red: #ef4444;
-
+        
         --radius-lg: 16px;
         --radius-md: 10px;
         --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -322,7 +319,7 @@
         transition: var(--transition-smooth);
     }
 
-    .user-profile:hover,
+    .user-profile:hover, 
     .user-profile-dropdown.show .user-profile {
         background: rgba(255, 255, 255, 0.08);
         border-color: rgba(245, 158, 11, 0.3);
