@@ -435,10 +435,7 @@
     <!-- Début du Wrapper principal -->
     <div class="wrapper">
 
-        <!-- ✅ Sidebar (ÉTAIT MANQUANTE) -->
-        @include('template.body.sidebar')
-
-        <!-- Topbar / En-tête -->
+               <!-- Topbar / En-tête -->
         @include('template.body.header')
 
         <!-- Contenu principal -->
