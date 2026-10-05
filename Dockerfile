@@ -1,6 +1,6 @@
 FROM php:8.2-fpm
 
-# Installation des dépendances système et des extensions PHP
+# Installation des extensions PHP et outils requis
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -14,27 +14,29 @@ RUN apt-get update && apt-get install -y \
 
 RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd
 
+# Répertoire de travail unique
+WORKDIR /var/www
+
 # Installation de Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-WORKDIR /var/www
+# Copie des fichiers du projet
+COPY . /var/www
 
-COPY . .
-
-# Installation des dépendances Laravel
+# Installation des dépendances Composer
 RUN composer install --no-dev --optimize-autoloader
 
-# Permissions pour le stockage et le cache
+# Correction des permissions
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
-# Remplacement de la configuration Nginx
+# Copie de la configuration Nginx
 COPY nginx.conf /etc/nginx/sites-available/default
 
 EXPOSE 80
 
-# Démarrage des caches et des services
+# Script de démarrage
 CMD php artisan config:cache && \
     php artisan route:cache && \
     php artisan view:cache && \
-    php-fpm -D && \
+    php-fpm -D -p /var/www && \
     nginx -g 'daemon off;'
