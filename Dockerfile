@@ -35,9 +35,7 @@ COPY nginx.conf /etc/nginx/sites-available/default
 EXPOSE 80
 
 # Lancement des migrations, seeders, caches et des services
-CMD php artisan migrate --force && \
-    php artisan db:seed --force && \
-    php artisan config:cache && \
+CMD php artisan config:cache && \
     php artisan route:cache && \
     php artisan view:cache && \
     php-fpm -D && \
