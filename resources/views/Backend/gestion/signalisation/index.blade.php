@@ -796,7 +796,7 @@
            
         </div>
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <a href="{{ route('dashboard') }}" class="btn-back-dash">
+            <a href="{{ route('all.dashboard') }}" class="btn-back-dash">
                 <i class="fa-solid fa-arrow-left"></i> Retour au dashboard
             </a>
 
