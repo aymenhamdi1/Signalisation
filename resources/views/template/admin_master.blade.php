@@ -48,121 +48,294 @@
     <script src="{{ asset('Backend/assets/js/DBR-config.js') }}"></script>
 
     <!-- Global Glassmorphism & Dark Theme Styles -->
+
     <style>
-        :root {
-            --bg-dark-body: #0b0f19;
-            --bg-glass-card: rgba(18, 26, 43, 0.75);
-            --bg-glass-hover: rgba(26, 38, 64, 0.85);
-            --border-glass: rgba(255, 255, 255, 0.08);
-            --border-glass-hover: rgba(255, 255, 255, 0.2);
-            
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-            
-            --accent-amber: #f59e0b;
-            --accent-amber-glow: rgba(245, 158, 11, 0.25);
-            --accent-blue: #3b82f6;
-            --accent-blue-glow: rgba(59, 130, 246, 0.25);
-            
-            --radius-lg: 16px;
-            --radius-md: 10px;
-            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+/* ============================================
+   CORRECTIONS D'AFFICHAGE - THÈME SOMBRE
+   ============================================ */
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
-            background-color: var(--bg-dark-body) !important;
-            color: var(--text-main) !important;
-            background-image: 
-                radial-gradient(circle at 10% 10%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 90% 90%, rgba(245, 158, 11, 0.06) 0%, transparent 40%);
-            background-attachment: fixed;
-            min-height: 100vh;
-        }
+/* Forcer le fond sombre sur TOUTES les cartes, y compris les sous-cartes */
+.card,
+.card-body,
+.card-header,
+.card-footer,
+.modal-content,
+[class*="card-"] {
+    background: var(--bg-glass-card) !important;
+    color: var(--text-main) !important;
+    border: 1px solid var(--border-glass) !important;
+}
 
-        /* Wrapper & Content Containers */
-        .wrapper {
-            background: transparent !important;
-        }
+/* Corriger les cartes blanches imbriquées (inner cards) */
+.card .card,
+.card-body .card,
+.card-body .card-body {
+    background: rgba(26, 38, 64, 0.6) !important;
+    border: 1px solid var(--border-glass) !important;
+}
 
-        .content-page, .content {
-            background: transparent !important;
-            padding-bottom: 2rem;
-        }
+/* Forcer la couleur du texte dans toutes les cartes */
+.card *,
+.card-body *,
+.modal-content * {
+    color: var(--text-main);
+}
 
-        /* Cartes et Panneaux en Glassmorphism */
-        .card, .card-body, .modal-content {
-            background: var(--bg-glass-card) !important;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--border-glass) !important;
-            border-radius: var(--radius-lg) !important;
-            color: var(--text-main) !important;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
+/* Titres et sous-titres dans les cartes */
+.card h1, .card h2, .card h3, .card h4, .card h5, .card h6,
+.card-body h1, .card-body h2, .card-body h3,
+.card-body h4, .card-body h5, .card-body h6 {
+    color: var(--text-main) !important;
+}
 
-        .card-header, .card-footer {
-            background: rgba(255, 255, 255, 0.03) !important;
-            border-color: var(--border-glass) !important;
-        }
+/* Textes muted (gris clair) - les rendre visibles */
+.text-muted,
+.card .text-muted,
+.card-body .text-muted,
+small.text-muted,
+p.text-muted,
+span.text-muted,
+div.text-muted {
+    color: #b8c1d1 !important;
+    opacity: 1 !important;
+}
 
-        /* Champs de saisie (Inputs, Selects, Textareas) */
-        .form-control, .form-select, .select2-container--default .select2-selection--single {
-            background-color: rgba(255, 255, 255, 0.05) !important;
-            border: 1px solid var(--border-glass) !important;
-            color: var(--text-main) !important;
-            border-radius: var(--radius-md) !important;
-            transition: var(--transition-smooth);
-        }
+/* Labels "Non renseigné" et champs vides */
+.card .text-secondary,
+.card-body .text-secondary,
+.text-secondary {
+    color: #8b95a8 !important;
+}
 
-        .form-control:focus, .form-select:focus {
-            background-color: rgba(255, 255, 255, 0.08) !important;
-            border-color: var(--accent-amber) !important;
-            box-shadow: 0 0 12px var(--accent-amber-glow) !important;
-            color: #fff !important;
-        }
+/* Sections d'identification avec bordures */
+.card-body [class*="border"],
+.card-body .border-top,
+.card-body .border-bottom,
+.card-body .border-start,
+.card-body .border-end {
+    border-color: var(--border-glass) !important;
+}
 
-        /* DataTables Custom Theme */
-        .table {
-            color: var(--text-main) !important;
-            border-color: var(--border-glass) !important;
-        }
+/* Listes dans les cartes */
+.card ul, .card ol, .card-body ul, .card-body ol {
+    color: var(--text-main) !important;
+}
 
-        .table thead th {
-            background: rgba(255, 255, 255, 0.04) !important;
-            color: var(--accent-amber) !important;
-            border-bottom: 1px solid var(--border-glass) !important;
-            font-weight: 600;
-        }
+.card li, .card-body li {
+    color: var(--text-main) !important;
+}
 
-        .table td, .table th {
-            border-color: var(--border-glass) !important;
-            vertical-align: middle;
-        }
+/* Tableaux dans les cartes */
+.card table,
+.card-body table {
+    color: var(--text-main) !important;
+}
 
-        .table-hover tbody tr:hover {
-            background-color: var(--bg-glass-hover) !important;
-        }
+.card table td,
+.card table th,
+.card-body table td,
+.card-body table th {
+    color: var(--text-main) !important;
+    border-color: var(--border-glass) !important;
+}
 
-        /* Barre de défilement (Scrollbar) moderne */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
+/* Badges et pastilles */
+.badge {
+    color: #fff !important;
+}
 
-        ::-webkit-scrollbar-track {
-            background: var(--bg-dark-body);
-        }
+/* Forcer le fond sombre sur les sections avec bg-white ou bg-light */
+.bg-white,
+.bg-light,
+[class*="bg-white"],
+[class*="bg-light"] {
+    background: var(--bg-glass-card) !important;
+    color: var(--text-main) !important;
+}
 
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 4px;
-        }
+/* Inputs désactivés / readonly */
+.form-control:disabled,
+.form-control[readonly],
+.form-select:disabled {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+    color: #8b95a8 !important;
+    border-color: var(--border-glass) !important;
+}
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-amber);
-        }
-    </style>
+/* Placeholder */
+.form-control::placeholder,
+.form-select::placeholder {
+    color: #6b7280 !important;
+    opacity: 1 !important;
+}
+
+/* Labels de formulaire */
+.form-label,
+label {
+    color: var(--text-main) !important;
+}
+
+/* ============================================
+   CORRECTION DU TOPBAR / HEADER
+   ============================================ */
+
+/* Fixer la hauteur de la topbar */
+.topbar,
+.navbar-topbar,
+.topbar-custom {
+    background: rgba(11, 15, 25, 0.95) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-glass) !important;
+    z-index: 1030;
+    position: relative;
+}
+
+/* Logo DBR - corriger l'image cassée */
+.topbar .logo img,
+.topbar .logo-img,
+.topbar-custom .logo img,
+.topbar-custom .logo-img,
+.brand-logo,
+img[alt*="DBR Logo"] {
+    height: 32px !important;
+    width: auto !important;
+    max-width: 150px !important;
+    object-fit: contain;
+    display: inline-block;
+}
+
+/* Si l'image n'existe pas, afficher un texte de remplacement */
+.topbar .logo,
+.topbar-custom .logo,
+.brand-logo {
+    color: var(--accent-amber) !important;
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: 1px;
+    text-decoration: none;
+}
+
+/* ============================================
+   CORRECTION DU MENU PROFIL DÉROULANT
+   ============================================ */
+
+/* Menu déroulant du profil */
+.dropdown-menu,
+.profile-dropdown,
+.navbar-nav .dropdown-menu {
+    background: rgba(18, 26, 43, 0.98) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-glass) !important;
+    border-radius: var(--radius-md) !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;
+    z-index: 1050 !important;
+    min-width: 220px;
+    padding: 0.5rem 0;
+}
+
+/* Items du menu déroulant */
+.dropdown-menu .dropdown-item,
+.profile-dropdown .dropdown-item {
+    color: var(--text-main) !important;
+    padding: 0.6rem 1.25rem;
+    transition: var(--transition-smooth);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.dropdown-menu .dropdown-item:hover,
+.profile-dropdown .dropdown-item:hover {
+    background: rgba(245, 158, 11, 0.15) !important;
+    color: var(--accent-amber) !important;
+}
+
+/* Icônes dans le menu */
+.dropdown-menu .dropdown-item i,
+.dropdown-menu .dropdown-item svg {
+    width: 18px;
+    color: var(--text-muted);
+}
+
+.dropdown-menu .dropdown-item:hover i,
+.dropdown-menu .dropdown-item:hover svg {
+    color: var(--accent-amber);
+}
+
+/* Séparateur du menu */
+.dropdown-divider {
+    border-color: var(--border-glass) !important;
+    margin: 0.25rem 0;
+}
+
+/* Empêcher le menu de rester ouvert par-dessus le contenu */
+.dropdown-menu.show {
+    display: block;
+    position: absolute !important;
+}
+
+/* S'assurer que le contenu principal est bien positionné */
+.content-page,
+.content {
+    position: relative;
+    z-index: 1;
+}
+
+/* Header dropdown toggle */
+.navbar-nav .nav-link,
+.profile-toggle,
+.dropdown-toggle {
+    color: var(--text-main) !important;
+    cursor: pointer;
+}
+
+.navbar-nav .nav-link:hover,
+.profile-toggle:hover {
+    color: var(--accent-amber) !important;
+}
+
+/* ============================================
+   CORRECTIONS SUPPLÉMENTAIRES
+   ============================================ */
+
+/* Bouton "Modifier" */
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent-blue), #2563eb) !important;
+    border: none !important;
+    color: #fff !important;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #2563eb, var(--accent-blue)) !important;
+    box-shadow: 0 0 20px var(--accent-blue-glow);
+}
+
+/* Bouton "Nouvelle observation" (amber) */
+.btn-warning,
+.btn-amber {
+    background: linear-gradient(135deg, var(--accent-amber), #d97706) !important;
+    border: none !important;
+    color: #1a1a1a !important;
+    font-weight: 600;
+}
+
+.btn-warning:hover {
+    box-shadow: 0 0 20px var(--accent-amber-glow);
+}
+
+/* Bouton "Liste" (outline clair) */
+.btn-outline-light {
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    color: var(--text-main) !important;
+}
+
+.btn-outline-light:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+}
+</style>
 </head>
 
 <body class="loading" data-layout-config='{"leftSideBarTheme":"dark","layoutBoxed":false, "leftSidebarCondensed":false, "leftSidebarScrollable":false,"hasTopbar":true}'>
