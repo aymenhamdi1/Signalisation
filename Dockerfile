@@ -27,21 +27,8 @@ RUN composer install --no-dev --optimize-autoloader
 # Permissions pour le stockage et le cache
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
-# Configuration Nginx
-RUN printf 'server {\n\
-    listen 80;\n\
-    index index.php index.html;\n\
-    root /var/www/public;\n\
-    location / {\n\
-        try_files \(uri\)uri/ /index.php?$query_string;\n\
-    }\n\
-    location ~ \\.php$ {\n\
-        fastcgi_pass 127.0.0.1:9000;\n\
-        fastcgi_index index.php;\n\
-        include fastcgi_params;\n\
-        fastcgi_param SCRIPT_FILENAME \(document_root\)fastcgi_script_name;\n\
-    }\n\
-}\n' > /etc/nginx/sites-available/default
+# Remplacement de la configuration Nginx
+COPY nginx.conf /etc/nginx/sites-available/default
 
 EXPOSE 80
 
