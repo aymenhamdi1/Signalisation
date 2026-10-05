@@ -10,15 +10,15 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
+{
+    if (!Schema::hasTable('model_has_roles')) {
         Schema::create('model_has_roles', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->morphs('model'); // Cela crée deux colonnes : model_id et model_type
+            $table->id();
+            $table->string('model_type');
+            $table->unsignedBigInteger('model_id');
             $table->unsignedBigInteger('role_id');
-            $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
             $table->timestamps();
         });
-        
     }
 
     /**

@@ -47,8 +47,7 @@ RUN echo 'server { \n\
 EXPOSE 80
 
 # Script de démarrage : exécute les migrations/caches puis lance les services
-CMD php artisan migrate:fresh --force && \
-    php artisan config:cache && \
+CMD php artisan config:cache && \
     php artisan route:cache && \
     php artisan view:cache && \
     php-fpm -D && \
