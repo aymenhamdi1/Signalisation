@@ -14,7 +14,7 @@
 
                 <!-- Logo Dark -->
                 <a href="{{ route('all.dashboard') }}" class="logo-dark d-block d-lg-none">
-                    <img src="{{ asset('Backend/assets/images/logo-sm.png') }}" alt="DBR Logo" class="mobile-logo">
+                    <img src="{{ asset('Backend/assets/images/logo3.png') }}" alt="DBR Logo" class="mobile-logo">
                 </a>
 
                 <!-- Boutons de Menu -->
