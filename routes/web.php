@@ -10,7 +10,7 @@ use App\Http\Controllers\Backend\traduction\TraductionController;
 use App\Http\Controllers\Backend\permission_par_role\PermissionByRoleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Backend\gestion\carte\CarteController;
+use App\Http\Controllers\Backend\gestion\Carte\CarteController;
 use App\Http\Controllers\Backend\gestion\signalisation\SignalisationController;
 use App\Http\Controllers\Backend\gestion\dashboard\DashboardController;
 
