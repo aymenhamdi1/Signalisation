@@ -2,28 +2,64 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+@php
+    $authUser = Auth::user();
+    $adminData = $authUser ? App\Models\User::find($authUser->id) : null;
+@endphp
+
 <div class="navbar-custom">
     <div class="topbar container-fluid">
         <div class="d-flex align-items-center gap-3">
             <!-- Logo et Boutons de Menu -->
             <div class="d-flex align-items-center gap-2">
-                <!-- Logo Light -->
-                <a href="{{ route('all.dashboard') }}" class="logo-light d-none d-lg-block">
-                    <img src="{{ asset('Backend/assets/images/logo3.png') }}" alt="DBR Logo" class="main-logo">
+                <!-- Logo Desktop (Light) -->
+                <a href="{{ route('all.dashboard') }}" class="logo-light d-none d-lg-flex align-items-center text-decoration-none">
+                    @if(file_exists(public_path('Backend/assets/images/logo3.png')))
+                        <img src="{{ asset('Backend/assets/images/logo3.png') }}" 
+                             alt="DBR" 
+                             class="main-logo"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+                        <span class="logo-fallback" style="display:none;">
+                            <i class="fa-solid fa-shield-halved"></i> DBR
+                        </span>
+                    @else
+                        <span class="logo-fallback">
+                            <i class="fa-solid fa-shield-halved"></i> DBR
+                        </span>
+                    @endif
                 </a>
 
-                <!-- Logo Dark -->
-                <a href="{{ route('all.dashboard') }}" class="logo-dark d-block d-lg-none">
-                    <img src="{{ asset('Backend/assets/images/logo-sm.png') }}" alt="DBR Logo" class="mobile-logo">
+                <!-- Logo Mobile (Dark) -->
+                <a href="{{ route('all.dashboard') }}" class="logo-dark d-flex d-lg-none align-items-center text-decoration-none">
+                    @if(file_exists(public_path('Backend/assets/images/logo-sm.png')))
+                        <img src="{{ asset('Backend/assets/images/logo-sm.png') }}" 
+                             alt="DBR" 
+                             class="mobile-logo"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+                        <span class="logo-fallback-mobile" style="display:none;">
+                            <i class="fa-solid fa-shield-halved"></i> DBR
+                        </span>
+                    @else
+                        <span class="logo-fallback-mobile">
+                            <i class="fa-solid fa-shield-halved"></i> DBR
+                        </span>
+                    @endif
                 </a>
 
-                <!-- Boutons de Menu -->
-                <button class="button-toggle-menu menu-toggle-btn" title="{{ __('Réduire le menu') }}">
+                <!-- Bouton Toggle Menu (Desktop) -->
+                <button class="button-toggle-menu menu-toggle-btn" 
+                        type="button"
+                        title="{{ __('Réduire le menu') }}"
+                        aria-label="{{ __('Réduire le menu') }}">
                     <i class="fa-solid fa-bars-staggered"></i>
                 </button>
 
-                <button class="navbar-toggle mobile-menu-btn" data-bs-toggle="collapse"
-                    data-bs-target="#topnav-menu-content">
+                <!-- Bouton Toggle Menu (Mobile) -->
+                <button class="navbar-toggle mobile-menu-btn" 
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#topnav-menu-content"
+                        aria-label="{{ __('Menu') }}">
                     <span class="menu-line"></span>
                     <span class="menu-line"></span>
                     <span class="menu-line"></span>
@@ -35,31 +71,41 @@
         <ul class="topbar-menu">
             <!-- Mode Sombre/Clair -->
             <li class="theme-toggle-container">
-                <div class="nav-link theme-toggle" id="light-dark-mode" title="{{ __('Changer le thème') }}">
+                <button type="button" 
+                        class="nav-link theme-toggle" 
+                        id="light-dark-mode" 
+                        title="{{ __('Changer le thème') }}"
+                        aria-label="{{ __('Changer le thème') }}">
                     <i class="fa-solid fa-moon light-icon"></i>
                     <i class="fa-solid fa-sun dark-icon"></i>
-                </div>
+                </button>
             </li>
 
             <!-- Plein écran -->
             <li class="fullscreen-toggle">
-                <a class="nav-link fullscreen-btn" href="#" title="{{ __('Plein écran') }}">
+                <a class="nav-link fullscreen-btn" 
+                   href="#" 
+                   title="{{ __('Plein écran') }}"
+                   aria-label="{{ __('Plein écran') }}">
                     <i class="fa-solid fa-expand enter-fullscreen"></i>
                     <i class="fa-solid fa-compress exit-fullscreen"></i>
                 </a>
             </li>
 
             <!-- Profil Utilisateur -->
-            @php
-                $id = Auth::user()->id;
-                $adminData = App\Models\User::find($id);
-            @endphp
+            @if($adminData)
             <li class="dropdown user-profile-dropdown">
-                <a class="nav-link dropdown-toggle user-profile" data-bs-toggle="dropdown" href="#" role="button"
-                    aria-expanded="false">
+                <a class="nav-link dropdown-toggle user-profile" 
+                   data-bs-toggle="dropdown" 
+                   href="#" 
+                   role="button"
+                   aria-expanded="false"
+                   aria-haspopup="true">
                     <div class="user-avatar-container">
                         <img src="{{ !empty($adminData->photo) ? url('upload/admin_images/' . $adminData->photo) : url('upload/no_image.png') }}"
-                            alt="{{ __('Photo de profil') }}" class="user-avatar">
+                             alt="{{ __('Photo de profil') }}" 
+                             class="user-avatar"
+                             onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 36 36%22><circle cx=%2218%22 cy=%2218%22 r=%2218%22 fill=%22%233b82f6%22/><text x=%2218%22 y=%2224%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2216%22 font-family=%22Arial%22>{{ strtoupper(substr($adminData->name ?? 'U', 0, 1)) }}</text></svg>'">
                         <span class="user-status"></span>
                     </div>
                     <div class="user-info d-none d-xl-block">
@@ -73,7 +119,9 @@
                     <div class="dropdown-header">
                         <div class="d-flex align-items-center gap-3">
                             <img src="{{ !empty($adminData->photo) ? url('upload/admin_images/' . $adminData->photo) : url('upload/no_image.png') }}"
-                                alt="{{ __('Photo de profil') }}" class="dropdown-avatar">
+                                 alt="{{ __('Photo de profil') }}" 
+                                 class="dropdown-avatar"
+                                 onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 44 44%22><circle cx=%2222%22 cy=%2222%22 r=%2222%22 fill=%22%233b82f6%22/><text x=%2222%22 y=%2229%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2220%22 font-family=%22Arial%22>{{ strtoupper(substr($adminData->name ?? 'U', 0, 1)) }}</text></svg>'">
                             <div class="user-details">
                                 <h6 class="mb-0 text-white font-weight-bold">{{ $adminData->name }}</h6>
                                 <p class="text-muted-custom mb-0">{{ $adminData->email }}</p>
@@ -103,21 +151,25 @@
                     </a>
                 </div>
             </li>
+            @endif
         </ul>
     </div>
 </div>
 <!-- ========== Topbar End ========== -->
 
 <style>
-    /* Variables & Aesthetics Glassmorphism Dark Theme */
+    /* ============================================
+       VARIABLES GLOBALES - THÈME SOMBRE DBR
+       ============================================ */
     :root {
         --bg-dark-topbar: rgba(11, 15, 25, 0.85);
-        --bg-glass-card: rgba(18, 26, 43, 0.85);
+        --bg-glass-card: rgba(18, 26, 43, 0.95);
         --border-glass: rgba(255, 255, 255, 0.08);
         --border-glass-hover: rgba(255, 255, 255, 0.2);
 
         --text-main: #f3f4f6;
         --text-muted: #9ca3af;
+        --text-dim: #b8c1d1;
 
         --accent-amber: #f59e0b;
         --accent-amber-glow: rgba(245, 158, 11, 0.3);
@@ -131,7 +183,9 @@
         --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* Navbar Custom Container */
+    /* ============================================
+       NAVBAR CONTAINER
+       ============================================ */
     .navbar-custom {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         background: var(--bg-dark-topbar) !important;
@@ -155,7 +209,9 @@
         height: 100%;
     }
 
-    /* Logos */
+    /* ============================================
+       LOGOS + FALLBACK
+       ============================================ */
     .main-logo {
         height: 38px;
         transition: var(--transition-smooth);
@@ -171,7 +227,25 @@
         transform: scale(1.04);
     }
 
-    /* Toggle Buttons */
+    .logo-fallback,
+    .logo-fallback-mobile {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--accent-amber);
+        font-weight: 700;
+        font-size: 1.25rem;
+        letter-spacing: 1px;
+    }
+
+    .logo-fallback i,
+    .logo-fallback-mobile i {
+        font-size: 1.5rem;
+    }
+
+    /* ============================================
+       TOGGLE BUTTONS
+       ============================================ */
     .menu-toggle-btn {
         background: rgba(255, 255, 255, 0.05);
         border: 1px solid var(--border-glass);
@@ -198,12 +272,21 @@
     .mobile-menu-btn {
         background: transparent;
         border: none;
-        display: flex;
+        display: none;
         flex-direction: column;
         justify-content: space-between;
         height: 20px;
         padding: 0;
         cursor: pointer;
+    }
+
+    @media (max-width: 992px) {
+        .mobile-menu-btn {
+            display: flex;
+        }
+        .menu-toggle-btn {
+            display: none;
+        }
     }
 
     .menu-line {
@@ -219,7 +302,9 @@
         background-color: var(--accent-amber);
     }
 
-    /* Topbar Navigation Menu */
+    /* ============================================
+       TOPBAR MENU
+       ============================================ */
     .topbar-menu {
         display: flex;
         align-items: center;
@@ -240,6 +325,8 @@
         font-size: 1.1rem;
         transition: var(--transition-smooth);
         text-decoration: none;
+        background: transparent;
+        border: none;
     }
 
     .topbar-menu .nav-link:hover {
@@ -247,7 +334,9 @@
         background: rgba(255, 255, 255, 0.06);
     }
 
-    /* Mode Sombre / Clair Toggle */
+    /* ============================================
+       THEME TOGGLE
+       ============================================ */
     .theme-toggle-container .theme-toggle {
         cursor: pointer;
         width: 40px;
@@ -279,7 +368,9 @@
         display: block;
     }
 
-    /* Plein Ecran */
+    /* ============================================
+       FULLSCREEN
+       ============================================ */
     .fullscreen-btn {
         width: 40px;
         height: 40px;
@@ -301,7 +392,9 @@
         color: var(--accent-amber);
     }
 
-    /* Profile Dropdown Component */
+    /* ============================================
+       USER PROFILE DROPDOWN
+       ============================================ */
     .user-profile-dropdown {
         position: relative;
     }
@@ -317,6 +410,7 @@
         border-radius: 30px;
         cursor: pointer;
         transition: var(--transition-smooth);
+        text-decoration: none;
     }
 
     .user-profile:hover,
@@ -330,6 +424,7 @@
         position: relative;
         width: 36px;
         height: 36px;
+        flex-shrink: 0;
     }
 
     .user-avatar {
@@ -381,7 +476,9 @@
         color: var(--accent-amber);
     }
 
-    /* Menu Déroulant (Dropdown Glassmorphism) */
+    /* ============================================
+       PROFILE DROPDOWN MENU - CORRIGÉ
+       ============================================ */
     .profile-dropdown {
         background: var(--bg-glass-card) !important;
         backdrop-filter: blur(20px);
@@ -392,6 +489,13 @@
         width: 260px;
         padding: 8px;
         margin-top: 10px !important;
+        /* ✅ Correction : alignement propre à droite */
+        right: 0 !important;
+        left: auto !important;
+        position: absolute !important;
+        top: 100% !important;
+        transform: none !important;
+        z-index: 1050;
     }
 
     .dropdown-header {
@@ -408,6 +512,7 @@
         border-radius: 50%;
         object-fit: cover;
         border: 2px solid var(--accent-blue);
+        flex-shrink: 0;
     }
 
     .text-muted-custom {
@@ -424,11 +529,18 @@
         display: flex;
         align-items: center;
         transition: var(--transition-smooth);
+        text-decoration: none;
+        background: transparent;
+        border: none;
+        width: 100%;
+        text-align: left;
     }
 
     .profile-dropdown .dropdown-item i {
         color: var(--text-muted);
         transition: var(--transition-smooth);
+        width: 18px;
+        text-align: center;
     }
 
     .profile-dropdown .dropdown-item:hover {
@@ -442,43 +554,81 @@
     }
 
     .dropdown-divider {
-        border-top-color: var(--border-glass);
+        border-top-color: var(--border-glass) !important;
         margin: 6px 0;
     }
 
     .dropdown-item.text-danger-custom {
-        color: var(--accent-red);
+        color: var(--accent-red) !important;
     }
 
     .dropdown-item.text-danger-custom:hover {
-        background: rgba(239, 68, 68, 0.12);
-        color: var(--accent-red);
+        background: rgba(239, 68, 68, 0.12) !important;
+        color: var(--accent-red) !important;
     }
 
     .dropdown-item.text-danger-custom:hover i {
-        color: var(--accent-red);
+        color: var(--accent-red) !important;
     }
 
-    /* Adaptabilité mobile */
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
     @media (max-width: 768px) {
         .navbar-custom {
             padding: 0 0.5rem;
+        }
+
+        .topbar {
+            padding: 0 0.75rem;
         }
 
         .user-profile {
             padding: 4px !important;
             border-radius: 50%;
         }
+
+        .profile-dropdown {
+            width: calc(100vw - 24px);
+            right: 12px !important;
+        }
+    }
+
+    /* ============================================
+       ANIMATIONS
+       ============================================ */
+    .dropdown-menu-animated {
+        animation: dropdownFadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes dropdownFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 </style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Mode Sombre/Clair Toggle
+        // ============================================
+        // MODE SOMBRE / CLAIR
+        // ============================================
         const themeBtn = document.getElementById('light-dark-mode');
         const themeContainer = document.querySelector('.theme-toggle-container');
 
-        if (themeBtn) {
+        if (themeBtn && themeContainer) {
+            // Restaurer l'état sauvegardé
+            const savedDarkMode = localStorage.getItem('darkMode');
+            if (savedDarkMode === 'true') {
+                document.body.classList.add('dark-mode');
+                themeContainer.classList.add('active');
+            }
+
             themeBtn.addEventListener('click', function() {
                 document.body.classList.toggle('dark-mode');
                 themeContainer.classList.toggle('active');
@@ -486,14 +636,11 @@
                 const isDarkMode = document.body.classList.contains('dark-mode');
                 localStorage.setItem('darkMode', isDarkMode);
             });
-
-            if (localStorage.getItem('darkMode') === 'true') {
-                document.body.classList.add('dark-mode');
-                themeContainer.classList.add('active');
-            }
         }
 
-        // Mode Plein écran Toggle
+        // ============================================
+        // MODE PLEIN ÉCRAN
+        // ============================================
         const fullscreenBtn = document.querySelector('.fullscreen-btn');
         if (fullscreenBtn) {
             fullscreenBtn.addEventListener('click', function(e) {
@@ -501,7 +648,7 @@
 
                 if (!document.fullscreenElement) {
                     document.documentElement.requestFullscreen().catch(err => {
-                        console.log(`Erreur plein écran: ${err.message}`);
+                        console.warn(`Erreur plein écran: ${err.message}`);
                     });
                 } else {
                     if (document.exitFullscreen) {
@@ -518,5 +665,21 @@
                 }
             });
         }
+
+        // ============================================
+        // FERMER LE MENU AU CLIC EXTÉRIEUR
+        // ============================================
+        document.addEventListener('click', function(e) {
+            const dropdown = document.querySelector('.user-profile-dropdown');
+            if (dropdown && !dropdown.contains(e.target)) {
+                const menu = dropdown.querySelector('.dropdown-menu');
+                if (menu && menu.classList.contains('show')) {
+                    const toggle = dropdown.querySelector('[data-bs-toggle="dropdown"]');
+                    if (toggle && typeof bootstrap !== 'undefined') {
+                        bootstrap.Dropdown.getInstance(toggle)?.hide();
+                    }
+                }
+            }
+        });
     });
 </script>
