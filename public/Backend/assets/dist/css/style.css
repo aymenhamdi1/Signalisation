@@ -1,0 +1,308 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --bg-dark: #090d16;
+    --card-bg: rgba(15, 23, 42, 0.75);
+    --card-border: rgba(255, 255, 255, 0.1);
+    --input-bg: rgba(15, 23, 42, 0.6);
+    --input-border: rgba(255, 255, 255, 0.15);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent-blue: #3b82f6;
+    --accent-blue-glow: rgba(59, 130, 246, 0.4);
+    --accent-amber: #f59e0b;
+    --accent-amber-glow: rgba(245, 158, 11, 0.4);
+    --accent-danger: #ef4444;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Page & Map Layout                                                          */
+/* -------------------------------------------------------------------------- */
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+    background-color: #0b0f19;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Légende Glassmorphism                                                     */
+/* -------------------------------------------------------------------------- */
+.legend {
+    background: var(--card-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--card-border);
+    border-radius: 0.75rem;
+    box-shadow: 0 12px 32px 0 rgba(0, 0, 0, 0.5);
+    padding: 12px 16px;
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    z-index: 1000;
+    display: none;
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.legend img {
+    display: block;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+}
+
+.legend-header {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(15, 23, 42, 0.4));
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: #60a5fa;
+    padding: 6px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    box-shadow: 0 0 10px var(--accent-blue-glow);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Modales & Cartes de contenu                                               */
+/* -------------------------------------------------------------------------- */
+.modal-content {
+    background: rgba(15, 23, 42, 0.85) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid var(--card-border) !important;
+    border-radius: 1rem !important;
+    padding: 16px 20px;
+    font-size: 15px;
+    color: var(--text-primary);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    transition: all 0.3s ease;
+}
+
+.modal-body {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.row {
+    margin-bottom: 12px;
+}
+
+.col-md-6 {
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-bottom: 10px;
+}
+
+h5 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #60a5fa;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Conteneur d'images & Médias                                               */
+/* -------------------------------------------------------------------------- */
+.photo-container {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    margin: 12px auto;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--card-border);
+    border-radius: 0.75rem;
+    padding: 12px;
+    backdrop-filter: blur(8px);
+    overflow: hidden;
+}
+
+.photo-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s ease;
+}
+
+.photo-container img:hover {
+    transform: scale(1.02);
+}
+
+.photo-container p {
+    color: var(--text-secondary);
+    font-style: italic;
+    font-size: 0.85rem;
+    margin-top: 8px;
+    margin-bottom: 0;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Boutons & Contrôles                                                       */
+/* -------------------------------------------------------------------------- */
+#filter-button {
+    display: block;
+    position: absolute;
+    z-index: 9999;
+    top: 20px;
+    left: 55px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.5rem;
+    padding: 8px 16px;
+    font-weight: 500;
+    font-size: 0.875rem;
+    box-shadow: 0 0 15px var(--accent-blue-glow);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#filter-button:hover {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 0 25px rgba(59, 130, 246, 0.7);
+}
+
+#filter-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Barre latérale Glassmorphic (Sidebar)                                      */
+/* -------------------------------------------------------------------------- */
+.sidebar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 340px;
+    height: 100%;
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-left: 1px solid var(--card-border);
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.6);
+    overflow-y: auto;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1000;
+    font-family: 'Inter', sans-serif;
+    display: none;
+}
+
+#sidebar-header {
+    padding: 16px 20px;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(15, 23, 42, 0.4));
+    border-bottom: 1px solid var(--card-border);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #fef08a;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#sidebar-header #sidebar-title {
+    flex: 1;
+    text-align: center;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.close-sidebar {
+    display: inline-block;
+    padding: 8px 12px;
+    cursor: pointer;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--card-border);
+    border-radius: 0.375rem;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    transition: all 0.25s ease;
+}
+
+.close-sidebar:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #fca5a5;
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.3);
+}
+
+#sidebar-content {
+    padding: 16px;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+.ouvrage-item {
+    margin-bottom: 12px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--card-border);
+    border-radius: 0.5rem;
+    transition: all 0.25s ease;
+}
+
+.ouvrage-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.ouvrage-item button {
+    margin-top: 10px;
+    width: 100%;
+    background: linear-gradient(135deg, #d97706, #b45309);
+    color: #ffffff;
+    border: none;
+    border-radius: 0.375rem;
+    padding: 8px 12px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 0 12px var(--accent-amber-glow);
+    transition: all 0.25s ease;
+}
+
+.ouvrage-item button:hover {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
+    transform: translateY(-1px);
+}
+
+/* Personnalisation de la barre de défilement (Scrollbar) */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+.sidebar::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
+}
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-blue);
+}

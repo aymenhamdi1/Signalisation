@@ -1,0 +1,773 @@
+@extends('template.admin_master')
+
+@section('content')
+<div class="page-wrapper d-flex align-items-center justify-content-center" style="min-height: 80vh; padding: 32px 20px;">
+
+    <div class="page">
+
+        <!-- =====================================================
+             COLONNE GAUCHE
+        ====================================================== -->
+        <aside class="side-left">
+
+            <div class="side-left-content">
+
+                <!-- BRAND -->
+                <div class="brand">
+                    <div class="brand-logo-box">
+                        <img src="{{ asset('Backend/assets/images/logo3.png') }}"
+                             alt="Logo Ministère"
+                             onerror="
+                                 this.style.display='none';
+                                 this.parentElement.insertAdjacentHTML(
+                                     'beforeend',
+                                     '<i class=\'fa-solid fa-landmark-flag\'></i>'
+                                 );
+                             ">
+                    </div>
+                </div>
+
+                <!-- TITRE -->
+                <h1 class="hero-title">
+                    SIG<span class="accent">·</span>Signalisation
+                </h1>
+
+                <p class="hero-description">
+                    Plateforme d'inventaire et de contrôle de conformité
+                    de la signalisation verticale routière — CCTP DGPC.
+                </p>
+
+                <!-- BADGES -->
+                <div class="badge-row">
+                    <div class="badge-icon yellow">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div class="badge-icon red">
+                        <i class="fa-solid fa-ban"></i>
+                    </div>
+                    <div class="badge-icon">
+                        <i class="fa-solid fa-arrow-up"></i>
+                    </div>
+                    <div class="badge-icon">
+                        <i class="fa-solid fa-road"></i>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="side-left-footer">
+                Direction Générale des Ponts et Chaussées
+            </div>
+
+        </aside>
+
+        <!-- =====================================================
+             COLONNE DROITE
+        ====================================================== -->
+        <main class="side-right">
+
+            <div class="form-header">
+                <span class="form-tag">
+                    <span class="dot"></span>
+                    Erreur 419
+                </span>
+            </div>
+
+            <!-- Icône d'erreur animée -->
+            <div class="error-icon-wrapper">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+            </div>
+
+            <!-- Code erreur -->
+            <div class="error-code">419</div>
+
+            <!-- Titre -->
+            <h1 class="error-title">{{ __('Session expirée') }}</h1>
+
+            <!-- Description -->
+            <p class="error-description">
+                {{ __("Votre session a expiré ou n'est plus valide pour des raisons de sécurité. Veuillez vous reconnecter pour continuer.") }}
+            </p>
+
+            <!-- Contact support -->
+            <div class="contact-box">
+                <div class="contact-icon">
+                    <i class="fa-solid fa-headset"></i>
+                </div>
+                <div class="contact-content">
+                    <div class="contact-label">{{ __('Contact support') }}</div>
+                    <div class="contact-value">
+                        <span>{{ __('Support DGPC') }}</span>
+                        <a href="tel:+21600000000">
+                            <i class="fa-solid fa-phone fa-xs"></i>
+                            {{ __('+216 00 000 000') }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Boutons d'action -->
+            <a class="btn-submit" href="{{ route('login') }}">
+                <span>{{ __('Se reconnecter') }}</span>
+                <i class="fa-solid fa-right-to-bracket"></i>
+            </a>
+
+            <a class="btn-logout" href="{{ url('/') }}">
+                <i class="fa-solid fa-house"></i>
+                {{ __('Retour à l\'accueil') }}
+            </a>
+
+            <div class="register">
+                &copy; {{ date('Y') }} {{ __('SIG-Signalisation — Plateforme de Suivi Routier') }}
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
+<style>
+    /* =========================================================
+       RESET & VARIABLES (portée locale)
+    ========================================================= */
+    .page-wrapper *,
+    .page-wrapper *::before,
+    .page-wrapper *::after {
+        box-sizing: border-box;
+    }
+
+    .page-wrapper {
+        --bleu: #1E40AF;
+        --bleu-vif: #2563EB;
+        --bleu-clair: #3B82F6;
+        --bleu-glow: rgba(37, 99, 235, 0.30);
+
+        --rouge: #DC2626;
+        --rouge-vif: #EF4444;
+
+        --jaune: #FACC15;
+        --jaune-vif: #FDE047;
+
+        --vert: #10B981;
+
+        --blanc: #FFFFFF;
+        --gris-50: #F8FAFC;
+        --gris-100: #F1F5F9;
+        --gris-200: #E2E8F0;
+        --gris-300: #CBD5E1;
+        --gris-400: #94A3B8;
+        --gris-500: #64748B;
+        --gris-600: #475569;
+        --gris-700: #334155;
+        --gris-900: #0F172A;
+
+        --radius-sm: 10px;
+        --radius-md: 16px;
+        --radius-lg: 24px;
+        --radius-xl: 28px;
+
+        --shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+        --shadow-md: 0 6px 16px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.04);
+        --shadow-lg: 0 16px 40px rgba(15, 23, 42, 0.14), 0 4px 12px rgba(15, 23, 42, 0.06);
+        --shadow-2xl: 0 32px 80px rgba(15, 23, 42, 0.28), 0 12px 28px rgba(15, 23, 42, 0.12);
+
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: var(--gris-900);
+        position: relative;
+    }
+
+    .page-wrapper::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(circle at 15% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 45%),
+            radial-gradient(circle at 85% 80%, rgba(250, 204, 21, 0.10) 0%, transparent 45%),
+            radial-gradient(circle at 80% 15%, rgba(220, 38, 38, 0.08) 0%, transparent 40%);
+        pointer-events: none;
+        z-index: 1;
+        border-radius: var(--radius-xl);
+    }
+
+    /* =========================================================
+       CARTE PRINCIPALE
+    ========================================================= */
+    .page-wrapper .page {
+        position: relative;
+        z-index: 10;
+        width: 100%;
+        max-width: 1040px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        background: rgba(255, 255, 255, 0.96);
+        backdrop-filter: blur(24px) saturate(180%);
+        -webkit-backdrop-filter: blur(24px) saturate(180%);
+        border-radius: var(--radius-xl);
+        box-shadow:
+            var(--shadow-2xl),
+            0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+        overflow: hidden;
+        animation: cardIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes cardIn {
+        from {
+            opacity: 0;
+            transform: translateY(40px) scale(0.96);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    /* =========================================================
+       COLONNE GAUCHE
+    ========================================================= */
+    .page-wrapper .side-left {
+        position: relative;
+        padding: 52px 44px;
+        background:
+            radial-gradient(circle at 20% 0%, rgba(59, 130, 246, 0.45) 0%, transparent 55%),
+            radial-gradient(circle at 100% 100%, rgba(250, 204, 21, 0.18) 0%, transparent 55%),
+            linear-gradient(150deg, #1E3A8A 0%, #1E40AF 55%, #172554 100%);
+        color: var(--blanc);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        overflow: hidden;
+    }
+
+    .page-wrapper .side-left::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+        background-size: 22px 22px;
+        opacity: 0.7;
+        pointer-events: none;
+    }
+
+    .page-wrapper .side-left::after {
+        content: '';
+        position: absolute;
+        top: -140px;
+        right: -140px;
+        width: 320px;
+        height: 320px;
+        border: 2px dashed rgba(255, 255, 255, 0.12);
+        border-radius: 50%;
+        animation: rotate 45s linear infinite;
+        pointer-events: none;
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to   { transform: rotate(360deg); }
+    }
+
+    .page-wrapper .side-left-content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    /* BRAND */
+    .page-wrapper .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 48px;
+    }
+
+    .page-wrapper .brand-logo-box {
+        width: 100%;
+        height: 56px;
+        flex-shrink: 0;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.95);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .page-wrapper .brand-logo-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        padding: 6px;
+        display: block;
+    }
+
+    /* TITRE */
+    .page-wrapper .hero-title {
+        font-size: 2.2rem;
+        font-weight: 800;
+        line-height: 1.1;
+        letter-spacing: -0.035em;
+        margin-bottom: 18px;
+    }
+
+    .page-wrapper .hero-title .accent {
+        background: linear-gradient(120deg, var(--jaune) 0%, var(--jaune-vif) 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .page-wrapper .hero-description {
+        font-size: 0.9rem;
+        line-height: 1.65;
+        opacity: 0.85;
+        max-width: 340px;
+        margin-bottom: 32px;
+    }
+
+    /* BADGES */
+    .page-wrapper .badge-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .page-wrapper .badge-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        background: rgba(255, 255, 255, 0.10);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        color: var(--blanc);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        cursor: default;
+    }
+
+    .page-wrapper .badge-icon:hover {
+        transform: translateY(-4px);
+        background: rgba(255, 255, 255, 0.18);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .page-wrapper .badge-icon.yellow {
+        background: linear-gradient(135deg, var(--jaune) 0%, var(--jaune-vif) 100%);
+        color: var(--gris-900);
+        border-color: transparent;
+        box-shadow: 0 8px 20px rgba(250, 204, 21, 0.40);
+    }
+
+    .page-wrapper .badge-icon.red {
+        background: linear-gradient(135deg, var(--rouge) 0%, var(--rouge-vif) 100%);
+        border-color: transparent;
+        box-shadow: 0 8px 20px rgba(220, 38, 38, 0.40);
+    }
+
+    /* FOOTER GAUCHE */
+    .page-wrapper .side-left-footer {
+        position: relative;
+        z-index: 2;
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        opacity: 0.6;
+        padding-top: 22px;
+        border-top: 1px solid rgba(255, 255, 255, 0.14);
+        margin-top: auto;
+    }
+
+    /* =========================================================
+       COLONNE DROITE
+    ========================================================= */
+    .page-wrapper .side-right {
+        padding: 52px 48px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.9);
+        overflow-y: auto;
+        max-height: 90vh;
+        text-align: center;
+    }
+
+    .page-wrapper .form-header {
+        margin-bottom: 26px;
+    }
+
+    .page-wrapper .form-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--bleu);
+        background: rgba(37, 99, 235, 0.08);
+        padding: 6px 12px;
+        border-radius: 100px;
+        margin-bottom: 16px;
+        border: 1px solid rgba(37, 99, 235, 0.14);
+    }
+
+    .page-wrapper .form-tag .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--bleu);
+        box-shadow: 0 0 8px var(--bleu);
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50%      { opacity: 0.55; transform: scale(0.8); }
+    }
+
+    /* ICÔNE ERREUR 419 */
+    .page-wrapper .error-icon-wrapper {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 25px;
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.12) 0%, rgba(59, 130, 246, 0.08) 100%);
+        border: 2px solid rgba(37, 99, 235, 0.30);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        animation: pulse-error 2.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse-error {
+        0%, 100% {
+            box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.25);
+        }
+        50% {
+            box-shadow: 0 0 0 18px rgba(37, 99, 235, 0);
+        }
+    }
+
+    .page-wrapper .error-icon-wrapper::before {
+        content: '';
+        position: absolute;
+        inset: -10px;
+        border-radius: 50%;
+        border: 1.5px dashed rgba(37, 99, 235, 0.20);
+        animation: rotate 20s linear infinite;
+    }
+
+    .page-wrapper .error-icon-wrapper i {
+        font-size: 2.8rem;
+        background: linear-gradient(135deg, var(--bleu) 0%, var(--bleu-vif) 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .page-wrapper .error-code {
+        font-size: 4.5rem;
+        font-weight: 800;
+        line-height: 1;
+        margin-bottom: 5px;
+        letter-spacing: -2px;
+        background: linear-gradient(135deg, var(--bleu) 0%, var(--bleu-vif) 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 4px 20px rgba(37, 99, 235, 0.25);
+    }
+
+    .page-wrapper .error-title {
+        font-size: 1.75rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        color: var(--gris-900);
+        margin-bottom: 12px;
+    }
+
+    .page-wrapper .error-description {
+        color: var(--gris-500);
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin-bottom: 22px;
+        max-width: 380px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* CONTACT BOX */
+    .page-wrapper .contact-box {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 16px 20px;
+        margin-bottom: 22px;
+        text-align: left;
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.06) 0%, rgba(37, 99, 235, 0.02) 100%);
+        border: 1px solid rgba(37, 99, 235, 0.18);
+        border-radius: var(--radius-md);
+        transition: all 0.25s ease;
+    }
+
+    .page-wrapper .contact-box:hover {
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.09) 0%, rgba(37, 99, 235, 0.03) 100%);
+        border-color: rgba(37, 99, 235, 0.30);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.10);
+    }
+
+    .page-wrapper .contact-box .contact-icon {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--bleu) 0%, var(--bleu-vif) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--blanc);
+        font-size: 1.05rem;
+        box-shadow: 0 6px 16px var(--bleu-glow);
+    }
+
+    .page-wrapper .contact-box .contact-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .page-wrapper .contact-box .contact-label {
+        font-size: 0.7rem;
+        color: var(--gris-500);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 700;
+        margin-bottom: 3px;
+    }
+
+    .page-wrapper .contact-box .contact-value {
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: var(--gris-900);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .page-wrapper .contact-box .contact-value a {
+        color: var(--bleu-vif);
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.86rem;
+        transition: color 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .page-wrapper .contact-box .contact-value a:hover {
+        color: var(--rouge);
+        text-decoration: underline;
+    }
+
+    /* BOUTON PRINCIPAL */
+    .page-wrapper .btn-submit {
+        position: relative;
+        width: 100%;
+        padding: 16px 24px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--blanc);
+        background: linear-gradient(135deg, var(--bleu) 0%, var(--bleu-vif) 100%);
+        border: none;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow:
+            0 10px 24px var(--bleu-glow),
+            0 2px 4px rgba(15, 23, 42, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        text-decoration: none;
+    }
+
+    .page-wrapper .btn-submit::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, var(--rouge) 0%, var(--rouge-vif) 100%);
+        opacity: 0;
+        transition: opacity 0.35s ease;
+        z-index: 1;
+    }
+
+    .page-wrapper .btn-submit:hover::before {
+        opacity: 1;
+    }
+
+    .page-wrapper .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow:
+            0 16px 36px rgba(220, 38, 38, 0.38),
+            0 4px 8px rgba(15, 23, 42, 0.10);
+        color: var(--blanc);
+    }
+
+    .page-wrapper .btn-submit span,
+    .page-wrapper .btn-submit i {
+        position: relative;
+        z-index: 2;
+    }
+
+    .page-wrapper .btn-submit i {
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .page-wrapper .btn-submit:hover i {
+        transform: translateX(4px);
+    }
+
+    /* BOUTON SECONDAIRE */
+    .page-wrapper .btn-logout {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        padding: 14px 24px;
+        margin-top: 12px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--gris-600);
+        background: var(--blanc);
+        border: 1.5px solid var(--gris-200);
+        border-radius: var(--radius-md);
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .page-wrapper .btn-logout:hover {
+        color: var(--rouge);
+        border-color: var(--rouge);
+        background: rgba(220, 38, 38, 0.04);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(220, 38, 38, 0.15);
+    }
+
+    /* REGISTER / FOOTER */
+    .page-wrapper .register {
+        margin-top: 26px;
+        padding-top: 22px;
+        border-top: 1px solid var(--gris-200);
+        text-align: center;
+        font-size: 0.85rem;
+        color: var(--gris-500);
+    }
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+    @media (max-width: 900px) {
+        .page-wrapper .page {
+            grid-template-columns: 1fr;
+            max-width: 540px;
+        }
+
+        .page-wrapper .side-left {
+            padding: 40px 32px;
+        }
+
+        .page-wrapper .hero-title {
+            font-size: 1.9rem;
+        }
+
+        .page-wrapper .side-right {
+            padding: 40px 32px;
+            max-height: none;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .page-wrapper {
+            padding: 16px 12px;
+        }
+
+        .page-wrapper .side-left,
+        .page-wrapper .side-right {
+            padding: 32px 22px;
+        }
+
+        .page-wrapper .hero-title {
+            font-size: 1.55rem;
+        }
+
+        .page-wrapper .badge-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 15px;
+        }
+
+        .page-wrapper .brand-logo-box {
+            width: 148px;
+            height: 48px;
+        }
+
+        .page-wrapper .error-code {
+            font-size: 3.5rem;
+        }
+
+        .page-wrapper .error-icon-wrapper {
+            width: 80px;
+            height: 80px;
+        }
+
+        .page-wrapper .error-icon-wrapper i {
+            font-size: 2.2rem;
+        }
+
+        .page-wrapper .error-title {
+            font-size: 1.4rem;
+        }
+
+        .page-wrapper .contact-box {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .page-wrapper .contact-box .contact-content {
+            text-align: center;
+        }
+
+        .page-wrapper .contact-box .contact-value {
+            justify-content: center;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .page-wrapper *,
+        .page-wrapper *::before,
+        .page-wrapper *::after {
+            animation-duration: 0.01ms !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+</style>
+@endsection

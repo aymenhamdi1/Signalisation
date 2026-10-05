@@ -1,0 +1,182 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+#map {
+    position: relative; /* Ajout de la position relative pour le conteneur de la carte */
+    height: 100vh; /* Utilisation de vh pour spécifier la hauteur de la carte */
+    width: 88%;
+    left: 30vh; /* Utilisation de vh pour spécifier la hauteur de la carte */
+}
+        #KMZsidebar {
+            position: absolute;
+    top: 0;
+    left: 1px;
+    width: 350px; /* Ajustez la largeur selon vos besoins */
+    height: 100%; /* Occupera toute la hauteur de la carte */
+    background-color: white; /* Couleur de fond */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Ombre légère */
+    overflow-y: auto; /* Activation du défilement vertical si nécessaire */
+    z-index: 1000; /* Assurez-vous que la sidebar est au-dessus des autres éléments de la carte */
+    transition: right 0.3s ease; /* Animation lors de l'ouverture/fermeture */
+        }
+        #KMZsidebar.open {
+            left: 0;
+            opacity: 1; /* Rendre le KMZsidebar visible lorsque ouvert */
+            visibility: visible; /* Rendre le KMZsidebar visible lorsque ouvert */
+        }
+
+        #KMZsidebar button {
+            background-color: #17a2b8;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            align-items: center;
+            align-tracks: center;
+        }
+        #Produit {
+            background-color: #a9babc;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            align-content: center;
+        }
+        #KMZsidebar button:hover {
+            background-color: #138496;
+            align-self: center;
+        }
+        #Produit option {
+            color: #333;
+        }
+        #counterkmz {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #555;
+            align-self: center;
+        }
+        .filter-section label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .filter-section .checkbox-container {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center; /* Alignement vertical des éléments */
+        }
+        
+        .filter-section .checkbox-container div {
+            margin-right: 10px;
+            margin-bottom: 5px; /* Espacement entre les cases à cocher */
+            display: flex;
+            align-items: center; /* Alignement vertical des éléments */
+        }
+        
+        .filter-section .checkbox-container input[type="checkbox"] {
+            display: none;
+        }
+        
+        .filter-section .checkbox-container label {
+            position: relative;
+            padding-left: 25px;
+            cursor: pointer;
+            user-select: none;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .filter-section .checkbox-container label:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            border: 2px solid #007bff;
+            border-radius: 4px;
+            background: #fff;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+        
+        .filter-section .checkbox-container input[type="checkbox"]:checked + label:before {
+            background: #007bff;
+            border-color: #007bff;
+        }
+        
+        .filter-section .checkbox-container input[type="checkbox"]:checked + label:after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 50%;
+            transform: translateY(-50%) rotate(45deg);
+            width: 6px;
+            height: 10px;
+            border: solid #fff;
+            border-width: 0 2px 2px 0;
+            box-sizing: border-box;
+        }
+        .quarry-listkmz {
+            max-height: calc(100% - 150px); /* Ajustez la hauteur maximale en fonction de votre design */
+            overflow-y: auto;
+            margin-top: 20px;
+            padding-right: 10px; /* Pour compenser la barre de défilement */
+        }
+        .quarry-listkmz li {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .quarry-listkmz li:hover {
+            background-color: #f0f0f0;
+        }
+        .quarry-listkmz li p {
+            margin: 0;
+        }
+        .KMZsidebar-header {
+    background-color: #3498db;
+    color: #fff;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.KMZsidebar-content {
+    padding: 10px;
+}
+#distance-range {
+    width: 100%;
+    margin: 10px 0;
+}
+
+#distance-label {
+    font-weight: bold;
+    margin-left: 10px;
+}
+.base-layer-style {
+    color: blue; /* Customize base layer color */
+}
+.kmz-layer-style {
+    color: green; /* Customize KMZ layer color */
+}
+.filtered-layer-style {
+    color: red; /* Customize filtered results color */
+}
+
+.selected-polygon {
+    fill: yellow; /* Change the fill color as needed */
+    stroke: red; /* Change the stroke color as needed */
+}

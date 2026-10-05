@@ -1,0 +1,160 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --bg-dark: #090d16;
+    --card-bg: rgba(15, 23, 42, 0.75);
+    --card-border: rgba(255, 255, 255, 0.12);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent-blue: #3b82f6;
+    --accent-blue-glow: rgba(59, 130, 246, 0.4);
+    --accent-amber: #f59e0b;
+    --accent-amber-glow: rgba(245, 158, 11, 0.4);
+    --accent-success: #10b981;
+    --accent-success-glow: rgba(16, 185, 129, 0.5);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Utilitaires                                                                */
+/* -------------------------------------------------------------------------- */
+.hidden {
+    display: none !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Conteneur Basemap Switcher Leaflet Glassmorphic                            */
+/* -------------------------------------------------------------------------- */
+.leaflet-control-basemapsSwitcher {
+    height: auto;
+    width: auto;
+    display: flex;
+    gap: 8px;
+    padding: 6px;
+    background: var(--card-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--card-border);
+    border-radius: 0.85rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+}
+
+.leaflet-control-basemapsSwitcher:hover {
+    cursor: pointer;
+    border-color: rgba(255, 255, 255, 0.22);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6), 0 0 15px rgba(59, 130, 246, 0.2);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Carte Individuelle (Vignette)                                             */
+/* -------------------------------------------------------------------------- */
+.basemapImg {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    margin: 0;
+    padding: 4px;
+    border-radius: 0.65rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.basemapImg:hover {
+    transform: translateY(-2px) scale(1.03);
+    border-color: var(--accent-amber);
+    box-shadow: 0 0 15px var(--accent-amber-glow);
+}
+
+.basemapImg div {
+    background-size: cover;
+    background-position: center;
+    width: 72px;
+    height: 72px;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Overlay sombre sur l'image pour un meilleur rendu Dark Theme */
+.basemapImg div::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.2) 0%, rgba(15, 23, 42, 0.75) 100%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Nom du fond de carte */
+.basemapImg div .name {
+    width: 100%;
+    height: auto;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 3px 2px;
+    text-align: center;
+    z-index: 2;
+    letter-spacing: 0.2px;
+}
+
+/* Zone de validation (Checkmark) */
+.basemapImg div .check {
+    width: auto;
+    height: auto;
+    border-radius: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    font-weight: 500;
+    padding: 4px;
+    z-index: 2;
+}
+
+/* Indicateur de carte active avec lueur néon verte/émeraude */
+.activeMap::before {
+    color: #ffffff;
+    content: '✓';
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 12px var(--accent-success-glow);
+    animation: glowPulse 2s infinite alternate;
+}
+
+/* Bordure active lumineuse sur le conteneur principal */
+.basemapImg:has(.activeMap) {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 15px var(--accent-blue-glow);
+}
+
+@keyframes glowPulse {
+    from {
+        box-shadow: 0 0 8px var(--accent-success-glow);
+    }
+    to {
+        box-shadow: 0 0 18px rgba(16, 185, 129, 0.8);
+    }
+}
