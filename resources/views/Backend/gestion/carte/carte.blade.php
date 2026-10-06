@@ -591,6 +591,175 @@
     .photo-preview-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
     /* =========================================================
+       ✅ CUSTOM SELECT AVEC SVG — CODE NOMENCLATURE
+       ========================================================= */
+    .nomen-custom-select {
+        position: relative;
+        width: 100%;
+        font-family: 'Inter', sans-serif;
+    }
+    .nomen-custom-select__trigger {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 12px;
+        border: 1.5px solid #E2E8F0;
+        border-radius: 8px;
+        background: #fff;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        min-height: 38px;
+    }
+    .nomen-custom-select__trigger:hover { border-color: #CBD5E1; }
+    .nomen-custom-select.open .nomen-custom-select__trigger {
+        border-color: #2563EB;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .nomen-custom-select__arrow {
+        color: #64748B;
+        font-size: 0.75rem;
+        transition: transform 0.2s ease;
+        flex-shrink: 0;
+        margin-left: 8px;
+    }
+    .nomen-custom-select.open .nomen-custom-select__arrow { transform: rotate(180deg); }
+    .nomen-custom-select__value { flex: 1; min-width: 0; }
+
+    .nomen-custom-select__dropdown {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0;
+        right: 0;
+        background: #fff;
+        border: 1.5px solid #E2E8F0;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
+        z-index: 3000;
+        max-height: 340px;
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    .nomen-custom-select.open .nomen-custom-select__dropdown { display: flex; }
+    .nomen-custom-select__search {
+        position: relative;
+        padding: 8px;
+        border-bottom: 1px solid #F1F5F9;
+        flex-shrink: 0;
+    }
+    .nomen-custom-select__search i {
+        position: absolute;
+        left: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94A3B8;
+        font-size: 0.8rem;
+    }
+    .nomen-custom-select__search input {
+        width: 100%;
+        padding: 8px 12px 8px 32px;
+        border: 1.5px solid #E2E8F0;
+        border-radius: 8px;
+        font-size: 0.82rem;
+        outline: none;
+        font-family: 'Inter', sans-serif;
+        box-sizing: border-box;
+    }
+    .nomen-custom-select__search input:focus {
+        border-color: #2563EB;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .nomen-custom-select__options {
+        overflow-y: auto;
+        max-height: 280px;
+        padding: 4px 0;
+    }
+    .nomen-custom-select__options::-webkit-scrollbar { width: 5px; }
+    .nomen-custom-select__options::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+
+    .nomen-custom-option {
+        cursor: pointer;
+        transition: background 0.15s ease;
+        padding: 0;
+    }
+    .nomen-custom-option:hover { background: #EFF6FF; }
+    .nomen-custom-option.active { background: #EFF6FF; }
+
+    .nomen-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+    }
+    .nomen-option__svg {
+        width: 36px;
+        height: 36px;
+        object-fit: contain;
+        flex-shrink: 0;
+        background: #F8FAFC;
+        border: 1px solid #E2E8F0;
+        border-radius: 6px;
+        padding: 3px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+    .nomen-option__svg img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        display: block;
+    }
+    .nomen-option__svg i {
+        color: #CBD5E1;
+        font-size: 16px;
+    }
+    .nomen-option__text {
+        flex: 1;
+        min-width: 0;
+    }
+    .nomen-option__code {
+        font-weight: 800;
+        color: #1E40AF;
+        font-size: 0.85rem;
+        line-height: 1.2;
+    }
+    .nomen-option__name {
+        font-size: 0.72rem;
+        color: #64748B;
+        line-height: 1.3;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .nomen-option__name.obsolete {
+        color: #EA580C;
+        font-style: italic;
+    }
+    .nomen-custom-option.active .nomen-option__svg {
+        border-color: #2563EB;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    }
+
+    /* Trigger : version compacte (sans le nom) */
+    .nomen-custom-select__trigger .nomen-option {
+        padding: 0;
+        gap: 8px;
+    }
+    .nomen-custom-select__trigger .nomen-option__svg {
+        width: 26px;
+        height: 26px;
+        padding: 2px;
+    }
+    .nomen-custom-select__trigger .nomen-option__name {
+        display: none;
+    }
+    .nomen-custom-select__trigger .nomen-option__code {
+        font-size: 0.82rem;
+    }
+
+    /* =========================================================
        RESPONSIVE — TABLETTE (≤ 1024px)
        ========================================================= */
     @media (max-width: 1024px) {
@@ -726,14 +895,12 @@
             box-shadow: 0 4px 16px rgba(15, 23, 42, 0.22);
         }
 
-        /* Par défaut repliée sur mobile */
         .zones-legend:not(.expanded) .zones-legend-body {
             max-height: 0 !important;
             padding: 0 !important;
             overflow: hidden;
         }
 
-        /* Quand dépliée, elle s'étend mais reste limitée */
         .zones-legend.expanded {
             max-height: 45vh;
             width: calc(100vw - 24px);
@@ -839,7 +1006,6 @@
     border-color: transparent;
 }
 
-/* Position du bouton sur mobile */
 @media (max-width: 768px) {
     .btn-recenter-map {
         right: 12px;
@@ -858,171 +1024,6 @@
         font-size: 1rem;
     }
 }
-.btn-recenter-map {
-    position: absolute;
-    right: 16px;
-    bottom: 100px;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: #fff;
-    border: 1px solid #E2E8F0;
-    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.18);
-    color: #2563EB;
-    font-size: 1.15rem;
-    cursor: pointer;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-}
-.btn-recenter-map:hover {
-    background: #EFF6FF;
-    transform: scale(1.08);
-}
-.btn-recenter-map.active {
-    background: linear-gradient(135deg, #2563EB, #1E40AF);
-    color: #fff !important;
-    border-color: transparent;
-}
-@media (max-width: 768px) {
-    .btn-recenter-map {
-        right: 12px;
-        bottom: 150px;
-        width: 44px;
-        height: 44px;
-    }
-}
-</style>
-<!-- Select2 -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<style>
-    /* Style Select2 personnalisé pour matcher le design */
-    .select2-container--default .select2-selection--single {
-        height: 38px !important;
-        border: 1.5px solid #E2E8F0 !important;
-        border-radius: 8px !important;
-        padding: 4px 8px !important;
-        background: #fff !important;
-        transition: all 0.15s ease;
-    }
-    .select2-container--default .select2-selection--single:focus,
-    .select2-container--default.select2-container--focus .select2-selection--single {
-        border-color: #2563EB !important;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
-        outline: none !important;
-    }
-    .select2-container--default .select2-selection--single .select2-selection__rendered {
-        line-height: 28px !important;
-        padding-left: 0 !important;
-        color: #0F172A !important;
-        font-size: 0.85rem;
-    }
-    .select2-container--default .select2-selection--single .select2-selection__arrow {
-        height: 36px !important;
-        right: 8px !important;
-    }
-    .select2-dropdown {
-        border: 1.5px solid #E2E8F0 !important;
-        border-radius: 10px !important;
-        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15) !important;
-        overflow: hidden;
-        font-family: 'Inter', sans-serif;
-    }
-    .select2-container--default .select2-search--dropdown .select2-search__field {
-        border: 1.5px solid #E2E8F0 !important;
-        border-radius: 8px !important;
-        padding: 8px 12px !important;
-        font-size: 0.85rem;
-        outline: none;
-        font-family: 'Inter', sans-serif;
-    }
-    .select2-container--default .select2-search--dropdown .select2-search__field:focus {
-        border-color: #2563EB !important;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
-    }
-    .select2-results__option {
-        padding: 0 !important;
-    }
-    .select2-results__option[aria-selected="true"] {
-        background: #EFF6FF !important;
-        color: #1E40AF !important;
-    }
-    .select2-results__option--highlighted[aria-selected] {
-        background: #EFF6FF !important;
-        color: #1E40AF !important;
-    }
-
-    /* Option custom avec SVG */
-    .nomen-option {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 8px 12px;
-    }
-    .nomen-option__svg {
-        width: 32px;
-        height: 32px;
-        object-fit: contain;
-        flex-shrink: 0;
-        background: #F8FAFC;
-        border: 1px solid #E2E8F0;
-        border-radius: 6px;
-        padding: 3px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .nomen-option__svg img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-    }
-    .nomen-option__svg i {
-        color: #CBD5E1;
-        font-size: 14px;
-    }
-    .nomen-option__text {
-        flex: 1;
-        min-width: 0;
-    }
-    .nomen-option__code {
-        font-weight: 800;
-        color: #1E40AF;
-        font-size: 0.85rem;
-        line-height: 1.2;
-    }
-    .nomen-option__name {
-        font-size: 0.72rem;
-        color: #64748B;
-        line-height: 1.3;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-    .nomen-option__name.obsolete {
-        color: #EA580C;
-        font-style: italic;
-    }
-    .nomen-option--selected .nomen-option__svg {
-        border-color: #2563EB;
-    }
-    .nomen-option--selected .nomen-option__code {
-        color: #1E40AF;
-    }
-
-    /* Aperçu dans la barre de sélection (rendu fermé) */
-    .select2-selection__rendered .nomen-option {
-        padding: 0;
-    }
-    .select2-selection__rendered .nomen-option__svg {
-        width: 24px;
-        height: 24px;
-    }
-    .select2-selection__rendered .nomen-option__name {
-        display: none;
-    }
 </style>
 </head>
 <body>
@@ -1060,7 +1061,6 @@ console.log('📋 Listes :', window.__listes);
         </div>
 
         <div class="topbar-right">
-            {{-- ✅ Bouton "Ma position" AJOUTÉ --}}
             <button type="button" class="btn-topbar btn-topbar-locate" id="btnLocateMe" onclick="locateMe()">
                 <i class="fa-solid fa-location-crosshairs"></i> <span>Ma position</span>
             </button>
@@ -1115,7 +1115,6 @@ console.log('📋 Listes :', window.__listes);
     <div class="carte-main">
         <div id="carte-globale"></div>
 
-        {{-- ✅ BOUTON FLOTTANT DE RECENTRAGE --}}
         <button type="button"
                 id="btnRecenter"
                 class="btn-recenter-map"
@@ -1125,7 +1124,6 @@ console.log('📋 Listes :', window.__listes);
             <i class="fa-solid fa-location-crosshairs"></i>
         </button>
 
-        {{-- ✅ BANDEAU INFO POSITION (correctement fermé !) --}}
         <div class="user-location-banner" id="userLocationBanner">
             <span class="loc-dot"></span>
             <span class="loc-text" id="userLocationText">Position en cours...</span>
@@ -1134,7 +1132,6 @@ console.log('📋 Listes :', window.__listes);
             </button>
         </div>
 
-        {{-- PANNEAU DE FILTRES AVANCÉS --}}
         <div class="filters-panel" id="filtersPanel">
             <div class="filters-header">
                 <div style="display:flex; align-items:center; gap:8px;">
@@ -1148,8 +1145,6 @@ console.log('📋 Listes :', window.__listes);
             </div>
 
             <div class="filters-body">
-
-                {{-- Route --}}
                 <div class="filter-group">
                     <label class="filter-label">
                         <i class="fa-solid fa-road"></i> Route
@@ -1159,7 +1154,6 @@ console.log('📋 Listes :', window.__listes);
                     </select>
                 </div>
 
-                {{-- Catégorie de panneau (types_panneaux.categorie) --}}
                 <div class="filter-group">
                     <label class="filter-label">
                         <i class="fa-solid fa-layer-group"></i> Catégorie
@@ -1169,7 +1163,6 @@ console.log('📋 Listes :', window.__listes);
                     </select>
                 </div>
 
-                {{-- Nom du panneau (types_panneaux.nom) --}}
                 <div class="filter-group">
                     <label class="filter-label">
                         <i class="fa-solid fa-sign-hanging"></i> Nom du panneau
@@ -1179,7 +1172,6 @@ console.log('📋 Listes :', window.__listes);
                     </select>
                 </div>
 
-                {{-- État --}}
                 <div class="filter-group">
                     <label class="filter-label">
                         <i class="fa-solid fa-heart-pulse"></i> État
@@ -1194,7 +1186,6 @@ console.log('📋 Listes :', window.__listes);
                     </select>
                 </div>
 
-                {{-- PK min/max --}}
                 <div class="filter-group">
                     <label class="filter-label">
                         <i class="fa-solid fa-ruler"></i> PK (min — max)
@@ -1205,7 +1196,6 @@ console.log('📋 Listes :', window.__listes);
                     </div>
                 </div>
 
-                {{-- Date d'observation --}}
                 <div class="filter-group">
                     <label class="filter-label">
                         <i class="fa-solid fa-calendar"></i> Dernière observation
@@ -1219,7 +1209,6 @@ console.log('📋 Listes :', window.__listes);
                         <option value="__jamais__">Jamais observé</option>
                     </select>
                 </div>
-
             </div>
 
             <div class="filters-footer">
@@ -1232,7 +1221,6 @@ console.log('📋 Listes :', window.__listes);
             </div>
         </div>
 
-        {{-- LÉGENDE ZONES --}}
         <div class="zones-legend" id="zonesLegend">
             <div class="zones-legend-header">
                 <i class="fa-solid fa-map"></i>
@@ -1241,7 +1229,6 @@ console.log('📋 Listes :', window.__listes);
             <div class="zones-legend-body" id="zonesLegendBody"></div>
         </div>
 
-        {{-- BANDEAU PLACEMENT --}}
         <div class="placement-banner" id="placementBanner">
             <i class="fa-solid fa-crosshairs" id="placementIcon"></i>
             <span id="placementText">Cliquez sur la carte pour placer le nouveau panneau</span>
@@ -1327,10 +1314,27 @@ console.log('📋 Listes :', window.__listes);
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Code nomenclature</label>
-                                    <select name="code_nomen" id="p_code_nomen" class="form-select">
-                                        <option value="">— Non renseigné —</option>
-                                        {{-- Options injectées dynamiquement en JS --}}
-                                    </select>
+                                    <input type="hidden" name="code_nomen" id="p_code_nomen_hidden" value="">
+                                    <div class="nomen-custom-select" id="nomenCustomSelect">
+                                        <div class="nomen-custom-select__trigger" onclick="toggleNomenDropdown()">
+                                            <div class="nomen-custom-select__value" id="nomenSelectedDisplay">
+                                                <div class="nomen-option">
+                                                    <div class="nomen-option__svg"><i class="fa-solid fa-sign-hanging"></i></div>
+                                                    <div class="nomen-option__text">
+                                                        <div class="nomen-option__code" style="color:#94A3B8;">— Non renseigné —</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <i class="fa-solid fa-chevron-down nomen-custom-select__arrow"></i>
+                                        </div>
+                                        <div class="nomen-custom-select__dropdown" id="nomenDropdown">
+                                            <div class="nomen-custom-select__search">
+                                                <i class="fa-solid fa-magnifying-glass"></i>
+                                                <input type="text" id="nomenSearch" placeholder="Rechercher code ou nom..." oninput="filterNomenOptions(this.value)">
+                                            </div>
+                                            <div class="nomen-custom-select__options" id="nomenOptionsList"></div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Fclass</label>
@@ -1692,106 +1696,122 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('🚀 Panneaux valides :', panneaux.length, '/', panneauxListe.length);
 
     /* =========================================================
-       ✅ PEUPLEMENT DU SELECT "CODE NOMENCLATURE"
+       ✅ CUSTOM SELECT AVEC SVG — CODE NOMENCLATURE
        ========================================================= */
-    /* =========================================================
-   ✅ PEUPLEMENT DU SELECT "CODE NOMENCLATURE" (avec Select2 + SVG)
-   ========================================================= */
-function buildNomenOptionHtml(tp, opts) {
-    opts = opts || {};
-    const isSelected = !!opts.selected;
-    const isObsolete = !!opts.obsolete;
+    let nomenTypes = [];
 
-    const svgUrl = tp.code_type ? (BASE_SVG + '/' + tp.code_type + '.svg') : null;
-    const svgContent = svgUrl
-        ? '<img src="' + svgUrl + '" alt="" onerror="this.style.display=\'none\';this.parentElement.innerHTML=\'<i class=&quot;fa-solid fa-sign-hanging&quot;></i>\';">'
-        : '<i class="fa-solid fa-sign-hanging"></i>';
+    function buildNomenOptionHtml(tp, opts) {
+        opts = opts || {};
+        const isSelected = !!opts.selected;
+        const isObsolete = !!opts.obsolete;
 
-    const nameClass = 'nomen-option__name' + (isObsolete ? ' obsolete' : '');
-    const nameText  = isObsolete ? 'Code obsolète — ' + (tp.nom || 'non listé') : (tp.nom || '');
+        const svgUrl = tp.code_type ? (BASE_SVG + '/' + tp.code_type + '.svg') : null;
+        const svgContent = svgUrl
+            ? '<img src="' + svgUrl + '" alt="" loading="lazy" onerror="this.style.display=\'none\';this.parentElement.innerHTML=\'<i class=&quot;fa-solid fa-sign-hanging&quot;></i>\';">'
+            : '<i class="fa-solid fa-sign-hanging"></i>';
 
-    return '<div class="nomen-option' + (isSelected ? ' nomen-option--selected' : '') + '">' +
-        '<div class="nomen-option__svg">' + svgContent + '</div>' +
-        '<div class="nomen-option__text">' +
-            '<div class="nomen-option__code">' + tp.code_type + (isObsolete ? ' (actuel)' : '') + '</div>' +
-            '<div class="' + nameClass + '">' + nameText + '</div>' +
-        '</div>' +
-    '</div>';
-}
+        const nameClass = 'nomen-option__name' + (isObsolete ? ' obsolete' : '');
+        const nameText  = isObsolete ? 'Code obsolète' : (tp.nom || '');
 
-function populateCodeNomenSelect() {
-    const select = document.getElementById('p_code_nomen');
-    if (!select) {
-        console.warn('⚠️ #p_code_nomen introuvable');
-        return;
+        return '<div class="nomen-option' + (isSelected ? ' nomen-option--selected' : '') + '">' +
+            '<div class="nomen-option__svg">' + svgContent + '</div>' +
+            '<div class="nomen-option__text">' +
+                '<div class="nomen-option__code">' + tp.code_type + (isObsolete ? ' (actuel)' : '') + '</div>' +
+                '<div class="' + nameClass + '">' + nameText + '</div>' +
+            '</div>' +
+        '</div>';
     }
 
-    const types = (window.__listes && window.__listes.types_panneaux) || [];
+    function populateCodeNomenSelect() {
+        nomenTypes = (window.__listes && window.__listes.types_panneaux) || [];
 
-    if (!types.length) {
-        console.warn('⚠️ Aucun type de panneau dans window.__listes.types_panneaux');
-        return;
+        if (!nomenTypes.length) {
+            console.warn('⚠️ Aucun type de panneau dans window.__listes.types_panneaux');
+        }
+
+        renderNomenOptions(nomenTypes);
+        console.log('✅ Custom select code_nomen peuplé avec', nomenTypes.length, 'options');
     }
 
-    /* 1. Construire les options HTML natives AVEC data-svg pour Select2 */
-    select.innerHTML = '<option value="">— Non renseigné —</option>';
-    const fragment = document.createDocumentFragment();
+    function renderNomenOptions(types) {
+        const list = document.getElementById('nomenOptionsList');
+        if (!list) return;
 
-    types.forEach(function (tp) {
-        const opt = document.createElement('option');
-        opt.value = tp.code_type;
-        opt.dataset.nom = tp.nom || '';
-        opt.dataset.categorie = tp.categorie || '';
-        opt.dataset.svg = tp.code_type ? (BASE_SVG + '/' + tp.code_type + '.svg') : '';
-        // Le contenu texte sert de fallback si Select2 n'est pas dispo
-        opt.textContent = tp.code_type + ' — ' + (tp.nom || '');
-        fragment.appendChild(opt);
+        let html = '<div class="nomen-custom-option" data-value="" onclick="selectNomenOption(\'\', this)">' +
+            '<div class="nomen-option">' +
+                '<div class="nomen-option__svg"><i class="fa-solid fa-ban"></i></div>' +
+                '<div class="nomen-option__text">' +
+                    '<div class="nomen-option__code" style="color:#94A3B8;font-weight:600;">— Non renseigné —</div>' +
+                '</div>' +
+            '</div>' +
+        '</div>';
+
+        types.forEach(function (tp) {
+            const safeCode = (tp.code_type || '').replace(/'/g, "\\'");
+            html += '<div class="nomen-custom-option" data-value="' + safeCode + '" onclick="selectNomenOption(\'' + safeCode + '\', this)">' +
+                buildNomenOptionHtml(tp, {}) +
+            '</div>';
+        });
+
+        list.innerHTML = html;
+    }
+
+    function toggleNomenDropdown() {
+        const el = document.getElementById('nomenCustomSelect');
+        if (!el) return;
+        el.classList.toggle('open');
+        if (el.classList.contains('open')) {
+            const search = document.getElementById('nomenSearch');
+            if (search) { search.value = ''; renderNomenOptions(nomenTypes); setTimeout(function() { search.focus(); }, 50); }
+        }
+    }
+
+    function selectNomenOption(value, el) {
+        const hidden = document.getElementById('p_code_nomen_hidden');
+        if (hidden) hidden.value = value;
+
+        const display = document.getElementById('nomenSelectedDisplay');
+        if (display) {
+            if (!value) {
+                display.innerHTML = '<div class="nomen-option">' +
+                    '<div class="nomen-option__svg"><i class="fa-solid fa-sign-hanging"></i></div>' +
+                    '<div class="nomen-option__text"><div class="nomen-option__code" style="color:#94A3B8;">— Non renseigné —</div></div>' +
+                '</div>';
+            } else {
+                const tp = nomenTypes.find(function (t) { return t.code_type === value; })
+                        || { code_type: value, nom: '' };
+                display.innerHTML = buildNomenOptionHtml(tp, { selected: true });
+            }
+        }
+
+        document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
+            o.classList.toggle('active', o.dataset.value === value);
+        });
+
+        const el2 = document.getElementById('nomenCustomSelect');
+        if (el2) el2.classList.remove('open');
+    }
+
+    function filterNomenOptions(q) {
+        q = (q || '').toLowerCase().trim();
+        const filtered = !q ? nomenTypes : nomenTypes.filter(function (tp) {
+            return (tp.code_type || '').toLowerCase().indexOf(q) !== -1
+                || (tp.nom || '').toLowerCase().indexOf(q) !== -1;
+        });
+        renderNomenOptions(filtered);
+    }
+
+    document.addEventListener('click', function (e) {
+        const el = document.getElementById('nomenCustomSelect');
+        if (el && !el.contains(e.target)) el.classList.remove('open');
     });
 
-    select.appendChild(fragment);
-    console.log('✅ Select code_nomen peuplé avec', types.length, 'options');
+    window.populateCodeNomenSelect = populateCodeNomenSelect;
+    window.toggleNomenDropdown = toggleNomenDropdown;
+    window.selectNomenOption = selectNomenOption;
+    window.filterNomenOptions = filterNomenOptions;
 
-    /* 2. Initialiser Select2 avec template custom */
-    if (typeof jQuery !== 'undefined' && jQuery.fn.select2) {
-        jQuery(select).select2({
-            width: '100%',
-            placeholder: '— Sélectionner un code —',
-            allowClear: true,
-            templateResult: function (state) {
-                if (!state.id) return state.text; // placeholder
-                const code = state.element ? state.element.value : state.id;
-                const nom  = state.element ? (state.element.dataset.nom || '') : '';
-                const isObsolete = state.element && state.element.dataset.current === '1';
-
-                return jQuery(buildNomenOptionHtml(
-                    { code_type: code, nom: nom },
-                    { selected: state.selected, obsolete: isObsolete }
-                ));
-            },
-            templateSelection: function (state) {
-                if (!state.id) return state.text;
-                const code = state.element ? state.element.value : state.id;
-                const nom  = state.element ? (state.element.dataset.nom || '') : '';
-                return jQuery(buildNomenOptionHtml(
-                    { code_type: code, nom: nom },
-                    { selected: true }
-                ));
-            },
-            escapeMarkup: function (m) { return m; } // autoriser le HTML
-        });
-
-        // Écouter le changement pour rafraîchir les libellés si besoin
-        jQuery(select).on('select2:select select2:unselect', function () {
-            // Rien à faire ici, le template gère tout
-        });
-
-        console.log('✅ Select2 initialisé sur #p_code_nomen');
-    } else {
-        console.warn('⚠️ jQuery ou Select2 non chargé — select natif utilisé');
-    }
-}
-
-populateCodeNomenSelect();
+    populateCodeNomenSelect();
 
     let placementMode = null;
     let movePanneauId = null;
@@ -1940,7 +1960,6 @@ populateCodeNomenSelect();
         legendBody.innerHTML = '';
         legendBody.appendChild(fragment);
 
-        /* Repli/dépli légende sur mobile */
         const legendEl = document.getElementById('zonesLegend');
         const legendHeader = legendEl ? legendEl.querySelector('.zones-legend-header') : null;
         if (legendEl && legendHeader && !legendEl.dataset.bound) {
@@ -2332,19 +2351,21 @@ populateCodeNomenSelect();
         document.getElementById('formPanneauMethod').value = 'POST';
         form.reset();
 
-        /* ✅ Nettoyer l'option "actuelle" résiduelle + reset du select */
-    /* ✅ Nettoyer l'option "actuelle" + reset du select */
-const selectCode = document.getElementById('p_code_nomen');
-if (selectCode) {
-    const oldOpt = selectCode.querySelector('option[data-current="1"]');
-    if (oldOpt) oldOpt.remove();
-    selectCode.value = '';
+        /* ✅ Reset custom select code_nomen */
+        const hiddenCode = document.getElementById('p_code_nomen_hidden');
+        if (hiddenCode) hiddenCode.value = '';
 
-    // Rafraîchir Select2 (si actif)
-    if (typeof jQuery !== 'undefined' && jQuery.fn.select2 && jQuery(selectCode).data('select2')) {
-        jQuery(selectCode).trigger('change.select2');
-    }
-}
+        const display = document.getElementById('nomenSelectedDisplay');
+        if (display) {
+            display.innerHTML = '<div class="nomen-option">' +
+                '<div class="nomen-option__svg"><i class="fa-solid fa-sign-hanging"></i></div>' +
+                '<div class="nomen-option__text"><div class="nomen-option__code" style="color:#94A3B8;">— Non renseigné —</div></div>' +
+            '</div>';
+        }
+
+        document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
+            o.classList.remove('active');
+        });
 
         document.getElementById('p_lat').value = lat.toFixed(7);
         document.getElementById('p_lng').value = lng.toFixed(7);
@@ -2373,39 +2394,28 @@ if (selectCode) {
         form.action = '/carte/panneau/' + id;
         document.getElementById('formPanneauMethod').value = 'PUT';
 
-        /* ✅ GESTION DU SELECT code_nomen */
-        /* ✅ GESTION DU SELECT code_nomen (compatible Select2) */
-const selectCode = document.getElementById('p_code_nomen');
-if (selectCode) {
-    // 1. Nettoyer une éventuelle ancienne option "actuelle"
-    const oldOpt = selectCode.querySelector('option[data-current="1"]');
-    if (oldOpt) oldOpt.remove();
+        /* ✅ Code nomenclature (custom select) */
+        const hiddenCode = document.getElementById('p_code_nomen_hidden');
+        const codeActuel = p.code_nomen || '';
+        if (hiddenCode) hiddenCode.value = codeActuel;
 
-    // 2. Vérifier si le code actuel existe dans la liste
-    const codeActuel = p.code_nomen || '';
-    const existeDeja = Array.from(selectCode.options).some(function (o) {
-        return o.value === codeActuel;
-    });
+        const display = document.getElementById('nomenSelectedDisplay');
+        if (display) {
+            if (!codeActuel) {
+                display.innerHTML = '<div class="nomen-option">' +
+                    '<div class="nomen-option__svg"><i class="fa-solid fa-sign-hanging"></i></div>' +
+                    '<div class="nomen-option__text"><div class="nomen-option__code" style="color:#94A3B8;">— Non renseigné —</div></div>' +
+                '</div>';
+            } else {
+                const tp = nomenTypes.find(function (t) { return t.code_type === codeActuel; })
+                        || { code_type: codeActuel, nom: p.type_nom || p.name || '', obsolete: true };
+                display.innerHTML = buildNomenOptionHtml(tp, { selected: true, obsolete: !nomenTypes.find(function (t) { return t.code_type === codeActuel; }) });
+            }
+        }
 
-    // 3. Ajouter l'option "actuelle" si absente
-    if (codeActuel && !existeDeja) {
-        const opt = document.createElement('option');
-        opt.value = codeActuel;
-        opt.dataset.current = '1';
-        opt.dataset.nom = p.type_nom || p.name || 'Code obsolète';
-        opt.dataset.svg = BASE_SVG + '/' + codeActuel + '.svg';
-        opt.textContent = codeActuel + ' (actuel)';
-        selectCode.insertBefore(opt, selectCode.options[1] || null);
-    }
-
-    // 4. Sélectionner la valeur
-    selectCode.value = codeActuel;
-
-    // 5. Rafraîchir Select2 (si actif)
-    if (typeof jQuery !== 'undefined' && jQuery.fn.select2 && jQuery(selectCode).data('select2')) {
-        jQuery(selectCode).trigger('change.select2');
-    }
-}
+        document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
+            o.classList.toggle('active', o.dataset.value === codeActuel);
+        });
 
         /* Mapping des autres champs (sans code_nomen) */
         const map = {
@@ -2447,11 +2457,7 @@ if (selectCode) {
     };
 
     /* =========================================================
-       GÉOLOCALISATION — MA POSITION (style Google Maps)
-       - Zoom automatique
-       - Suivi continu (watchPosition)
-       - Bouton flottant de recentrage
-       - Cercle de précision dynamique
+       GÉOLOCALISATION — MA POSITION
     ========================================================= */
     let userLocationMarker = null;
     let userAccuracyCircle = null;
@@ -2463,7 +2469,6 @@ if (selectCode) {
     const userLocationText   = document.getElementById('userLocationText');
     const btnLocateMe        = document.getElementById('btnLocateMe');
 
-    /* Icône style Google Maps */
     const userIcon = L.divIcon({
         className: 'user-location-marker',
         html: '<div class="pulse-ring"></div><div class="pulse-dot"></div>',
@@ -2500,11 +2505,9 @@ if (selectCode) {
             || location.hostname === '127.0.0.1';
     }
 
-    /* Mettre à jour la position sur la carte */
     function updateUserPositionOnMap(lat, lng, accuracy, shouldZoom) {
         userLastPosition = { lat: lat, lng: lng, accuracy: accuracy };
 
-        /* Cercle de précision */
         if (userAccuracyCircle) {
             userAccuracyCircle.setLatLng([lat, lng]);
             userAccuracyCircle.setRadius(accuracy);
@@ -2520,7 +2523,6 @@ if (selectCode) {
             }).addTo(carte);
         }
 
-        /* Marqueur */
         if (userLocationMarker) {
             userLocationMarker.setLatLng([lat, lng]);
         } else {
@@ -2551,7 +2553,6 @@ if (selectCode) {
             }, { maxWidth: 260 });
         }
 
-        /* ✅ ZOOM AUTOMATIQUE style Google Maps */
         if (shouldZoom) {
             const targetZoom = accuracy < 30 ? 18 : accuracy < 100 ? 17 : 16;
             carte.flyTo([lat, lng], targetZoom, {
@@ -2562,7 +2563,6 @@ if (selectCode) {
         }
     }
 
-    /* ✅ Localiser (avec watchPosition pour suivi continu) */
     window.locateMe = function () {
         if (!navigator.geolocation) {
             showUserLocationBanner('❌ Géolocalisation non supportée par ce navigateur.', true);
@@ -2573,7 +2573,6 @@ if (selectCode) {
             return;
         }
 
-        /* État de chargement */
         if (btnLocateMe) {
             btnLocateMe.classList.add('loading');
             const icon = btnLocateMe.querySelector('i');
@@ -2581,13 +2580,11 @@ if (selectCode) {
         }
         showUserLocationBanner('📍 Recherche de votre position...', false);
 
-        /* Arrêter l'ancien watch */
         if (userWatchId !== null) {
             navigator.geolocation.clearWatch(userWatchId);
             userWatchId = null;
         }
 
-        /* Afficher le bouton flottant */
         const btnRecenter = document.getElementById('btnRecenter');
         if (btnRecenter) btnRecenter.style.display = 'flex';
 
@@ -2652,7 +2649,6 @@ if (selectCode) {
         );
     };
 
-    /* ✅ Recentrer sur la position (bouton flottant) */
     window.centerOnMyPosition = function () {
         if (!userLastPosition) {
             locateMe();
@@ -2674,7 +2670,6 @@ if (selectCode) {
         }
     };
 
-    /* Arrêter le suivi */
     window.stopLocateMe = function () {
         if (userWatchId !== null) {
             navigator.geolocation.clearWatch(userWatchId);
@@ -2682,13 +2677,11 @@ if (selectCode) {
         }
     };
 
-    /* Créer un panneau à ma position */
     window.startNewPanneauAtMyPosition = function (lat, lng) {
         if (userLocationMarker) userLocationMarker.closePopup();
         openCreatePanneau(lat, lng);
     };
 
-    /* Nettoyer à la fermeture */
     window.addEventListener('beforeunload', stopLocateMe);
 
     /* =========================================================
@@ -3204,7 +3197,6 @@ if (selectCode) {
 
 });
 </script>
-<!-- Select2 JS -->
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 </body>
 </html>
