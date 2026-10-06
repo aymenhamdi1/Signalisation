@@ -909,6 +909,7 @@ window.__zonesBounds  = @json($zonesBounds ?? null);
 console.log('📦 Panneaux :', window.__panneaux.length);
 console.log('🗺️ Zones :', window.__zones.length);
 console.log('📍 Bounds zones :', window.__zonesBounds);
+console.log('📋 Listes :', window.__listes);
 </script>
 
 <div class="carte-page">
@@ -1197,7 +1198,10 @@ console.log('📍 Bounds zones :', window.__zonesBounds);
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Code nomenclature</label>
-                                    <input type="text" name="code_nomen" id="p_code_nomen" class="form-control" placeholder="Ex: A1a, B1...">
+                                    <select name="code_nomen" id="p_code_nomen" class="form-select">
+                                        <option value="">— Non renseigné —</option>
+                                        {{-- Options injectées dynamiquement en JS --}}
+                                    </select>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Fclass</label>
@@ -1557,6 +1561,37 @@ document.addEventListener('DOMContentLoaded', function () {
     const ZONES_BOUNDS  = window.__zonesBounds || null;
 
     console.log('🚀 Panneaux valides :', panneaux.length, '/', panneauxListe.length);
+
+    /* =========================================================
+       ✅ PEUPLEMENT DU SELECT "CODE NOMENCLATURE"
+       ========================================================= */
+    function populateCodeNomenSelect() {
+        const select = document.getElementById('p_code_nomen');
+        if (!select) {
+            console.warn('⚠️ #p_code_nomen introuvable');
+            return;
+        }
+
+        const types = (window.__listes && window.__listes.types_panneaux) || [];
+
+        if (!types.length) {
+            console.warn('⚠️ Aucun type de panneau dans window.__listes.types_panneaux');
+            return;
+        }
+
+        const fragment = document.createDocumentFragment();
+        types.forEach(function (tp) {
+            const opt = document.createElement('option');
+            opt.value = tp.code_type;
+            opt.textContent = tp.code_type + ' — ' + (tp.nom || '');
+            fragment.appendChild(opt);
+        });
+
+        select.appendChild(fragment);
+        console.log('✅ Select code_nomen peuplé avec', types.length, 'options');
+    }
+
+    populateCodeNomenSelect();
 
     let placementMode = null;
     let movePanneauId = null;
@@ -2082,37 +2117,85 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('p_lat').addEventListener('input', updateCoordsLabels);
     document.getElementById('p_lng').addEventListener('input', updateCoordsLabels);
 
+    /* =========================================================
+       ✅ CRÉATION D'UN PANNEAU
+       ========================================================= */
     window.openCreatePanneau = function (lat, lng) {
         currentMode = 'create';
+
         document.getElementById('modalPanneauTitle').innerHTML = '<i class="fa-solid fa-plus-circle"></i> Nouveau panneau';
         document.getElementById('modalPanneauSubtitle').textContent = 'Position : ' + lat.toFixed(6) + ', ' + lng.toFixed(6);
         document.getElementById('modalPanneauHeader').style.background = 'linear-gradient(135deg, #059669, #10B981)';
+
         const form = document.getElementById('formPanneau');
         form.action = '/carte/panneau';
         document.getElementById('formPanneauMethod').value = 'POST';
         form.reset();
+
+        /* ✅ Nettoyer l'option "actuelle" résiduelle + reset du select */
+        const selectCode = document.getElementById('p_code_nomen');
+        if (selectCode) {
+            const oldOpt = selectCode.querySelector('option[data-current="1"]');
+            if (oldOpt) oldOpt.remove();
+            selectCode.value = '';
+        }
+
         document.getElementById('p_lat').value = lat.toFixed(7);
         document.getElementById('p_lng').value = lng.toFixed(7);
         document.getElementById('p_duree_vie_ans').value = '10';
         updateCoordsLabels();
+
         const firstTab = modalPanneauEl.querySelector('.nav-tabs .nav-link');
         if (firstTab) new bootstrap.Tab(firstTab).show();
+
         bsModalPanneau.show();
     };
 
+    /* =========================================================
+       ✅ ÉDITION D'UN PANNEAU
+       ========================================================= */
     window.openEditPanneau = function (id) {
         const p = panneaux.find(function (x) { return String(x.panneau_id) === String(id); });
         if (!p) { alert('Panneau introuvable'); return; }
+
         currentMode = 'edit';
         document.getElementById('modalPanneauTitle').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Modifier le panneau';
         document.getElementById('modalPanneauSubtitle').textContent = (p.code_nomen || '—') + ' — ' + (p.type_nom || p.name || '');
         document.getElementById('modalPanneauHeader').style.background = 'linear-gradient(135deg, #1E40AF, #2563EB)';
+
         const form = document.getElementById('formPanneau');
         form.action = '/carte/panneau/' + id;
         document.getElementById('formPanneauMethod').value = 'PUT';
 
+        /* ✅ GESTION DU SELECT code_nomen */
+        const selectCode = document.getElementById('p_code_nomen');
+        if (selectCode) {
+            // 1. Nettoyer une éventuelle ancienne option "actuelle"
+            const oldOpt = selectCode.querySelector('option[data-current="1"]');
+            if (oldOpt) oldOpt.remove();
+
+            // 2. Vérifier si le code actuel existe dans la liste
+            const codeActuel = p.code_nomen || '';
+            const existeDeja = Array.from(selectCode.options).some(function (o) {
+                return o.value === codeActuel;
+            });
+
+            // 3. Ajouter l'option "actuelle" si absente de la liste
+            if (codeActuel && !existeDeja) {
+                const opt = document.createElement('option');
+                opt.value = codeActuel;
+                opt.textContent = codeActuel + ' (actuel)';
+                opt.dataset.current = '1';
+                selectCode.insertBefore(opt, selectCode.options[1] || null);
+            }
+
+            // 4. Sélectionner la valeur
+            selectCode.value = codeActuel;
+        }
+
+        /* Mapping des autres champs (sans code_nomen) */
         const map = {
-            p_code_nomen: 'code_nomen', p_fclass: 'fclass', p_name: 'name',
+            p_fclass: 'fclass', p_name: 'name',
             p_num_agrement: 'num_agrement', p_code_panneau_cctp: 'code_panneau_cctp',
             p_hc_caractere: 'hc_caractere', p_dim_cctp: 'dim_cctp',
             p_lat: 'lat', p_lng: 'lng', p_route_nom: 'route_nom',
@@ -2128,6 +2211,7 @@ document.addEventListener('DOMContentLoaded', function () {
             p_implantation_m: 'implantation_m', p_fiche_ancrage_m: 'fiche_ancrage_m',
             p_duree_vie_ans: 'duree_vie_ans'
         };
+
         Object.keys(map).forEach(function (domId) {
             const el = document.getElementById(domId);
             if (el) el.value = p[map[domId]] || '';
@@ -2141,8 +2225,10 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('p_duree_vie_ans').value = p.duree_vie_ans || '10';
 
         updateCoordsLabels();
+
         const firstTab = modalPanneauEl.querySelector('.nav-tabs .nav-link');
         if (firstTab) new bootstrap.Tab(firstTab).show();
+
         bsModalPanneau.show();
     };
 
