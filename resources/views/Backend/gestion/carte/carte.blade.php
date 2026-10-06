@@ -13,9 +13,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-    {{-- ✅ MapillaryJS CSS --}}
-    <link href="https://unpkg.com/mapillary-js@4.1.2/dist/mapillary.css" rel="stylesheet" />
-
   <style>
     html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; }
     body { font-family: 'Inter', sans-serif; background: #F8FAFC; }
@@ -513,8 +510,6 @@
     .btn-slide-warning:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(234,88,12,0.35); color: #fff !important; }
     .btn-slide-light { background: #F1F5F9; color: #475569 !important; }
     .btn-slide-light:hover { background: #E2E8F0; color: #0F172A !important; }
-    .btn-slide-mapillary { background: linear-gradient(135deg, #10B981, #059669); color: #fff !important; box-shadow: 0 2px 6px rgba(16,185,129,0.25); grid-column: span 2; }
-    .btn-slide-mapillary:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(16,185,129,0.35); color: #fff !important; }
 
     .slide-toggle {
         position: absolute;
@@ -596,144 +591,7 @@
     .photo-preview-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
     /* =========================================================
-       ✅ MAPILLARY MODAL
-       ========================================================= */
-    .mapillary-modal-content {
-        border-radius: 16px !important;
-        border: none !important;
-        overflow: hidden !important;
-        background: #0F172A !important;
-    }
-    .mapillary-modal-header {
-        background: linear-gradient(135deg, #0F172A, #1E293B);
-        color: #fff;
-        padding: 16px 22px !important;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        border-bottom: 1px solid rgba(255,255,255,0.1);
-        flex-shrink: 0;
-    }
-    .mapillary-modal-header h5 {
-        color: #fff !important;
-        font-weight: 800;
-        font-size: 0.95rem;
-        margin: 0;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    .mapillary-modal-header h5 i { color: #10B981; }
-    .mapillary-modal-header small {
-        color: rgba(255,255,255,0.65);
-        font-size: 0.75rem;
-        display: block;
-        margin-top: 2px;
-    }
-    .mapillary-modal-body {
-        position: relative;
-        padding: 0 !important;
-        height: 70vh;
-        min-height: 500px;
-        background: #0F172A;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    #mapillaryViewer {
-        width: 100%;
-        height: 100%;
-        background: #0F172A;
-    }
-    .mapillary-modal-footer {
-        background: #0F172A;
-        border-top: 1px solid rgba(255,255,255,0.1);
-        padding: 12px 22px !important;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
-    }
-    .mapillary-info {
-        color: rgba(255,255,255,0.7);
-        font-size: 0.78rem;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
-    }
-    .mapillary-info i { color: #10B981; }
-
-    .mapillary-loading {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        color: #fff;
-        z-index: 10;
-        background: #0F172A;
-    }
-    .mapillary-loading .spinner {
-        width: 44px;
-        height: 44px;
-        border: 4px solid rgba(255,255,255,0.15);
-        border-top-color: #10B981;
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .mapillary-error {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 14px;
-        color: #FCA5A5;
-        background: #0F172A;
-        padding: 40px;
-        text-align: center;
-    }
-    .mapillary-error i { font-size: 3rem; opacity: 0.6; }
-    .mapillary-error h4 { color: #fff; margin: 0; font-size: 1rem; font-weight: 700; }
-    .mapillary-error p { margin: 0; font-size: 0.82rem; max-width: 400px; line-height: 1.5; }
-
-    .btn-mapillary {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 8px 16px;
-        border-radius: 8px;
-        border: none;
-        background: rgba(255,255,255,0.1);
-        color: #fff !important;
-        font-size: 0.78rem;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        text-decoration: none;
-    }
-    .btn-mapillary:hover {
-        background: rgba(255,255,255,0.2);
-        color: #fff !important;
-    }
-    .btn-mapillary-primary {
-        background: linear-gradient(135deg, #10B981, #059669);
-        color: #fff !important;
-    }
-    .btn-mapillary-primary:hover {
-        background: linear-gradient(135deg, #059669, #047857);
-        transform: translateY(-1px);
-    }
-
-    /* =========================================================
-       RESPONSIVE
+       RESPONSIVE — TABLETTE (≤ 1024px)
        ========================================================= */
     @media (max-width: 1024px) {
         .carte-topbar { padding: 10px 14px; gap: 10px; }
@@ -745,7 +603,12 @@
         .carte-kpibar { padding: 8px 14px; }
     }
 
+    /* =========================================================
+       RESPONSIVE — SMARTPHONE (≤ 768px)
+       ========================================================= */
     @media (max-width: 768px) {
+
+        /* TOPBAR */
         .carte-topbar { flex-direction: column; align-items: stretch; padding: 10px 12px; gap: 8px; }
         .topbar-left { justify-content: flex-start; }
         .topbar-icon { width: 36px; height: 36px; border-radius: 9px; }
@@ -758,11 +621,13 @@
         .btn-topbar { justify-content: center; padding: 8px 6px; font-size: 0.7rem; gap: 4px; }
         .btn-topbar i { font-size: 0.75rem; }
 
+        /* KPI BAR */
         .carte-kpibar { padding: 8px 12px; gap: 6px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
         .carte-kpibar::-webkit-scrollbar { display: none; }
         .kpi-chip { padding: 5px 10px; font-size: 0.7rem; gap: 6px; }
         .kpi-chip .chip-count { font-size: 0.65rem; padding: 1px 6px; }
 
+        /* SLIDE PANEL */
         .slide-panel { width: 100vw !important; max-width: 100vw !important; }
         .slide-header { padding: 14px 16px; }
         .slide-title { font-size: 0.85rem; }
@@ -789,6 +654,7 @@
         .slide-actions { gap: 6px; }
         .btn-slide { padding: 9px 12px; font-size: 0.75rem; border-radius: 8px; }
 
+        /* MODALES */
         .modal-dialog { margin: 0 !important; max-width: 100% !important; width: 100% !important; height: 100% !important; }
         .modal-dialog.modal-dialog-centered { min-height: 100% !important; align-items: stretch !important; }
         .modal-content { border-radius: 0 !important; height: 100% !important; max-height: 100vh !important; display: flex; flex-direction: column; }
@@ -810,6 +676,7 @@
         .btn-coord { width: 100%; justify-content: center; padding: 9px 12px; font-size: 0.78rem; }
         .photo-preview-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
 
+        /* BANDEAU PLACEMENT */
         .placement-banner {
             top: auto;
             bottom: 90px;
@@ -827,10 +694,12 @@
         .placement-banner.active { display: flex; }
         .placement-banner .btn-cancel-placement { flex-shrink: 0; }
 
+        /* POPUP LEAFLET */
         .leaflet-popup-content-wrapper { max-width: calc(100vw - 40px) !important; }
         .leaflet-popup-content { margin: 10px 12px !important; }
         .leaflet-popup { max-width: calc(100vw - 30px); }
 
+        /* FILTRES */
         .filters-panel {
             top: auto;
             bottom: 80px;
@@ -842,6 +711,9 @@
         }
         .filters-panel.open { transform: translateY(0); }
 
+        /* =========================================================
+           LÉGENDE DES ZONES — VERSION MOBILE COMPACTE ET REPLIABLE
+           ========================================================= */
         .zones-legend {
             bottom: 20px;
             left: 12px;
@@ -853,11 +725,15 @@
             border-radius: 10px;
             box-shadow: 0 4px 16px rgba(15, 23, 42, 0.22);
         }
+
+        /* Par défaut repliée sur mobile */
         .zones-legend:not(.expanded) .zones-legend-body {
             max-height: 0 !important;
             padding: 0 !important;
             overflow: hidden;
         }
+
+        /* Quand dépliée, elle s'étend mais reste limitée */
         .zones-legend.expanded {
             max-height: 45vh;
             width: calc(100vw - 24px);
@@ -867,6 +743,7 @@
             max-height: 40vh;
             padding: 4px 0;
         }
+
         .zones-legend-header {
             padding: 9px 12px;
             font-size: 0.75rem;
@@ -874,6 +751,7 @@
         }
         .zones-legend-header i { font-size: 0.78rem; }
         .zones-legend-header .legend-toggle-icon { font-size: 0.7rem; }
+
         .zones-legend-item {
             padding: 7px 12px;
             font-size: 0.75rem;
@@ -884,12 +762,17 @@
             max-width: calc(100vw - 90px);
             font-size: 0.75rem;
         }
+
         .leaflet-control-layers-toggle { width: 38px !important; height: 38px !important; background-size: 20px 20px !important; }
     }
 
+    /* =========================================================
+       TRÈS PETIT ÉCRAN (≤ 420px)
+       ========================================================= */
     @media (max-width: 420px) {
         .btn-topbar span { display: none; }
         .btn-topbar { font-size: 0.85rem; padding: 8px 4px; }
+
         .zones-legend.expanded {
             width: calc(100vw - 20px);
             max-width: calc(100vw - 20px);
@@ -897,12 +780,16 @@
         .zones-legend-name { max-width: calc(100vw - 80px); }
     }
 
+    /* =========================================================
+       TRÈS TRÈS PETIT ÉCRAN (≤ 380px)
+       ========================================================= */
     @media (max-width: 380px) {
         .topbar-title { font-size: 0.82rem; }
         .topbar-subtitle { display: none; }
         .kpi-chip { padding: 4px 8px; font-size: 0.65rem; }
         .btn-slide { font-size: 0.7rem; padding: 8px 10px; }
         .detail-svg-box { height: 90px; }
+
         .zones-legend {
             bottom: 16px;
             left: 10px;
@@ -914,214 +801,250 @@
         }
         .zones-legend-name { max-width: calc(100vw - 70px); }
     }
-
     /* =========================================================
-       BOUTON FLOTTANT DE RECENTRAGE
-       ========================================================= */
+   BOUTON FLOTTANT DE RECENTRAGE
+   ========================================================= */
+.btn-recenter-map {
+    position: absolute;
+    right: 16px;
+    bottom: 100px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.18);
+    color: #2563EB;
+    font-size: 1.15rem;
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+.btn-recenter-map:hover {
+    background: #EFF6FF;
+    color: #1E40AF;
+    transform: scale(1.08);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+}
+.btn-recenter-map:active {
+    transform: scale(0.95);
+}
+.btn-recenter-map.active {
+    background: linear-gradient(135deg, #2563EB, #1E40AF);
+    color: #fff !important;
+    border-color: transparent;
+}
+
+/* Position du bouton sur mobile */
+@media (max-width: 768px) {
     .btn-recenter-map {
-        position: absolute;
-        right: 16px;
-        bottom: 100px;
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background: #fff;
-        border: 1px solid #E2E8F0;
-        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.18);
-        color: #2563EB;
-        font-size: 1.15rem;
-        cursor: pointer;
-        z-index: 1000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s ease;
-        -webkit-tap-highlight-color: transparent;
+        right: 12px;
+        bottom: 150px;
+        width: 44px;
+        height: 44px;
+        font-size: 1.05rem;
     }
-    .btn-recenter-map:hover {
-        background: #EFF6FF;
-        color: #1E40AF;
-        transform: scale(1.08);
-        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
-    }
-    .btn-recenter-map:active {
-        transform: scale(0.95);
-    }
-    .btn-recenter-map.active {
-        background: linear-gradient(135deg, #2563EB, #1E40AF);
-        color: #fff !important;
-        border-color: transparent;
-    }
+}
 
-    @media (max-width: 768px) {
-        .btn-recenter-map {
-            right: 12px;
-            bottom: 150px;
-            width: 44px;
-            height: 44px;
-            font-size: 1.05rem;
-        }
+@media (max-width: 420px) {
+    .btn-recenter-map {
+        bottom: 140px;
+        width: 42px;
+        height: 42px;
+        font-size: 1rem;
     }
+}
+.btn-recenter-map {
+    position: absolute;
+    right: 16px;
+    bottom: 100px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.18);
+    color: #2563EB;
+    font-size: 1.15rem;
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+.btn-recenter-map:hover {
+    background: #EFF6FF;
+    transform: scale(1.08);
+}
+.btn-recenter-map.active {
+    background: linear-gradient(135deg, #2563EB, #1E40AF);
+    color: #fff !important;
+    border-color: transparent;
+}
+@media (max-width: 768px) {
+    .btn-recenter-map {
+        right: 12px;
+        bottom: 150px;
+        width: 44px;
+        height: 44px;
+    }
+}
+/* =========================================================
+   ✅ CUSTOM SELECT AVEC SVG — CODE NOMENCLATURE
+   ========================================================= */
+.nomen-custom-select {
+    position: relative;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+}
+.nomen-custom-select__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    min-height: 38px;
+}
+.nomen-custom-select__trigger:hover { border-color: #CBD5E1; }
+.nomen-custom-select.open .nomen-custom-select__trigger {
+    border-color: #2563EB;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+.nomen-custom-select__arrow {
+    color: #64748B;
+    font-size: 0.75rem;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+    margin-left: 8px;
+}
+.nomen-custom-select.open .nomen-custom-select__arrow { transform: rotate(180deg); }
+.nomen-custom-select__value { flex: 1; min-width: 0; }
 
-    @media (max-width: 420px) {
-        .btn-recenter-map {
-            bottom: 140px;
-            width: 42px;
-            height: 42px;
-            font-size: 1rem;
-        }
-    }
+.nomen-custom-select__dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
+    z-index: 3000;
+    max-height: 340px;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+}
+.nomen-custom-select.open .nomen-custom-select__dropdown { display: flex; }
+.nomen-custom-select__search {
+    position: relative;
+    padding: 8px;
+    border-bottom: 1px solid #F1F5F9;
+    flex-shrink: 0;
+}
+.nomen-custom-select__search i {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94A3B8;
+    font-size: 0.8rem;
+}
+.nomen-custom-select__search input {
+    width: 100%;
+    padding: 8px 12px 8px 32px;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    outline: none;
+    font-family: 'Inter', sans-serif;
+    box-sizing: border-box;
+}
+.nomen-custom-select__search input:focus {
+    border-color: #2563EB;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+.nomen-custom-select__options {
+    overflow-y: auto;
+    max-height: 280px;
+    padding: 4px 0;
+}
+.nomen-custom-select__options::-webkit-scrollbar { width: 5px; }
+.nomen-custom-select__options::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
 
-    /* =========================================================
-       ✅ CUSTOM SELECT AVEC SVG — CODE NOMENCLATURE
-       ========================================================= */
-    .nomen-custom-select {
-        position: relative;
-        width: 100%;
-        font-family: 'Inter', sans-serif;
-    }
-    .nomen-custom-select__trigger {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 6px 12px;
-        border: 1.5px solid #E2E8F0;
-        border-radius: 8px;
-        background: #fff;
-        cursor: pointer;
-        transition: all 0.15s ease;
-        min-height: 38px;
-    }
-    .nomen-custom-select__trigger:hover { border-color: #CBD5E1; }
-    .nomen-custom-select.open .nomen-custom-select__trigger {
-        border-color: #2563EB;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-    }
-    .nomen-custom-select__arrow {
-        color: #64748B;
-        font-size: 0.75rem;
-        transition: transform 0.2s ease;
-        flex-shrink: 0;
-        margin-left: 8px;
-    }
-    .nomen-custom-select.open .nomen-custom-select__arrow { transform: rotate(180deg); }
-    .nomen-custom-select__value { flex: 1; min-width: 0; }
+.nomen-custom-option {
+    cursor: pointer;
+    transition: background 0.15s ease;
+    padding: 0;
+}
+.nomen-custom-option:hover { background: #EFF6FF; }
+.nomen-custom-option.active { background: #EFF6FF; }
 
-    .nomen-custom-select__dropdown {
-        position: absolute;
-        top: calc(100% + 6px);
-        left: 0;
-        right: 0;
-        background: #fff;
-        border: 1.5px solid #E2E8F0;
-        border-radius: 10px;
-        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
-        z-index: 3000;
-        max-height: 340px;
-        display: none;
-        flex-direction: column;
-        overflow: hidden;
-    }
-    .nomen-custom-select.open .nomen-custom-select__dropdown { display: flex; }
-    .nomen-custom-select__search {
-        position: relative;
-        padding: 8px;
-        border-bottom: 1px solid #F1F5F9;
-        flex-shrink: 0;
-    }
-    .nomen-custom-select__search i {
-        position: absolute;
-        left: 18px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #94A3B8;
-        font-size: 0.8rem;
-    }
-    .nomen-custom-select__search input {
-        width: 100%;
-        padding: 8px 12px 8px 32px;
-        border: 1.5px solid #E2E8F0;
-        border-radius: 8px;
-        font-size: 0.82rem;
-        outline: none;
-        font-family: 'Inter', sans-serif;
-        box-sizing: border-box;
-    }
-    .nomen-custom-select__search input:focus {
-        border-color: #2563EB;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-    }
-    .nomen-custom-select__options {
-        overflow-y: auto;
-        max-height: 280px;
-        padding: 4px 0;
-    }
-    .nomen-custom-select__options::-webkit-scrollbar { width: 5px; }
-    .nomen-custom-select__options::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+.nomen-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+}
+.nomen-option__svg {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    padding: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.nomen-option__svg img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+}
+.nomen-option__svg i {
+    color: #CBD5E1;
+    font-size: 16px;
+}
+.nomen-option__text { flex: 1; min-width: 0; }
+.nomen-option__code {
+    font-weight: 800;
+    color: #1E40AF;
+    font-size: 0.85rem;
+    line-height: 1.2;
+}
+.nomen-option__name {
+    font-size: 0.72rem;
+    color: #64748B;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.nomen-option__name.obsolete { color: #EA580C; font-style: italic; }
+.nomen-custom-option.active .nomen-option__svg {
+    border-color: #2563EB;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
 
-    .nomen-custom-option {
-        cursor: pointer;
-        transition: background 0.15s ease;
-        padding: 0;
-    }
-    .nomen-custom-option:hover { background: #EFF6FF; }
-    .nomen-custom-option.active { background: #EFF6FF; }
-
-    .nomen-option {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 8px 12px;
-    }
-    .nomen-option__svg {
-        width: 36px;
-        height: 36px;
-        flex-shrink: 0;
-        background: #F8FAFC;
-        border: 1px solid #E2E8F0;
-        border-radius: 6px;
-        padding: 3px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-    }
-    .nomen-option__svg img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-        display: block;
-    }
-    .nomen-option__svg i {
-        color: #CBD5E1;
-        font-size: 16px;
-    }
-    .nomen-option__text { flex: 1; min-width: 0; }
-    .nomen-option__code {
-        font-weight: 800;
-        color: #1E40AF;
-        font-size: 0.85rem;
-        line-height: 1.2;
-    }
-    .nomen-option__name {
-        font-size: 0.72rem;
-        color: #64748B;
-        line-height: 1.3;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-    .nomen-option__name.obsolete { color: #EA580C; font-style: italic; }
-    .nomen-custom-option.active .nomen-option__svg {
-        border-color: #2563EB;
-        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
-    }
-
-    .nomen-custom-select__trigger .nomen-option { padding: 0; gap: 8px; }
-    .nomen-custom-select__trigger .nomen-option__svg { width: 26px; height: 26px; padding: 2px; }
-    .nomen-custom-select__trigger .nomen-option__name { display: none; }
-    .nomen-custom-select__trigger .nomen-option__code { font-size: 0.82rem; }
-  </style>
+/* Trigger compact (sans le nom) */
+.nomen-custom-select__trigger .nomen-option { padding: 0; gap: 8px; }
+.nomen-custom-select__trigger .nomen-option__svg { width: 26px; height: 26px; padding: 2px; }
+.nomen-custom-select__trigger .nomen-option__name { display: none; }
+.nomen-custom-select__trigger .nomen-option__code { font-size: 0.82rem; }
+</style>
 </head>
 <body>
 
@@ -1133,14 +1056,10 @@ window.__listes       = @json($listes ?? []);
 window.__zones        = @json($zones ?? []);
 window.__zonesBounds  = @json($zonesBounds ?? null);
 
-/* ✅ CONFIGURATION MAPILLARY */
-window.__mapillaryToken = "MLY|26275324248758064|7819d63bee8179a083cdd76e20557967";
-
 console.log('📦 Panneaux :', window.__panneaux.length);
 console.log('🗺️ Zones :', window.__zones.length);
 console.log('📍 Bounds zones :', window.__zonesBounds);
 console.log('📋 Listes :', window.__listes);
-console.log('🗺️ Mapillary Token :', window.__mapillaryToken ? '✅ configuré' : '❌ manquant');
 </script>
 
 <div class="carte-page">
@@ -1162,6 +1081,7 @@ console.log('🗺️ Mapillary Token :', window.__mapillaryToken ? '✅ configur
         </div>
 
         <div class="topbar-right">
+            {{-- ✅ Bouton "Ma position" AJOUTÉ --}}
             <button type="button" class="btn-topbar btn-topbar-locate" id="btnLocateMe" onclick="locateMe()">
                 <i class="fa-solid fa-location-crosshairs"></i> <span>Ma position</span>
             </button>
@@ -1216,6 +1136,7 @@ console.log('🗺️ Mapillary Token :', window.__mapillaryToken ? '✅ configur
     <div class="carte-main">
         <div id="carte-globale"></div>
 
+        {{-- ✅ BOUTON FLOTTANT DE RECENTRAGE --}}
         <button type="button"
                 id="btnRecenter"
                 class="btn-recenter-map"
@@ -1225,6 +1146,7 @@ console.log('🗺️ Mapillary Token :', window.__mapillaryToken ? '✅ configur
             <i class="fa-solid fa-location-crosshairs"></i>
         </button>
 
+        {{-- ✅ BANDEAU INFO POSITION (correctement fermé !) --}}
         <div class="user-location-banner" id="userLocationBanner">
             <span class="loc-dot"></span>
             <span class="loc-text" id="userLocationText">Position en cours...</span>
@@ -1233,6 +1155,7 @@ console.log('🗺️ Mapillary Token :', window.__mapillaryToken ? '✅ configur
             </button>
         </div>
 
+        {{-- PANNEAU DE FILTRES AVANCÉS --}}
         <div class="filters-panel" id="filtersPanel">
             <div class="filters-header">
                 <div style="display:flex; align-items:center; gap:8px;">
@@ -1246,6 +1169,8 @@ console.log('🗺️ Mapillary Token :', window.__mapillaryToken ? '✅ configur
             </div>
 
             <div class="filters-body">
+
+                {{-- Route --}}
                 <div class="filter-group">
                     <label class="filter-label">
                         <i class="fa-solid fa-road"></i> Route
@@ -1255,6 +1180,7 @@ console.log('🗺️ Mapillary Token :', window.__mapillaryToken ? '✅ configur
                     </select>
                 </div>
 
+                {{-- Catégorie de panneau (types_panneaux.categorie) --}}
                 <div class="filter-group">
                     <label class="filter-label">
                         <i class="fa-solid fa-layer-group"></i> Catégorie
@@ -1264,6 +1190,7 @@ console.log('🗺️ Mapillary Token :', window.__mapillaryToken ? '✅ configur
                     </select>
                 </div>
 
+                {{-- Nom du panneau (types_panneaux.nom) --}}
                 <div class="filter-group">
                     <label class="filter-label">
                         <i class="fa-solid fa-sign-hanging"></i> Nom du panneau
@@ -1273,6 +1200,7 @@ console.log('🗺️ Mapillary Token :', window.__mapillaryToken ? '✅ configur
                     </select>
                 </div>
 
+                {{-- État --}}
                 <div class="filter-group">
                     <label class="filter-label">
                         <i class="fa-solid fa-heart-pulse"></i> État
@@ -1287,6 +1215,7 @@ console.log('🗺️ Mapillary Token :', window.__mapillaryToken ? '✅ configur
                     </select>
                 </div>
 
+                {{-- PK min/max --}}
                 <div class="filter-group">
                     <label class="filter-label">
                         <i class="fa-solid fa-ruler"></i> PK (min — max)
@@ -1297,6 +1226,7 @@ console.log('🗺️ Mapillary Token :', window.__mapillaryToken ? '✅ configur
                     </div>
                 </div>
 
+                {{-- Date d'observation --}}
                 <div class="filter-group">
                     <label class="filter-label">
                         <i class="fa-solid fa-calendar"></i> Dernière observation
@@ -1310,6 +1240,7 @@ console.log('🗺️ Mapillary Token :', window.__mapillaryToken ? '✅ configur
                         <option value="__jamais__">Jamais observé</option>
                     </select>
                 </div>
+
             </div>
 
             <div class="filters-footer">
@@ -1322,6 +1253,7 @@ console.log('🗺️ Mapillary Token :', window.__mapillaryToken ? '✅ configur
             </div>
         </div>
 
+        {{-- LÉGENDE ZONES --}}
         <div class="zones-legend" id="zonesLegend">
             <div class="zones-legend-header">
                 <i class="fa-solid fa-map"></i>
@@ -1330,6 +1262,7 @@ console.log('🗺️ Mapillary Token :', window.__mapillaryToken ? '✅ configur
             <div class="zones-legend-body" id="zonesLegendBody"></div>
         </div>
 
+        {{-- BANDEAU PLACEMENT --}}
         <div class="placement-banner" id="placementBanner">
             <i class="fa-solid fa-crosshairs" id="placementIcon"></i>
             <span id="placementText">Cliquez sur la carte pour placer le nouveau panneau</span>
@@ -1414,29 +1347,29 @@ console.log('🗺️ Mapillary Token :', window.__mapillaryToken ? '✅ configur
                         <div class="tab-pane fade show active" id="p-tab-ident">
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label class="form-label">Code nomenclature</label>
-                                    <input type="hidden" name="code_nomen" id="p_code_nomen_hidden" value="">
-                                    <div class="nomen-custom-select" id="nomenCustomSelect">
-                                        <div class="nomen-custom-select__trigger" onclick="toggleNomenDropdown()">
-                                            <div class="nomen-custom-select__value" id="nomenSelectedDisplay">
-                                                <div class="nomen-option">
-                                                    <div class="nomen-option__svg"><i class="fa-solid fa-sign-hanging"></i></div>
-                                                    <div class="nomen-option__text">
-                                                        <div class="nomen-option__code" style="color:#94A3B8;">— Non renseigné —</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <i class="fa-solid fa-chevron-down nomen-custom-select__arrow"></i>
-                                        </div>
-                                        <div class="nomen-custom-select__dropdown" id="nomenDropdown">
-                                            <div class="nomen-custom-select__search">
-                                                <i class="fa-solid fa-magnifying-glass"></i>
-                                                <input type="text" id="nomenSearch" placeholder="Rechercher code ou nom..." oninput="filterNomenOptions(this.value)">
-                                            </div>
-                                            <div class="nomen-custom-select__options" id="nomenOptionsList"></div>
-                                        </div>
-                                    </div>
-                                </div>
+    <label class="form-label">Code nomenclature</label>
+    <input type="hidden" name="code_nomen" id="p_code_nomen_hidden" value="">
+    <div class="nomen-custom-select" id="nomenCustomSelect">
+        <div class="nomen-custom-select__trigger" onclick="toggleNomenDropdown()">
+            <div class="nomen-custom-select__value" id="nomenSelectedDisplay">
+                <div class="nomen-option">
+                    <div class="nomen-option__svg"><i class="fa-solid fa-sign-hanging"></i></div>
+                    <div class="nomen-option__text">
+                        <div class="nomen-option__code" style="color:#94A3B8;">— Non renseigné —</div>
+                    </div>
+                </div>
+            </div>
+            <i class="fa-solid fa-chevron-down nomen-custom-select__arrow"></i>
+        </div>
+        <div class="nomen-custom-select__dropdown" id="nomenDropdown">
+            <div class="nomen-custom-select__search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="nomenSearch" placeholder="Rechercher code ou nom..." oninput="filterNomenOptions(this.value)">
+            </div>
+            <div class="nomen-custom-select__options" id="nomenOptionsList"></div>
+        </div>
+    </div>
+</div>
                                 <div class="col-md-6">
                                     <label class="form-label">Fclass</label>
                                     <input type="text" name="fclass" id="p_fclass" class="form-control">
@@ -1744,53 +1677,8 @@ console.log('🗺️ Mapillary Token :', window.__mapillaryToken ? '✅ configur
     </div>
 </div>
 
-{{-- =========================================================
-     ✅ MODALE MAPILLARY
-     ========================================================= --}}
-<div class="modal fade" id="modalMapillary" tabindex="-1" aria-hidden="true" data-bs-backdrop="true" data-bs-keyboard="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl" style="max-width: 1200px;">
-        <div class="modal-content mapillary-modal-content">
-
-            <div class="mapillary-modal-header">
-                <div>
-                    <h5>
-                        <i class="fa-solid fa-street-view"></i>
-                        Vue de la rue — Mapillary
-                    </h5>
-                    <small id="mapillarySubtitle">Chargement...</small>
-                </div>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
-            </div>
-
-            <div class="mapillary-modal-body" id="mapillaryBody">
-                <div class="mapillary-loading" id="mapillaryLoading">
-                    <div class="spinner"></div>
-                    <div style="font-size:0.85rem; color:rgba(255,255,255,0.7);">Recherche d'images à proximité...</div>
-                </div>
-                <div id="mapillaryViewer"></div>
-            </div>
-
-            <div class="mapillary-modal-footer">
-                <div class="mapillary-info" id="mapillaryInfo">
-                    <span><i class="fa-solid fa-location-dot"></i> <span id="mapillaryCoords">—</span></span>
-                    <span><i class="fa-solid fa-image"></i> <span id="mapillaryCount">0</span> image(s)</span>
-                </div>
-                <div style="display:flex; gap:8px;">
-                    <a id="mapillaryOpenBtn" href="#" target="_blank" rel="noopener" class="btn-mapillary">
-                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                        Ouvrir sur Mapillary
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-{{-- ✅ MapillaryJS --}}
-<script src="https://unpkg.com/mapillary-js@4.1.2/dist/mapillary.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -1839,135 +1727,141 @@ document.addEventListener('DOMContentLoaded', function () {
     const ZONES         = window.__zones || [];
     const ZONES_BOUNDS  = window.__zonesBounds || null;
 
-    /* ✅ CONFIG MAPILLARY */
-    const MAPILLARY_TOKEN = window.__mapillaryToken || '';
-    const MAPILLARY_API   = 'https://graph.mapillary.com';
-
     console.log('🚀 Panneaux valides :', panneaux.length, '/', panneauxListe.length);
 
     /* =========================================================
-       CUSTOM SELECT AVEC SVG — CODE NOMENCLATURE
+       ✅ PEUPLEMENT DU SELECT "CODE NOMENCLATURE"
        ========================================================= */
-    let nomenTypes = [];
+/* =========================================================
+   ✅ CUSTOM SELECT AVEC SVG — CODE NOMENCLATURE
+   ========================================================= */
+let nomenTypes = [];
 
-    function buildNomenOptionHtml(tp, opts) {
-        opts = opts || {};
-        const isSelected = !!opts.selected;
-        const isObsolete = !!opts.obsolete;
+function buildNomenOptionHtml(tp, opts) {
+    opts = opts || {};
+    const isSelected = !!opts.selected;
+    const isObsolete = !!opts.obsolete;
 
-        const svgUrl = tp.code_type ? (BASE_SVG + '/' + tp.code_type + '.svg') : null;
-        const svgContent = svgUrl
-            ? '<img src="' + svgUrl + '" alt="" loading="lazy" onerror="this.style.display=\'none\';this.parentElement.innerHTML=\'<i class=&quot;fa-solid fa-sign-hanging&quot;></i>\';">'
-            : '<i class="fa-solid fa-sign-hanging"></i>';
+    const svgUrl = tp.code_type ? (BASE_SVG + '/' + tp.code_type + '.svg') : null;
+    const svgContent = svgUrl
+        ? '<img src="' + svgUrl + '" alt="" loading="lazy" onerror="this.style.display=\'none\';this.parentElement.innerHTML=\'<i class=&quot;fa-solid fa-sign-hanging&quot;></i>\';">'
+        : '<i class="fa-solid fa-sign-hanging"></i>';
 
-        const nameClass = 'nomen-option__name' + (isObsolete ? ' obsolete' : '');
-        const nameText  = isObsolete ? 'Code obsolète' : (tp.nom || '');
+    const nameClass = 'nomen-option__name' + (isObsolete ? ' obsolete' : '');
+    const nameText  = isObsolete ? 'Code obsolète' : (tp.nom || '');
 
-        return '<div class="nomen-option' + (isSelected ? ' nomen-option--selected' : '') + '">' +
-            '<div class="nomen-option__svg">' + svgContent + '</div>' +
+    return '<div class="nomen-option' + (isSelected ? ' nomen-option--selected' : '') + '">' +
+        '<div class="nomen-option__svg">' + svgContent + '</div>' +
+        '<div class="nomen-option__text">' +
+            '<div class="nomen-option__code">' + tp.code_type + (isObsolete ? ' (actuel)' : '') + '</div>' +
+            '<div class="' + nameClass + '">' + nameText + '</div>' +
+        '</div>' +
+    '</div>';
+}
+
+function populateCodeNomenSelect() {
+    nomenTypes = (window.__listes && window.__listes.types_panneaux) || [];
+
+    if (!nomenTypes.length) {
+        console.warn('⚠️ Aucun type de panneau dans window.__listes.types_panneaux');
+    }
+
+    renderNomenOptions(nomenTypes);
+    console.log('✅ Custom select code_nomen peuplé avec', nomenTypes.length, 'options');
+}
+
+function renderNomenOptions(types) {
+    const list = document.getElementById('nomenOptionsList');
+    if (!list) return;
+
+    let html = '<div class="nomen-custom-option" data-value="" onclick="selectNomenOption(\'\', this)">' +
+        '<div class="nomen-option">' +
+            '<div class="nomen-option__svg"><i class="fa-solid fa-ban"></i></div>' +
             '<div class="nomen-option__text">' +
-                '<div class="nomen-option__code">' + tp.code_type + (isObsolete ? ' (actuel)' : '') + '</div>' +
-                '<div class="' + nameClass + '">' + nameText + '</div>' +
+                '<div class="nomen-option__code" style="color:#94A3B8;font-weight:600;">— Non renseigné —</div>' +
             '</div>' +
+        '</div>' +
+    '</div>';
+
+    types.forEach(function (tp) {
+        const safeCode = (tp.code_type || '').replace(/'/g, "\\'");
+        html += '<div class="nomen-custom-option" data-value="' + safeCode + '" onclick="selectNomenOption(\'' + safeCode + '\', this)">' +
+            buildNomenOptionHtml(tp, {}) +
         '</div>';
-    }
-
-    function populateCodeNomenSelect() {
-        nomenTypes = (window.__listes && window.__listes.types_panneaux) || [];
-        if (!nomenTypes.length) console.warn('⚠️ Aucun type de panneau');
-        renderNomenOptions(nomenTypes);
-        console.log('✅ Custom select code_nomen peuplé avec', nomenTypes.length, 'options');
-    }
-
-    function renderNomenOptions(types) {
-        const list = document.getElementById('nomenOptionsList');
-        if (!list) return;
-
-        let html = '<div class="nomen-custom-option" data-value="" onclick="selectNomenOption(\'\', this)">' +
-            '<div class="nomen-option">' +
-                '<div class="nomen-option__svg"><i class="fa-solid fa-ban"></i></div>' +
-                '<div class="nomen-option__text">' +
-                    '<div class="nomen-option__code" style="color:#94A3B8;font-weight:600;">— Non renseigné —</div>' +
-                '</div>' +
-            '</div>' +
-        '</div>';
-
-        types.forEach(function (tp) {
-            const safeCode = (tp.code_type || '').replace(/'/g, "\\'");
-            html += '<div class="nomen-custom-option" data-value="' + safeCode + '" onclick="selectNomenOption(\'' + safeCode + '\', this)">' +
-                buildNomenOptionHtml(tp, {}) +
-            '</div>';
-        });
-
-        list.innerHTML = html;
-    }
-
-    function toggleNomenDropdown() {
-        const el = document.getElementById('nomenCustomSelect');
-        if (!el) return;
-        el.classList.toggle('open');
-        if (el.classList.contains('open')) {
-            const search = document.getElementById('nomenSearch');
-            if (search) { search.value = ''; renderNomenOptions(nomenTypes); setTimeout(function() { search.focus(); }, 50); }
-        }
-    }
-
-    function selectNomenOption(value, el) {
-        const hidden = document.getElementById('p_code_nomen_hidden');
-        if (hidden) hidden.value = value;
-
-        const display = document.getElementById('nomenSelectedDisplay');
-        if (display) {
-            if (!value) {
-                display.innerHTML = '<div class="nomen-option">' +
-                    '<div class="nomen-option__svg"><i class="fa-solid fa-sign-hanging"></i></div>' +
-                    '<div class="nomen-option__text"><div class="nomen-option__code" style="color:#94A3B8;">— Non renseigné —</div></div>' +
-                '</div>';
-            } else {
-                const tp = nomenTypes.find(function (t) { return t.code_type === value; })
-                        || { code_type: value, nom: '' };
-                display.innerHTML = buildNomenOptionHtml(tp, { selected: true });
-            }
-        }
-
-        const nomInput = document.getElementById('p_name');
-        if (nomInput) {
-            if (!value) {
-                nomInput.value = '';
-            } else {
-                const tp = nomenTypes.find(function (t) { return t.code_type === value; });
-                nomInput.value = tp ? (tp.nom || '') : '';
-            }
-        }
-
-        document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
-            o.classList.toggle('active', o.dataset.value === value);
-        });
-
-        const el2 = document.getElementById('nomenCustomSelect');
-        if (el2) el2.classList.remove('open');
-    }
-
-    function filterNomenOptions(q) {
-        q = (q || '').toLowerCase().trim();
-        const filtered = !q ? nomenTypes : nomenTypes.filter(function (tp) {
-            return (tp.code_type || '').toLowerCase().indexOf(q) !== -1
-                || (tp.nom || '').toLowerCase().indexOf(q) !== -1;
-        });
-        renderNomenOptions(filtered);
-    }
-
-    document.addEventListener('click', function (e) {
-        const el = document.getElementById('nomenCustomSelect');
-        if (el && !el.contains(e.target)) el.classList.remove('open');
     });
 
-    window.populateCodeNomenSelect = populateCodeNomenSelect;
-    window.toggleNomenDropdown = toggleNomenDropdown;
-    window.selectNomenOption = selectNomenOption;
-    window.filterNomenOptions = filterNomenOptions;
+    list.innerHTML = html;
+}
 
-    populateCodeNomenSelect();
+function toggleNomenDropdown() {
+    const el = document.getElementById('nomenCustomSelect');
+    if (!el) return;
+    el.classList.toggle('open');
+    if (el.classList.contains('open')) {
+        const search = document.getElementById('nomenSearch');
+        if (search) { search.value = ''; renderNomenOptions(nomenTypes); setTimeout(function() { search.focus(); }, 50); }
+    }
+}
+
+function selectNomenOption(value, el) {
+    const hidden = document.getElementById('p_code_nomen_hidden');
+    if (hidden) hidden.value = value;
+
+    const display = document.getElementById('nomenSelectedDisplay');
+    if (display) {
+        if (!value) {
+            display.innerHTML = '<div class="nomen-option">' +
+                '<div class="nomen-option__svg"><i class="fa-solid fa-sign-hanging"></i></div>' +
+                '<div class="nomen-option__text"><div class="nomen-option__code" style="color:#94A3B8;">— Non renseigné —</div></div>' +
+            '</div>';
+        } else {
+            const tp = nomenTypes.find(function (t) { return t.code_type === value; })
+                    || { code_type: value, nom: '' };
+            display.innerHTML = buildNomenOptionHtml(tp, { selected: true });
+        }
+    }
+
+    /* ✅ AUTO-REMPLISSAGE DU CHAMP "NOM" */
+    const nomInput = document.getElementById('p_name');
+    if (nomInput) {
+        if (!value) {
+            nomInput.value = '';
+        } else {
+            const tp = nomenTypes.find(function (t) { return t.code_type === value; });
+            nomInput.value = tp ? (tp.nom || '') : '';
+        }
+    }
+
+    /* ✅ Marquer comme actif */
+    document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
+        o.classList.toggle('active', o.dataset.value === value);
+    });
+
+    /* ✅ Fermer le dropdown */
+    const el2 = document.getElementById('nomenCustomSelect');
+    if (el2) el2.classList.remove('open');
+}
+
+function filterNomenOptions(q) {
+    q = (q || '').toLowerCase().trim();
+    const filtered = !q ? nomenTypes : nomenTypes.filter(function (tp) {
+        return (tp.code_type || '').toLowerCase().indexOf(q) !== -1
+            || (tp.nom || '').toLowerCase().indexOf(q) !== -1;
+    });
+    renderNomenOptions(filtered);
+}
+
+document.addEventListener('click', function (e) {
+    const el = document.getElementById('nomenCustomSelect');
+    if (el && !el.contains(e.target)) el.classList.remove('open');
+});
+
+window.populateCodeNomenSelect = populateCodeNomenSelect;
+window.toggleNomenDropdown = toggleNomenDropdown;
+window.selectNomenOption = selectNomenOption;
+window.filterNomenOptions = filterNomenOptions;
+
+populateCodeNomenSelect();
 
     let placementMode = null;
     let movePanneauId = null;
@@ -2116,6 +2010,7 @@ document.addEventListener('DOMContentLoaded', function () {
         legendBody.innerHTML = '';
         legendBody.appendChild(fragment);
 
+        /* Repli/dépli légende sur mobile */
         const legendEl = document.getElementById('zonesLegend');
         const legendHeader = legendEl ? legendEl.querySelector('.zones-legend-header') : null;
         if (legendEl && legendHeader && !legendEl.dataset.bound) {
@@ -2380,9 +2275,6 @@ document.addEventListener('DOMContentLoaded', function () {
     window.openSlidePanel  = function () { slidePanel.classList.add('open'); slideToggle.classList.add('hidden'); };
     window.closeSlidePanel = function () { slidePanel.classList.remove('open'); slideToggle.classList.remove('hidden'); };
 
-    /* =========================================================
-       ✅ AFFICHER DÉTAIL (avec bouton Mapillary)
-    ========================================================= */
     window.afficherDetail = function (p) {
         const etatKey   = getEtatKey(p.etat_actuel);
         const etatLabel = p.etat_actuel || 'Non observé';
@@ -2405,7 +2297,6 @@ document.addEventListener('DOMContentLoaded', function () {
             +   '<button type="button" class="btn-slide btn-slide-success" onclick="openNewObservation(' + p.panneau_id + ')"><i class="fa-solid fa-plus-circle"></i> Nouvelle observation</button>'
             +   '<button type="button" class="btn-slide btn-slide-warning" onclick="startMovePanneau(' + p.panneau_id + ')"><i class="fa-solid fa-arrows-up-down-left-right"></i> Déplacer le point</button>'
             +   '<button type="button" class="btn-slide btn-slide-primary" onclick="openEditPanneau(' + p.panneau_id + ')"><i class="fa-solid fa-pen"></i> Modifier infos</button>'
-            +   '<button type="button" class="btn-slide btn-slide-mapillary" onclick="ouvrirMapillaryPourPanneau(' + p.panneau_id + ')"><i class="fa-solid fa-street-view"></i> Voir la rue (Mapillary)</button>'
             +   '<a href="/signalisation/' + p.panneau_id + '" class="btn-slide btn-slide-light"><i class="fa-solid fa-arrow-up-right-from-square"></i> Fiche complète</a>'
             +   '<button type="button" class="btn-slide btn-slide-light" onclick="centrerSur(' + p.panneau_id + ')"><i class="fa-solid fa-crosshairs"></i> Centrer</button>'
             + '</div>';
@@ -2416,210 +2307,6 @@ document.addEventListener('DOMContentLoaded', function () {
     window.centrerSur = function (id) {
         const marker = markersById[id];
         if (marker) carte.setView(marker.getLatLng(), 16, { animate: true });
-    };
-
-    /* =========================================================
-       ✅ MAPILLARY — LOGIQUE D'INTÉGRATION
-       ========================================================= */
-    const mapillaryCache = new Map();
-    let mapillaryViewer = null;
-    let mapillaryModal = null;
-
-    function getMapillaryModal() {
-        if (!mapillaryModal) {
-            const modalEl = document.getElementById('modalMapillary');
-            if (modalEl) {
-                mapillaryModal = new bootstrap.Modal(modalEl);
-                modalEl.addEventListener('hidden.bs.modal', function () {
-                    if (mapillaryViewer) {
-                        try { mapillaryViewer.remove(); } catch (e) {}
-                        mapillaryViewer = null;
-                    }
-                    document.getElementById('mapillaryViewer').innerHTML = '';
-                    document.getElementById('mapillaryLoading').style.display = 'flex';
-                });
-            }
-        }
-        return mapillaryModal;
-    }
-
-    function distanceMeters(lat1, lng1, lat2, lng2) {
-        const R = 6371000;
-        const dLat = (lat2 - lat1) * Math.PI / 180;
-        const dLng = (lng2 - lng1) * Math.PI / 180;
-        const a = Math.sin(dLat / 2) ** 2
-                + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180)
-                * Math.sin(dLng / 2) ** 2;
-        return 2 * R * Math.asin(Math.sqrt(a));
-    }
-
-    async function fetchNearbyImages(lat, lng, radiusMeters, limit) {
-        radiusMeters = radiusMeters || 50;
-        limit = limit || 10;
-
-        const cacheKey = 'near_' + lat.toFixed(5) + '_' + lng.toFixed(5) + '_' + radiusMeters;
-        if (mapillaryCache.has(cacheKey)) return mapillaryCache.get(cacheKey);
-
-        const url = MAPILLARY_API + '/images'
-            + '?fields=id,captured_at,compass_angle,is_pano,thumb_256_url,geometry,sequence'
-            + '&lat=' + lat
-            + '&lng=' + lng
-            + '&radius=' + radiusMeters
-            + '&limit=' + limit
-            + '&access_token=' + encodeURIComponent(MAPILLARY_TOKEN);
-
-        console.log('🌐 [API] Images proches:', url);
-        const res = await fetch(url);
-        if (!res.ok) {
-            const errText = await res.text();
-            throw new Error('Erreur API images proches: ' + res.status + ' — ' + errText);
-        }
-        const data = await res.json();
-        mapillaryCache.set(cacheKey, data);
-        return data;
-    }
-
-    async function fetchSequenceImages(sequenceId) {
-        const cacheKey = 'seq_' + sequenceId;
-        if (mapillaryCache.has(cacheKey)) return mapillaryCache.get(cacheKey);
-
-        const url = MAPILLARY_API + '/image_ids'
-            + '?sequence_id=' + encodeURIComponent(sequenceId)
-            + '&access_token=' + encodeURIComponent(MAPILLARY_TOKEN);
-
-        console.log('🌐 [API] Images séquence:', url);
-        const res = await fetch(url);
-        if (!res.ok) throw new Error('Erreur API séquence: ' + res.status);
-        const data = await res.json();
-        mapillaryCache.set(cacheKey, data);
-        return data;
-    }
-
-    async function findNearestImage(lat, lng) {
-        const data = await fetchNearbyImages(lat, lng, 100, 20);
-        if (!data || !data.data || data.data.length === 0) return null;
-
-        let nearest = null;
-        let minDist = Infinity;
-        data.data.forEach(function (img) {
-            if (!img.geometry || !img.geometry.coordinates) return;
-            const imgLng = img.geometry.coordinates[0];
-            const imgLat = img.geometry.coordinates[1];
-            const d = distanceMeters(lat, lng, imgLat, imgLng);
-            if (d < minDist) {
-                minDist = d;
-                nearest = img;
-            }
-        });
-
-        if (nearest) nearest._distance = minDist;
-        return nearest;
-    }
-
-    window.ouvrirMapillaryPourPanneau = async function (panneauId) {
-        const p = panneaux.find(function (x) { return String(x.panneau_id) === String(panneauId); });
-        if (!p) { alert('Panneau introuvable'); return; }
-
-        if (!MAPILLARY_TOKEN) {
-            alert('❌ Token Mapillary manquant.');
-            return;
-        }
-
-        const modal = getMapillaryModal();
-        if (!modal) { alert('Modale Mapillary introuvable'); return; }
-
-        const loadingEl = document.getElementById('mapillaryLoading');
-        const viewerEl  = document.getElementById('mapillaryViewer');
-        const coordsEl  = document.getElementById('mapillaryCoords');
-        const countEl   = document.getElementById('mapillaryCount');
-        const subtitle  = document.getElementById('mapillarySubtitle');
-        const openBtn   = document.getElementById('mapillaryOpenBtn');
-
-        loadingEl.style.display = 'flex';
-        loadingEl.innerHTML = '<div class="spinner"></div><div style="font-size:0.85rem; color:rgba(255,255,255,0.7);">Recherche d\'images à proximité...</div>';
-        viewerEl.innerHTML = '';
-        coordsEl.textContent = Number(p.lat).toFixed(5) + ', ' + Number(p.lng).toFixed(5);
-        countEl.textContent = '0';
-        subtitle.textContent = 'Panneau ' + (p.code_nomen || '—') + ' — Recherche en cours...';
-        openBtn.href = 'https://www.mapillary.com/app/?lat=' + p.lat + '&lng=' + p.lng + '&z=17';
-        openBtn.style.display = 'none';
-
-        modal.show();
-
-        try {
-            const nearest = await findNearestImage(p.lat, p.lng);
-
-            if (!nearest) {
-                loadingEl.innerHTML =
-                    '<div class="mapillary-error">' +
-                        '<i class="fa-solid fa-satellite-dish"></i>' +
-                        '<h4>Aucune image Mapillary trouvée</h4>' +
-                        '<p>Aucune image n\'est disponible dans un rayon de 100 m autour de ce panneau.<br>Utilisez le bouton "Ouvrir sur Mapillary" pour explorer manuellement.</p>' +
-                    '</div>';
-                subtitle.textContent = 'Aucune image à proximité';
-                openBtn.style.display = 'inline-flex';
-                return;
-            }
-
-            console.log('📍 Image la plus proche:', nearest.id, 'à', Math.round(nearest._distance), 'm');
-
-            let seqCount = 0;
-            if (nearest.sequence) {
-                try {
-                    const seqData = await fetchSequenceImages(nearest.sequence);
-                    seqCount = (seqData.data || []).length;
-                } catch (e) {
-                    console.warn('⚠️ Impossible de récupérer la séquence:', e);
-                }
-            }
-
-            countEl.textContent = seqCount > 0 ? seqCount : '1+';
-            subtitle.textContent = 'Panneau ' + (p.code_nomen || '—') + ' — Image à ' + Math.round(nearest._distance) + ' m';
-            openBtn.href = 'https://www.mapillary.com/app/?focus=photo&pKey=' + nearest.id + '&lat=' + p.lat + '&lng=' + p.lng + '&z=17';
-            openBtn.style.display = 'inline-flex';
-
-            loadingEl.innerHTML = '<div class="spinner"></div><div style="font-size:0.85rem; color:rgba(255,255,255,0.7);">Chargement de la visionneuse...</div>';
-
-            if (typeof mapillary === 'undefined' || !mapillary.Viewer) {
-                throw new Error('MapillaryJS non chargé');
-            }
-
-            mapillaryViewer = new mapillary.Viewer({
-                container: 'mapillaryViewer',
-                accessToken: MAPILLARY_TOKEN,
-                imageId: nearest.id,
-                component: {
-                    cover: false,
-                    direction: true,
-                    sequence: true,
-                    zoom: true,
-                    navigation: true,
-                    keyboard: true
-                }
-            });
-
-            mapillaryViewer.on('image', function () {
-                loadingEl.style.display = 'none';
-                console.log('✅ Visionneuse Mapillary prête');
-            });
-
-            setTimeout(function () {
-                if (loadingEl.style.display !== 'none') {
-                    loadingEl.style.display = 'none';
-                }
-            }, 8000);
-
-        } catch (err) {
-            console.error('❌ Erreur Mapillary:', err);
-            loadingEl.innerHTML =
-                '<div class="mapillary-error">' +
-                    '<i class="fa-solid fa-triangle-exclamation"></i>' +
-                    '<h4>Erreur de chargement</h4>' +
-                    '<p>' + (err.message || 'Impossible de charger Mapillary.') + '</p>' +
-                '</div>';
-            subtitle.textContent = 'Erreur de chargement';
-            openBtn.style.display = 'inline-flex';
-        }
     };
 
     /* =========================================================
@@ -2700,6 +2387,9 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('p_lat').addEventListener('input', updateCoordsLabels);
     document.getElementById('p_lng').addEventListener('input', updateCoordsLabels);
 
+    /* =========================================================
+       ✅ CRÉATION D'UN PANNEAU
+       ========================================================= */
     window.openCreatePanneau = function (lat, lng) {
         currentMode = 'create';
 
@@ -2712,20 +2402,21 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('formPanneauMethod').value = 'POST';
         form.reset();
 
-        const hiddenCode = document.getElementById('p_code_nomen_hidden');
-        if (hiddenCode) hiddenCode.value = '';
+      /* ✅ Reset custom select code_nomen */
+const hiddenCode = document.getElementById('p_code_nomen_hidden');
+if (hiddenCode) hiddenCode.value = '';
 
-        const display = document.getElementById('nomenSelectedDisplay');
-        if (display) {
-            display.innerHTML = '<div class="nomen-option">' +
-                '<div class="nomen-option__svg"><i class="fa-solid fa-sign-hanging"></i></div>' +
-                '<div class="nomen-option__text"><div class="nomen-option__code" style="color:#94A3B8;">— Non renseigné —</div></div>' +
-            '</div>';
-        }
+const display = document.getElementById('nomenSelectedDisplay');
+if (display) {
+    display.innerHTML = '<div class="nomen-option">' +
+        '<div class="nomen-option__svg"><i class="fa-solid fa-sign-hanging"></i></div>' +
+        '<div class="nomen-option__text"><div class="nomen-option__code" style="color:#94A3B8;">— Non renseigné —</div></div>' +
+    '</div>';
+}
 
-        document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
-            o.classList.remove('active');
-        });
+document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
+    o.classList.remove('active');
+});
 
         document.getElementById('p_lat').value = lat.toFixed(7);
         document.getElementById('p_lng').value = lng.toFixed(7);
@@ -2738,6 +2429,9 @@ document.addEventListener('DOMContentLoaded', function () {
         bsModalPanneau.show();
     };
 
+    /* =========================================================
+       ✅ ÉDITION D'UN PANNEAU
+       ========================================================= */
     window.openEditPanneau = function (id) {
         const p = panneaux.find(function (x) { return String(x.panneau_id) === String(id); });
         if (!p) { alert('Panneau introuvable'); return; }
@@ -2751,28 +2445,30 @@ document.addEventListener('DOMContentLoaded', function () {
         form.action = '/carte/panneau/' + id;
         document.getElementById('formPanneauMethod').value = 'PUT';
 
-        const hiddenCode = document.getElementById('p_code_nomen_hidden');
-        const codeActuel = p.code_nomen || '';
-        if (hiddenCode) hiddenCode.value = codeActuel;
+     /* ✅ Code nomenclature (custom select) */
+const hiddenCode = document.getElementById('p_code_nomen_hidden');
+const codeActuel = p.code_nomen || '';
+if (hiddenCode) hiddenCode.value = codeActuel;
 
-        const display = document.getElementById('nomenSelectedDisplay');
-        if (display) {
-            if (!codeActuel) {
-                display.innerHTML = '<div class="nomen-option">' +
-                    '<div class="nomen-option__svg"><i class="fa-solid fa-sign-hanging"></i></div>' +
-                    '<div class="nomen-option__text"><div class="nomen-option__code" style="color:#94A3B8;">— Non renseigné —</div></div>' +
-                '</div>';
-            } else {
-                const tpExiste = nomenTypes.find(function (t) { return t.code_type === codeActuel; });
-                const tp = tpExiste || { code_type: codeActuel, nom: p.type_nom || p.name || '', obsolete: true };
-                display.innerHTML = buildNomenOptionHtml(tp, { selected: true, obsolete: !tpExiste });
-            }
-        }
+const display = document.getElementById('nomenSelectedDisplay');
+if (display) {
+    if (!codeActuel) {
+        display.innerHTML = '<div class="nomen-option">' +
+            '<div class="nomen-option__svg"><i class="fa-solid fa-sign-hanging"></i></div>' +
+            '<div class="nomen-option__text"><div class="nomen-option__code" style="color:#94A3B8;">— Non renseigné —</div></div>' +
+        '</div>';
+    } else {
+        const tpExiste = nomenTypes.find(function (t) { return t.code_type === codeActuel; });
+        const tp = tpExiste || { code_type: codeActuel, nom: p.type_nom || p.name || '', obsolete: true };
+        display.innerHTML = buildNomenOptionHtml(tp, { selected: true, obsolete: !tpExiste });
+    }
+}
 
-        document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
-            o.classList.toggle('active', o.dataset.value === codeActuel);
-        });
+document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
+    o.classList.toggle('active', o.dataset.value === codeActuel);
+});
 
+        /* Mapping des autres champs (sans code_nomen) */
         const map = {
             p_fclass: 'fclass', p_name: 'name',
             p_num_agrement: 'num_agrement', p_code_panneau_cctp: 'code_panneau_cctp',
@@ -2812,7 +2508,11 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     /* =========================================================
-       GÉOLOCALISATION
+       GÉOLOCALISATION — MA POSITION (style Google Maps)
+       - Zoom automatique
+       - Suivi continu (watchPosition)
+       - Bouton flottant de recentrage
+       - Cercle de précision dynamique
     ========================================================= */
     let userLocationMarker = null;
     let userAccuracyCircle = null;
@@ -2824,6 +2524,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const userLocationText   = document.getElementById('userLocationText');
     const btnLocateMe        = document.getElementById('btnLocateMe');
 
+    /* Icône style Google Maps */
     const userIcon = L.divIcon({
         className: 'user-location-marker',
         html: '<div class="pulse-ring"></div><div class="pulse-dot"></div>',
@@ -2860,9 +2561,11 @@ document.addEventListener('DOMContentLoaded', function () {
             || location.hostname === '127.0.0.1';
     }
 
+    /* Mettre à jour la position sur la carte */
     function updateUserPositionOnMap(lat, lng, accuracy, shouldZoom) {
         userLastPosition = { lat: lat, lng: lng, accuracy: accuracy };
 
+        /* Cercle de précision */
         if (userAccuracyCircle) {
             userAccuracyCircle.setLatLng([lat, lng]);
             userAccuracyCircle.setRadius(accuracy);
@@ -2878,6 +2581,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }).addTo(carte);
         }
 
+        /* Marqueur */
         if (userLocationMarker) {
             userLocationMarker.setLatLng([lat, lng]);
         } else {
@@ -2908,6 +2612,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }, { maxWidth: 260 });
         }
 
+        /* ✅ ZOOM AUTOMATIQUE style Google Maps */
         if (shouldZoom) {
             const targetZoom = accuracy < 30 ? 18 : accuracy < 100 ? 17 : 16;
             carte.flyTo([lat, lng], targetZoom, {
@@ -2918,6 +2623,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    /* ✅ Localiser (avec watchPosition pour suivi continu) */
     window.locateMe = function () {
         if (!navigator.geolocation) {
             showUserLocationBanner('❌ Géolocalisation non supportée par ce navigateur.', true);
@@ -2928,6 +2634,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        /* État de chargement */
         if (btnLocateMe) {
             btnLocateMe.classList.add('loading');
             const icon = btnLocateMe.querySelector('i');
@@ -2935,11 +2642,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         showUserLocationBanner('📍 Recherche de votre position...', false);
 
+        /* Arrêter l'ancien watch */
         if (userWatchId !== null) {
             navigator.geolocation.clearWatch(userWatchId);
             userWatchId = null;
         }
 
+        /* Afficher le bouton flottant */
         const btnRecenter = document.getElementById('btnRecenter');
         if (btnRecenter) btnRecenter.style.display = 'flex';
 
@@ -2978,7 +2687,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 let msg = '❌ Erreur de géolocalisation.';
                 switch (error.code) {
                     case error.PERMISSION_DENIED:
-                        msg = '❌ Accès refusé. Autorisez la localisation.';
+                        msg = '❌ Accès refusé. Autorisez la localisation dans les paramètres du navigateur.';
                         break;
                     case error.POSITION_UNAVAILABLE:
                         msg = '❌ Position indisponible. Activez le GPS.';
@@ -3004,6 +2713,7 @@ document.addEventListener('DOMContentLoaded', function () {
         );
     };
 
+    /* ✅ Recentrer sur la position (bouton flottant) */
     window.centerOnMyPosition = function () {
         if (!userLastPosition) {
             locateMe();
@@ -3025,6 +2735,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
+    /* Arrêter le suivi */
     window.stopLocateMe = function () {
         if (userWatchId !== null) {
             navigator.geolocation.clearWatch(userWatchId);
@@ -3032,11 +2743,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
+    /* Créer un panneau à ma position */
     window.startNewPanneauAtMyPosition = function (lat, lng) {
         if (userLocationMarker) userLocationMarker.closePopup();
         openCreatePanneau(lat, lng);
     };
 
+    /* Nettoyer à la fermeture */
     window.addEventListener('beforeunload', stopLocateMe);
 
     /* =========================================================
