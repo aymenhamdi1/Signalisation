@@ -894,6 +894,156 @@
         height: 44px;
     }
 }
+/* =========================================================
+   ✅ CUSTOM SELECT AVEC SVG — CODE NOMENCLATURE
+   ========================================================= */
+.nomen-custom-select {
+    position: relative;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+}
+.nomen-custom-select__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    min-height: 38px;
+}
+.nomen-custom-select__trigger:hover { border-color: #CBD5E1; }
+.nomen-custom-select.open .nomen-custom-select__trigger {
+    border-color: #2563EB;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+.nomen-custom-select__arrow {
+    color: #64748B;
+    font-size: 0.75rem;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+    margin-left: 8px;
+}
+.nomen-custom-select.open .nomen-custom-select__arrow { transform: rotate(180deg); }
+.nomen-custom-select__value { flex: 1; min-width: 0; }
+
+.nomen-custom-select__dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
+    z-index: 3000;
+    max-height: 340px;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+}
+.nomen-custom-select.open .nomen-custom-select__dropdown { display: flex; }
+.nomen-custom-select__search {
+    position: relative;
+    padding: 8px;
+    border-bottom: 1px solid #F1F5F9;
+    flex-shrink: 0;
+}
+.nomen-custom-select__search i {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94A3B8;
+    font-size: 0.8rem;
+}
+.nomen-custom-select__search input {
+    width: 100%;
+    padding: 8px 12px 8px 32px;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    outline: none;
+    font-family: 'Inter', sans-serif;
+    box-sizing: border-box;
+}
+.nomen-custom-select__search input:focus {
+    border-color: #2563EB;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+.nomen-custom-select__options {
+    overflow-y: auto;
+    max-height: 280px;
+    padding: 4px 0;
+}
+.nomen-custom-select__options::-webkit-scrollbar { width: 5px; }
+.nomen-custom-select__options::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+
+.nomen-custom-option {
+    cursor: pointer;
+    transition: background 0.15s ease;
+    padding: 0;
+}
+.nomen-custom-option:hover { background: #EFF6FF; }
+.nomen-custom-option.active { background: #EFF6FF; }
+
+.nomen-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+}
+.nomen-option__svg {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    padding: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.nomen-option__svg img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+}
+.nomen-option__svg i {
+    color: #CBD5E1;
+    font-size: 16px;
+}
+.nomen-option__text { flex: 1; min-width: 0; }
+.nomen-option__code {
+    font-weight: 800;
+    color: #1E40AF;
+    font-size: 0.85rem;
+    line-height: 1.2;
+}
+.nomen-option__name {
+    font-size: 0.72rem;
+    color: #64748B;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.nomen-option__name.obsolete { color: #EA580C; font-style: italic; }
+.nomen-custom-option.active .nomen-option__svg {
+    border-color: #2563EB;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+/* Trigger compact (sans le nom) */
+.nomen-custom-select__trigger .nomen-option { padding: 0; gap: 8px; }
+.nomen-custom-select__trigger .nomen-option__svg { width: 26px; height: 26px; padding: 2px; }
+.nomen-custom-select__trigger .nomen-option__name { display: none; }
+.nomen-custom-select__trigger .nomen-option__code { font-size: 0.82rem; }
 </style>
 </head>
 <body>
@@ -1197,12 +1347,29 @@ console.log('📋 Listes :', window.__listes);
                         <div class="tab-pane fade show active" id="p-tab-ident">
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label class="form-label">Code nomenclature</label>
-                                    <select name="code_nomen" id="p_code_nomen" class="form-select">
-                                        <option value="">— Non renseigné —</option>
-                                        {{-- Options injectées dynamiquement en JS --}}
-                                    </select>
-                                </div>
+    <label class="form-label">Code nomenclature</label>
+    <input type="hidden" name="code_nomen" id="p_code_nomen_hidden" value="">
+    <div class="nomen-custom-select" id="nomenCustomSelect">
+        <div class="nomen-custom-select__trigger" onclick="toggleNomenDropdown()">
+            <div class="nomen-custom-select__value" id="nomenSelectedDisplay">
+                <div class="nomen-option">
+                    <div class="nomen-option__svg"><i class="fa-solid fa-sign-hanging"></i></div>
+                    <div class="nomen-option__text">
+                        <div class="nomen-option__code" style="color:#94A3B8;">— Non renseigné —</div>
+                    </div>
+                </div>
+            </div>
+            <i class="fa-solid fa-chevron-down nomen-custom-select__arrow"></i>
+        </div>
+        <div class="nomen-custom-select__dropdown" id="nomenDropdown">
+            <div class="nomen-custom-select__search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="nomenSearch" placeholder="Rechercher code ou nom..." oninput="filterNomenOptions(this.value)">
+            </div>
+            <div class="nomen-custom-select__options" id="nomenOptionsList"></div>
+        </div>
+    </div>
+</div>
                                 <div class="col-md-6">
                                     <label class="form-label">Fclass</label>
                                     <input type="text" name="fclass" id="p_fclass" class="form-control">
@@ -1565,33 +1732,123 @@ document.addEventListener('DOMContentLoaded', function () {
     /* =========================================================
        ✅ PEUPLEMENT DU SELECT "CODE NOMENCLATURE"
        ========================================================= */
-    function populateCodeNomenSelect() {
-        const select = document.getElementById('p_code_nomen');
-        if (!select) {
-            console.warn('⚠️ #p_code_nomen introuvable');
-            return;
-        }
+/* =========================================================
+   ✅ CUSTOM SELECT AVEC SVG — CODE NOMENCLATURE
+   ========================================================= */
+let nomenTypes = [];
 
-        const types = (window.__listes && window.__listes.types_panneaux) || [];
+function buildNomenOptionHtml(tp, opts) {
+    opts = opts || {};
+    const isSelected = !!opts.selected;
+    const isObsolete = !!opts.obsolete;
 
-        if (!types.length) {
-            console.warn('⚠️ Aucun type de panneau dans window.__listes.types_panneaux');
-            return;
-        }
+    const svgUrl = tp.code_type ? (BASE_SVG + '/' + tp.code_type + '.svg') : null;
+    const svgContent = svgUrl
+        ? '<img src="' + svgUrl + '" alt="" loading="lazy" onerror="this.style.display=\'none\';this.parentElement.innerHTML=\'<i class=&quot;fa-solid fa-sign-hanging&quot;></i>\';">'
+        : '<i class="fa-solid fa-sign-hanging"></i>';
 
-        const fragment = document.createDocumentFragment();
-        types.forEach(function (tp) {
-            const opt = document.createElement('option');
-            opt.value = tp.code_type;
-            opt.textContent = tp.code_type + ' — ' + (tp.nom || '');
-            fragment.appendChild(opt);
-        });
+    const nameClass = 'nomen-option__name' + (isObsolete ? ' obsolete' : '');
+    const nameText  = isObsolete ? 'Code obsolète' : (tp.nom || '');
 
-        select.appendChild(fragment);
-        console.log('✅ Select code_nomen peuplé avec', types.length, 'options');
+    return '<div class="nomen-option' + (isSelected ? ' nomen-option--selected' : '') + '">' +
+        '<div class="nomen-option__svg">' + svgContent + '</div>' +
+        '<div class="nomen-option__text">' +
+            '<div class="nomen-option__code">' + tp.code_type + (isObsolete ? ' (actuel)' : '') + '</div>' +
+            '<div class="' + nameClass + '">' + nameText + '</div>' +
+        '</div>' +
+    '</div>';
+}
+
+function populateCodeNomenSelect() {
+    nomenTypes = (window.__listes && window.__listes.types_panneaux) || [];
+
+    if (!nomenTypes.length) {
+        console.warn('⚠️ Aucun type de panneau dans window.__listes.types_panneaux');
     }
 
-    populateCodeNomenSelect();
+    renderNomenOptions(nomenTypes);
+    console.log('✅ Custom select code_nomen peuplé avec', nomenTypes.length, 'options');
+}
+
+function renderNomenOptions(types) {
+    const list = document.getElementById('nomenOptionsList');
+    if (!list) return;
+
+    let html = '<div class="nomen-custom-option" data-value="" onclick="selectNomenOption(\'\', this)">' +
+        '<div class="nomen-option">' +
+            '<div class="nomen-option__svg"><i class="fa-solid fa-ban"></i></div>' +
+            '<div class="nomen-option__text">' +
+                '<div class="nomen-option__code" style="color:#94A3B8;font-weight:600;">— Non renseigné —</div>' +
+            '</div>' +
+        '</div>' +
+    '</div>';
+
+    types.forEach(function (tp) {
+        const safeCode = (tp.code_type || '').replace(/'/g, "\\'");
+        html += '<div class="nomen-custom-option" data-value="' + safeCode + '" onclick="selectNomenOption(\'' + safeCode + '\', this)">' +
+            buildNomenOptionHtml(tp, {}) +
+        '</div>';
+    });
+
+    list.innerHTML = html;
+}
+
+function toggleNomenDropdown() {
+    const el = document.getElementById('nomenCustomSelect');
+    if (!el) return;
+    el.classList.toggle('open');
+    if (el.classList.contains('open')) {
+        const search = document.getElementById('nomenSearch');
+        if (search) { search.value = ''; renderNomenOptions(nomenTypes); setTimeout(function() { search.focus(); }, 50); }
+    }
+}
+
+function selectNomenOption(value, el) {
+    const hidden = document.getElementById('p_code_nomen_hidden');
+    if (hidden) hidden.value = value;
+
+    const display = document.getElementById('nomenSelectedDisplay');
+    if (display) {
+        if (!value) {
+            display.innerHTML = '<div class="nomen-option">' +
+                '<div class="nomen-option__svg"><i class="fa-solid fa-sign-hanging"></i></div>' +
+                '<div class="nomen-option__text"><div class="nomen-option__code" style="color:#94A3B8;">— Non renseigné —</div></div>' +
+            '</div>';
+        } else {
+            const tp = nomenTypes.find(function (t) { return t.code_type === value; })
+                    || { code_type: value, nom: '' };
+            display.innerHTML = buildNomenOptionHtml(tp, { selected: true });
+        }
+    }
+
+    document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
+        o.classList.toggle('active', o.dataset.value === value);
+    });
+
+    const el2 = document.getElementById('nomenCustomSelect');
+    if (el2) el2.classList.remove('open');
+}
+
+function filterNomenOptions(q) {
+    q = (q || '').toLowerCase().trim();
+    const filtered = !q ? nomenTypes : nomenTypes.filter(function (tp) {
+        return (tp.code_type || '').toLowerCase().indexOf(q) !== -1
+            || (tp.nom || '').toLowerCase().indexOf(q) !== -1;
+    });
+    renderNomenOptions(filtered);
+}
+
+document.addEventListener('click', function (e) {
+    const el = document.getElementById('nomenCustomSelect');
+    if (el && !el.contains(e.target)) el.classList.remove('open');
+});
+
+window.populateCodeNomenSelect = populateCodeNomenSelect;
+window.toggleNomenDropdown = toggleNomenDropdown;
+window.selectNomenOption = selectNomenOption;
+window.filterNomenOptions = filterNomenOptions;
+
+populateCodeNomenSelect();
 
     let placementMode = null;
     let movePanneauId = null;
@@ -2132,13 +2389,21 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('formPanneauMethod').value = 'POST';
         form.reset();
 
-        /* ✅ Nettoyer l'option "actuelle" résiduelle + reset du select */
-        const selectCode = document.getElementById('p_code_nomen');
-        if (selectCode) {
-            const oldOpt = selectCode.querySelector('option[data-current="1"]');
-            if (oldOpt) oldOpt.remove();
-            selectCode.value = '';
-        }
+      /* ✅ Reset custom select code_nomen */
+const hiddenCode = document.getElementById('p_code_nomen_hidden');
+if (hiddenCode) hiddenCode.value = '';
+
+const display = document.getElementById('nomenSelectedDisplay');
+if (display) {
+    display.innerHTML = '<div class="nomen-option">' +
+        '<div class="nomen-option__svg"><i class="fa-solid fa-sign-hanging"></i></div>' +
+        '<div class="nomen-option__text"><div class="nomen-option__code" style="color:#94A3B8;">— Non renseigné —</div></div>' +
+    '</div>';
+}
+
+document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
+    o.classList.remove('active');
+});
 
         document.getElementById('p_lat').value = lat.toFixed(7);
         document.getElementById('p_lng').value = lng.toFixed(7);
@@ -2167,31 +2432,28 @@ document.addEventListener('DOMContentLoaded', function () {
         form.action = '/carte/panneau/' + id;
         document.getElementById('formPanneauMethod').value = 'PUT';
 
-        /* ✅ GESTION DU SELECT code_nomen */
-        const selectCode = document.getElementById('p_code_nomen');
-        if (selectCode) {
-            // 1. Nettoyer une éventuelle ancienne option "actuelle"
-            const oldOpt = selectCode.querySelector('option[data-current="1"]');
-            if (oldOpt) oldOpt.remove();
+     /* ✅ Code nomenclature (custom select) */
+const hiddenCode = document.getElementById('p_code_nomen_hidden');
+const codeActuel = p.code_nomen || '';
+if (hiddenCode) hiddenCode.value = codeActuel;
 
-            // 2. Vérifier si le code actuel existe dans la liste
-            const codeActuel = p.code_nomen || '';
-            const existeDeja = Array.from(selectCode.options).some(function (o) {
-                return o.value === codeActuel;
-            });
+const display = document.getElementById('nomenSelectedDisplay');
+if (display) {
+    if (!codeActuel) {
+        display.innerHTML = '<div class="nomen-option">' +
+            '<div class="nomen-option__svg"><i class="fa-solid fa-sign-hanging"></i></div>' +
+            '<div class="nomen-option__text"><div class="nomen-option__code" style="color:#94A3B8;">— Non renseigné —</div></div>' +
+        '</div>';
+    } else {
+        const tpExiste = nomenTypes.find(function (t) { return t.code_type === codeActuel; });
+        const tp = tpExiste || { code_type: codeActuel, nom: p.type_nom || p.name || '', obsolete: true };
+        display.innerHTML = buildNomenOptionHtml(tp, { selected: true, obsolete: !tpExiste });
+    }
+}
 
-            // 3. Ajouter l'option "actuelle" si absente de la liste
-            if (codeActuel && !existeDeja) {
-                const opt = document.createElement('option');
-                opt.value = codeActuel;
-                opt.textContent = codeActuel + ' (actuel)';
-                opt.dataset.current = '1';
-                selectCode.insertBefore(opt, selectCode.options[1] || null);
-            }
-
-            // 4. Sélectionner la valeur
-            selectCode.value = codeActuel;
-        }
+document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
+    o.classList.toggle('active', o.dataset.value === codeActuel);
+});
 
         /* Mapping des autres champs (sans code_nomen) */
         const map = {
