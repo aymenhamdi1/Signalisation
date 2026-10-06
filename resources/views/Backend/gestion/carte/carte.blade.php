@@ -895,6 +895,135 @@
     }
 }
 </style>
+<!-- Select2 -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+    /* Style Select2 personnalisé pour matcher le design */
+    .select2-container--default .select2-selection--single {
+        height: 38px !important;
+        border: 1.5px solid #E2E8F0 !important;
+        border-radius: 8px !important;
+        padding: 4px 8px !important;
+        background: #fff !important;
+        transition: all 0.15s ease;
+    }
+    .select2-container--default .select2-selection--single:focus,
+    .select2-container--default.select2-container--focus .select2-selection--single {
+        border-color: #2563EB !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+        outline: none !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 28px !important;
+        padding-left: 0 !important;
+        color: #0F172A !important;
+        font-size: 0.85rem;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 36px !important;
+        right: 8px !important;
+    }
+    .select2-dropdown {
+        border: 1.5px solid #E2E8F0 !important;
+        border-radius: 10px !important;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15) !important;
+        overflow: hidden;
+        font-family: 'Inter', sans-serif;
+    }
+    .select2-container--default .select2-search--dropdown .select2-search__field {
+        border: 1.5px solid #E2E8F0 !important;
+        border-radius: 8px !important;
+        padding: 8px 12px !important;
+        font-size: 0.85rem;
+        outline: none;
+        font-family: 'Inter', sans-serif;
+    }
+    .select2-container--default .select2-search--dropdown .select2-search__field:focus {
+        border-color: #2563EB !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+    }
+    .select2-results__option {
+        padding: 0 !important;
+    }
+    .select2-results__option[aria-selected="true"] {
+        background: #EFF6FF !important;
+        color: #1E40AF !important;
+    }
+    .select2-results__option--highlighted[aria-selected] {
+        background: #EFF6FF !important;
+        color: #1E40AF !important;
+    }
+
+    /* Option custom avec SVG */
+    .nomen-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+    }
+    .nomen-option__svg {
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+        flex-shrink: 0;
+        background: #F8FAFC;
+        border: 1px solid #E2E8F0;
+        border-radius: 6px;
+        padding: 3px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .nomen-option__svg img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+    .nomen-option__svg i {
+        color: #CBD5E1;
+        font-size: 14px;
+    }
+    .nomen-option__text {
+        flex: 1;
+        min-width: 0;
+    }
+    .nomen-option__code {
+        font-weight: 800;
+        color: #1E40AF;
+        font-size: 0.85rem;
+        line-height: 1.2;
+    }
+    .nomen-option__name {
+        font-size: 0.72rem;
+        color: #64748B;
+        line-height: 1.3;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .nomen-option__name.obsolete {
+        color: #EA580C;
+        font-style: italic;
+    }
+    .nomen-option--selected .nomen-option__svg {
+        border-color: #2563EB;
+    }
+    .nomen-option--selected .nomen-option__code {
+        color: #1E40AF;
+    }
+
+    /* Aperçu dans la barre de sélection (rendu fermé) */
+    .select2-selection__rendered .nomen-option {
+        padding: 0;
+    }
+    .select2-selection__rendered .nomen-option__svg {
+        width: 24px;
+        height: 24px;
+    }
+    .select2-selection__rendered .nomen-option__name {
+        display: none;
+    }
+</style>
 </head>
 <body>
 
@@ -1565,33 +1694,104 @@ document.addEventListener('DOMContentLoaded', function () {
     /* =========================================================
        ✅ PEUPLEMENT DU SELECT "CODE NOMENCLATURE"
        ========================================================= */
-    function populateCodeNomenSelect() {
-        const select = document.getElementById('p_code_nomen');
-        if (!select) {
-            console.warn('⚠️ #p_code_nomen introuvable');
-            return;
-        }
+    /* =========================================================
+   ✅ PEUPLEMENT DU SELECT "CODE NOMENCLATURE" (avec Select2 + SVG)
+   ========================================================= */
+function buildNomenOptionHtml(tp, opts) {
+    opts = opts || {};
+    const isSelected = !!opts.selected;
+    const isObsolete = !!opts.obsolete;
 
-        const types = (window.__listes && window.__listes.types_panneaux) || [];
+    const svgUrl = tp.code_type ? (BASE_SVG + '/' + tp.code_type + '.svg') : null;
+    const svgContent = svgUrl
+        ? '<img src="' + svgUrl + '" alt="" onerror="this.style.display=\'none\';this.parentElement.innerHTML=\'<i class=&quot;fa-solid fa-sign-hanging&quot;></i>\';">'
+        : '<i class="fa-solid fa-sign-hanging"></i>';
 
-        if (!types.length) {
-            console.warn('⚠️ Aucun type de panneau dans window.__listes.types_panneaux');
-            return;
-        }
+    const nameClass = 'nomen-option__name' + (isObsolete ? ' obsolete' : '');
+    const nameText  = isObsolete ? 'Code obsolète — ' + (tp.nom || 'non listé') : (tp.nom || '');
 
-        const fragment = document.createDocumentFragment();
-        types.forEach(function (tp) {
-            const opt = document.createElement('option');
-            opt.value = tp.code_type;
-            opt.textContent = tp.code_type + ' — ' + (tp.nom || '');
-            fragment.appendChild(opt);
-        });
+    return '<div class="nomen-option' + (isSelected ? ' nomen-option--selected' : '') + '">' +
+        '<div class="nomen-option__svg">' + svgContent + '</div>' +
+        '<div class="nomen-option__text">' +
+            '<div class="nomen-option__code">' + tp.code_type + (isObsolete ? ' (actuel)' : '') + '</div>' +
+            '<div class="' + nameClass + '">' + nameText + '</div>' +
+        '</div>' +
+    '</div>';
+}
 
-        select.appendChild(fragment);
-        console.log('✅ Select code_nomen peuplé avec', types.length, 'options');
+function populateCodeNomenSelect() {
+    const select = document.getElementById('p_code_nomen');
+    if (!select) {
+        console.warn('⚠️ #p_code_nomen introuvable');
+        return;
     }
 
-    populateCodeNomenSelect();
+    const types = (window.__listes && window.__listes.types_panneaux) || [];
+
+    if (!types.length) {
+        console.warn('⚠️ Aucun type de panneau dans window.__listes.types_panneaux');
+        return;
+    }
+
+    /* 1. Construire les options HTML natives AVEC data-svg pour Select2 */
+    select.innerHTML = '<option value="">— Non renseigné —</option>';
+    const fragment = document.createDocumentFragment();
+
+    types.forEach(function (tp) {
+        const opt = document.createElement('option');
+        opt.value = tp.code_type;
+        opt.dataset.nom = tp.nom || '';
+        opt.dataset.categorie = tp.categorie || '';
+        opt.dataset.svg = tp.code_type ? (BASE_SVG + '/' + tp.code_type + '.svg') : '';
+        // Le contenu texte sert de fallback si Select2 n'est pas dispo
+        opt.textContent = tp.code_type + ' — ' + (tp.nom || '');
+        fragment.appendChild(opt);
+    });
+
+    select.appendChild(fragment);
+    console.log('✅ Select code_nomen peuplé avec', types.length, 'options');
+
+    /* 2. Initialiser Select2 avec template custom */
+    if (typeof jQuery !== 'undefined' && jQuery.fn.select2) {
+        jQuery(select).select2({
+            width: '100%',
+            placeholder: '— Sélectionner un code —',
+            allowClear: true,
+            templateResult: function (state) {
+                if (!state.id) return state.text; // placeholder
+                const code = state.element ? state.element.value : state.id;
+                const nom  = state.element ? (state.element.dataset.nom || '') : '';
+                const isObsolete = state.element && state.element.dataset.current === '1';
+
+                return jQuery(buildNomenOptionHtml(
+                    { code_type: code, nom: nom },
+                    { selected: state.selected, obsolete: isObsolete }
+                ));
+            },
+            templateSelection: function (state) {
+                if (!state.id) return state.text;
+                const code = state.element ? state.element.value : state.id;
+                const nom  = state.element ? (state.element.dataset.nom || '') : '';
+                return jQuery(buildNomenOptionHtml(
+                    { code_type: code, nom: nom },
+                    { selected: true }
+                ));
+            },
+            escapeMarkup: function (m) { return m; } // autoriser le HTML
+        });
+
+        // Écouter le changement pour rafraîchir les libellés si besoin
+        jQuery(select).on('select2:select select2:unselect', function () {
+            // Rien à faire ici, le template gère tout
+        });
+
+        console.log('✅ Select2 initialisé sur #p_code_nomen');
+    } else {
+        console.warn('⚠️ jQuery ou Select2 non chargé — select natif utilisé');
+    }
+}
+
+populateCodeNomenSelect();
 
     let placementMode = null;
     let movePanneauId = null;
@@ -2133,12 +2333,18 @@ document.addEventListener('DOMContentLoaded', function () {
         form.reset();
 
         /* ✅ Nettoyer l'option "actuelle" résiduelle + reset du select */
-        const selectCode = document.getElementById('p_code_nomen');
-        if (selectCode) {
-            const oldOpt = selectCode.querySelector('option[data-current="1"]');
-            if (oldOpt) oldOpt.remove();
-            selectCode.value = '';
-        }
+    /* ✅ Nettoyer l'option "actuelle" + reset du select */
+const selectCode = document.getElementById('p_code_nomen');
+if (selectCode) {
+    const oldOpt = selectCode.querySelector('option[data-current="1"]');
+    if (oldOpt) oldOpt.remove();
+    selectCode.value = '';
+
+    // Rafraîchir Select2 (si actif)
+    if (typeof jQuery !== 'undefined' && jQuery.fn.select2 && jQuery(selectCode).data('select2')) {
+        jQuery(selectCode).trigger('change.select2');
+    }
+}
 
         document.getElementById('p_lat').value = lat.toFixed(7);
         document.getElementById('p_lng').value = lng.toFixed(7);
@@ -2168,30 +2374,38 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('formPanneauMethod').value = 'PUT';
 
         /* ✅ GESTION DU SELECT code_nomen */
-        const selectCode = document.getElementById('p_code_nomen');
-        if (selectCode) {
-            // 1. Nettoyer une éventuelle ancienne option "actuelle"
-            const oldOpt = selectCode.querySelector('option[data-current="1"]');
-            if (oldOpt) oldOpt.remove();
+        /* ✅ GESTION DU SELECT code_nomen (compatible Select2) */
+const selectCode = document.getElementById('p_code_nomen');
+if (selectCode) {
+    // 1. Nettoyer une éventuelle ancienne option "actuelle"
+    const oldOpt = selectCode.querySelector('option[data-current="1"]');
+    if (oldOpt) oldOpt.remove();
 
-            // 2. Vérifier si le code actuel existe dans la liste
-            const codeActuel = p.code_nomen || '';
-            const existeDeja = Array.from(selectCode.options).some(function (o) {
-                return o.value === codeActuel;
-            });
+    // 2. Vérifier si le code actuel existe dans la liste
+    const codeActuel = p.code_nomen || '';
+    const existeDeja = Array.from(selectCode.options).some(function (o) {
+        return o.value === codeActuel;
+    });
 
-            // 3. Ajouter l'option "actuelle" si absente de la liste
-            if (codeActuel && !existeDeja) {
-                const opt = document.createElement('option');
-                opt.value = codeActuel;
-                opt.textContent = codeActuel + ' (actuel)';
-                opt.dataset.current = '1';
-                selectCode.insertBefore(opt, selectCode.options[1] || null);
-            }
+    // 3. Ajouter l'option "actuelle" si absente
+    if (codeActuel && !existeDeja) {
+        const opt = document.createElement('option');
+        opt.value = codeActuel;
+        opt.dataset.current = '1';
+        opt.dataset.nom = p.type_nom || p.name || 'Code obsolète';
+        opt.dataset.svg = BASE_SVG + '/' + codeActuel + '.svg';
+        opt.textContent = codeActuel + ' (actuel)';
+        selectCode.insertBefore(opt, selectCode.options[1] || null);
+    }
 
-            // 4. Sélectionner la valeur
-            selectCode.value = codeActuel;
-        }
+    // 4. Sélectionner la valeur
+    selectCode.value = codeActuel;
+
+    // 5. Rafraîchir Select2 (si actif)
+    if (typeof jQuery !== 'undefined' && jQuery.fn.select2 && jQuery(selectCode).data('select2')) {
+        jQuery(selectCode).trigger('change.select2');
+    }
+}
 
         /* Mapping des autres champs (sans code_nomen) */
         const map = {
@@ -2990,6 +3204,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 </script>
-
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </body>
 </html>
