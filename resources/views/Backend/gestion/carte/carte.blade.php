@@ -1821,10 +1821,23 @@ function selectNomenOption(value, el) {
         }
     }
 
+    /* ✅ AUTO-REMPLISSAGE DU CHAMP "NOM" */
+    const nomInput = document.getElementById('p_name');
+    if (nomInput) {
+        if (!value) {
+            nomInput.value = '';
+        } else {
+            const tp = nomenTypes.find(function (t) { return t.code_type === value; });
+            nomInput.value = tp ? (tp.nom || '') : '';
+        }
+    }
+
+    /* ✅ Marquer comme actif */
     document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
         o.classList.toggle('active', o.dataset.value === value);
     });
 
+    /* ✅ Fermer le dropdown */
     const el2 = document.getElementById('nomenCustomSelect');
     if (el2) el2.classList.remove('open');
 }
