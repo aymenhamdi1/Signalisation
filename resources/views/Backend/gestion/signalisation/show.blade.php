@@ -354,9 +354,7 @@
     .photo-preview-item { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 1px solid #E2E8F0; }
     .photo-preview-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-    /* =========================================================
-       LIGHTBOX PHOTOS PREMIUM
-    ========================================================= */
+    /* LIGHTBOX */
     .photo-lightbox {
         position: fixed; inset: 0;
         background: rgba(10, 15, 30, 0.96);
@@ -594,35 +592,16 @@
 </style>
 
 {{-- =========================================================
-     DONNÉES PHOTOS — clés normalisées en STRING pour cohérence
+     ✅ DONNÉES PHOTOS — directement depuis le contrôleur
 ========================================================= --}}
 <script>
-window.__allPhotosByObs = {
-    @php
-        $photosByObsJs = [];
-        foreach ($photosParObs as $idObs => $photoList) {
-            $list = is_array($photoList) ? $photoList : $photoList->all();
-            // ✅ FORCER LA CLÉ EN STRING pour éviter les décalages
-            $photosByObsJs[(string) $idObs] = array_map(function($p) {
-                return [
-                    'id'  => $p->id_photo ?? ($p->id ?? ($p->id_0 ?? null)),
-                    'url' => asset('Backend/assets/photos/' . $p->chemin),
-                    'nom' => $p->nom_fichier ?? ('photo-' . ($p->id_photo ?? '')),
-                ];
-            }, $list);
-        }
-    @endphp
-    @json($photosByObsJs)
-};
-
-window.__typesPanneaux = @json($listes['types_panneaux'] ?? []);
-window.__baseSvg       = "{{ asset('Backend/assets/SVG') }}";
+window.__allPhotosByObs = @json($photosByObsJs ?? []);
+window.__typesPanneaux  = @json($listes['types_panneaux'] ?? []);
+window.__baseSvg        = "{{ asset('Backend/assets/SVG') }}";
 window.__urlDeletePhoto = "{{ url('signalisation/photos') }}";
 
-/* ✅ DEBUG — Vérifiez dans la console */
-console.log('📋 Types panneaux:', window.__typesPanneaux.length);
-console.log('📁 Base SVG:', window.__baseSvg);
-console.log('📸 Clés photosByObs:', Object.keys(window.__allPhotosByObs));
+/* ✅ DEBUG console */
+console.log('📸 JS — Clés photosByObs:', Object.keys(window.__allPhotosByObs));
 Object.keys(window.__allPhotosByObs).forEach(function(k) {
     console.log('   → id_obs = ' + k + ' : ' + window.__allPhotosByObs[k].length + ' photo(s)');
 });
@@ -1030,17 +1009,12 @@ Object.keys(window.__allPhotosByObs).forEach(function(k) {
                                     str_contains($oEtat, 'masqu')  => 'masque',
                                     default                        => 'aucun',
                                 };
-                                $photos = $photosParObs[$obs->id_obs] ?? [];
-                                $photosArr = is_array($photos) ? $photos : $photos->all();
 
-                                $obsPhotosData = array_map(function($p) {
-                                    return [
-                                        'id'  => $p->id_photo ?? ($p->id ?? ($p->id_0 ?? null)),
-                                        'url' => asset('Backend/assets/photos/' . $p->chemin),
-                                        'nom' => $p->nom_fichier ?? ('photo-' . ($p->id_photo ?? '')),
-                                    ];
-                                }, $photosArr);
-                                $obsPhotosJson = json_encode(array_values($obsPhotosData));
+                                // Utiliser directement $photosByObsJs pour cohérence
+                                $obsPhotosData = $photosByObsJs[(string) $obs->id_obs] ?? [];
+                                $obsPhotosJson = json_encode($obsPhotosData);
+                                $photosArr = $photosParObs[(string) $obs->id_obs] ?? [];
+                                $photosArr = is_array($photosArr) ? $photosArr : $photosArr->all();
                             @endphp
 
                             <tr>
@@ -1700,7 +1674,6 @@ Object.keys(window.__allPhotosByObs).forEach(function(k) {
                         </div>
 
                         <div class="tab-pane fade" id="edit-tab-photos">
-
                             <div style="margin-bottom: 22px;">
                                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
                                     <i class="fa-solid fa-images" style="color:#2563EB;"></i>
@@ -1850,11 +1823,9 @@ Object.keys(window.__allPhotosByObs).forEach(function(k) {
             <button type="button" class="lb-btn" id="lbDownloadBtn" title="Télécharger">
                 <i class="fa-solid fa-download"></i>
             </button>
-
             <button type="button" class="lb-btn lb-delete" id="lbDeleteBtn" title="Supprimer cette photo (Suppr)">
                 <i class="fa-solid fa-trash"></i>
             </button>
-
             <button type="button" class="lb-btn lb-close" id="lbCloseBtn" title="Fermer (Échap)">
                 <i class="fa-solid fa-xmark"></i>
             </button>
@@ -2070,7 +2041,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     /* =========================================================
-       CUSTOM SELECT AVEC SVG — CODE NOMENCLATURE
+       CUSTOM SELECT AVEC SVG
     ========================================================= */
     const nomenTypes = window.__typesPanneaux || [];
     const BASE_SVG   = window.__baseSvg || '';
@@ -2258,7 +2229,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     /* =========================================================
-       LIGHTBOX PHOTOS — avec suppression
+       LIGHTBOX PHOTOS
     ========================================================= */
     let lbPhotos  = [];
     let lbCurrent = 0;
@@ -2284,11 +2255,6 @@ document.addEventListener('DOMContentLoaded', function () {
         document.body.style.overflow = 'hidden';
 
         renderLightbox();
-    };
-
-    window.openLightbox = function(idObs, startIndex = 0) {
-        const photos = (window.__allPhotosByObs || {})[String(idObs)] || [];
-        window.ouvrirPhotos(photos, startIndex);
     };
 
     function renderLightbox() {
@@ -2432,7 +2398,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     /* =========================================================
-       BRANCHEMENTS DES BOUTONS LIGHTBOX
+       BRANCHEMENTS LIGHTBOX
     ========================================================= */
     document.getElementById('lbCloseBtn')?.addEventListener('click', function(e) {
         e.stopPropagation();
@@ -2634,7 +2600,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /* =========================================================
-       MODALE ÉDITION OBSERVATION — CHARGEMENT ROBUSTE DES PHOTOS
+       MODALE ÉDITION OBSERVATION — CHARGEMENT PHOTOS
     ========================================================= */
     const modalEditObs = document.getElementById('modalEditObservation');
     let currentEditObsId = null;
@@ -2657,8 +2623,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             currentEditObsId = idObs;
 
-            console.log('🔍 Ouverture modale édition — idObs reçu:', idObs, '(type: ' + typeof idObs + ')');
-
             document.getElementById('edit_etat').value      = etat || '';
             document.getElementById('edit_classe').value    = classe || '';
             document.getElementById('edit_num_agrem').value = numAgrem || '';
@@ -2680,35 +2644,24 @@ document.addEventListener('DOMContentLoaded', function () {
             const form = document.getElementById('formEditObservation');
             form.action = '/signalisation/observation/' + idObs;
 
-            /* ✅✅✅ CHARGEMENT ROBUSTE DES PHOTOS ✅✅✅ */
+            /* ✅ CHARGEMENT PHOTOS */
             const allPhotos = window.__allPhotosByObs || {};
             const keyStr = String(idObs);
-            const keyNum = Number(idObs);
 
-            console.log('🔑 Recherche avec clés:', keyStr, '/', keyNum);
-            console.log('📚 Toutes les clés disponibles:', Object.keys(allPhotos));
-
-            // Tentative 1 : par string
             let photosForObs = allPhotos[keyStr];
 
-            // Tentative 2 : par number
-            if (!photosForObs) photosForObs = allPhotos[keyNum];
-
-            // Tentative 3 : recherche manuelle (fallback extrême)
             if (!photosForObs) {
                 for (const k of Object.keys(allPhotos)) {
-                    if (String(k) === keyStr || Number(k) === keyNum) {
+                    if (String(k) === keyStr) {
                         photosForObs = allPhotos[k];
-                        console.log('✅ Trouvé via clé alternative:', k);
                         break;
                     }
                 }
             }
 
-            // Normalisation finale
             currentEditPhotos = Array.isArray(photosForObs) ? photosForObs : [];
 
-            console.log('📸 Photos trouvées:', currentEditPhotos.length, currentEditPhotos);
+            console.log('🔍 idObs=' + idObs + ' | Photos trouvées: ' + currentEditPhotos.length);
 
             renderEditExistingPhotos();
             clearEditNewPhotos();
@@ -2721,7 +2674,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    /* ✅ Affichage des photos existantes avec bouton supprimer */
+    /* ✅ Affichage des photos existantes */
     function renderEditExistingPhotos() {
         const grid = document.getElementById('editExistingPhotosGrid');
         const noMsg = document.getElementById('editNoPhotosMsg');
@@ -2788,7 +2741,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    /* ✅ Supprimer une photo existante via AJAX */
+    /* ✅ Supprimer une photo existante */
     function supprimerPhotoExistante(photoId, element) {
         if (!confirm('Supprimer cette photo ?\nCette action est irréversible.')) return;
 
@@ -2847,7 +2800,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    /* ✅ Preview des nouvelles photos à ajouter */
+    /* ✅ Preview des nouvelles photos */
     window.previewEditPhotos = function(input) {
         const container = document.getElementById('editNewPhotosPreviewGrid');
         if (!container) return;
@@ -2886,7 +2839,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     };
 
-    /* ✅ Vider le preview des nouvelles photos */
+    /* ✅ Vider preview */
     function clearEditNewPhotos() {
         const cameraInput  = document.getElementById('editObsPhotosCamera');
         const galleryInput = document.getElementById('editObsPhotosGallery');
@@ -2897,7 +2850,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (container)    container.innerHTML = '';
     }
 
-    /* ✅ Toast discret dans la modale */
+    /* ✅ Toast */
     function showEditObsToast(msg, type) {
         const box = document.getElementById('editObsSuccess');
         if (!box) return;
@@ -2908,7 +2861,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /* =========================================================
-       MODIFIER OBSERVATION : SOUMISSION (avec photos)
+       MODIFIER OBSERVATION : SOUMISSION
     ========================================================= */
     const formEditObs = document.getElementById('formEditObservation');
     if (formEditObs) {
@@ -3091,65 +3044,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 </script>
-{{-- ✅ DEBUG TEMPORAIRE --}}
-<div style="position:fixed; bottom:10px; right:10px; background:#000; color:#0f0; padding:14px; z-index:99999; font-family:monospace; font-size:11px; max-width:500px; max-height:400px; overflow:auto; border:2px solid #0f0; border-radius:8px;">
-    <strong style="color:#ff0;">🔍 DEBUG photosParObs</strong><br><br>
-    
-    @if (empty($photosParObs))
-        <span style="color:#f00;">❌ $photosParObs est VIDE !</span>
-    @else
-        <span style="color:#0f0;">✅ $photosParObs contient {{ count($photosParObs) }} clé(s)</span><br><br>
-        @foreach ($photosParObs as $key => $list)
-            @php
-                $listCount = is_array($list) ? count($list) : $list->count();
-            @endphp
-            <div style="color:#0ff;">
-                • id_obs = <strong>{{ $key }}</strong> 
-                (type: {{ gettype($key) }}) 
-                → <strong>{{ $listCount }}</strong> photo(s)
-            </div>
-        @endforeach
-    @endif
-    
-    <hr style="border-color:#0f0;">
-    
-    <strong style="color:#ff0;">🔍 DEBUG observations</strong><br>
-    @foreach ($observations as $obs)
-        <div style="color:#0ff;">
-            • id_obs = <strong>{{ $obs->id_obs }}</strong> 
-            (type: {{ gettype($obs->id_obs) }})
-            | date: {{ $obs->date_obs }}
-        </div>
-    @endforeach
-    
-    <hr style="border-color:#0f0;">
-    
-    <strong style="color:#ff0;">🔍 DEBUG HTML data-id-obs</strong><br>
-    @foreach ($observations as $obs)
-        <div style="color:#0ff;">
-            • Bouton ✏️ → data-id-obs="<strong>{{ $obs->id_obs }}</strong>"
-        </div>
-    @endforeach
-    
-    <hr style="border-color:#0f0;">
-    
-    <strong style="color:#ff0;">🔍 DEBUG JS (window.__allPhotosByObs)</strong><br>
-    <div id="debug-js-output" style="color:#0ff;">Chargement...</div>
-</div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const box = document.getElementById('debug-js-output');
-    if (!box) return;
-    
-    const all = window.__allPhotosByObs || {};
-    const keys = Object.keys(all);
-    
-    let html = '✅ ' + keys.length + ' clé(s) côté JS<br>';
-    keys.forEach(k => {
-        html += '• "' + k + '" (type: ' + typeof k + ') → ' + (all[k]?.length || 0) + ' photo(s)<br>';
-    });
-    box.innerHTML = html;
-});
-</script>
 @endsection
