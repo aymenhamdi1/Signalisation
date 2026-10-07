@@ -458,45 +458,21 @@
     @keyframes lbImageIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
     .lb-img.animate { animation: lbImageIn 0.3s ease; }
 
-    /* =========================================================
-       PHOTOS DANS MODALE ÉDITION OBSERVATION
-    ========================================================= */
+    /* PHOTOS DANS MODALE ÉDITION */
     .edit-photo-item {
-        position: relative;
-        aspect-ratio: 1;
-        border-radius: 8px;
-        overflow: hidden;
-        border: 1.5px solid #E2E8F0;
-        background: #fff;
+        position: relative; aspect-ratio: 1; border-radius: 8px;
+        overflow: hidden; border: 1.5px solid #E2E8F0; background: #fff;
         transition: all 0.2s ease;
     }
-    .edit-photo-item:hover {
-        border-color: #2563EB;
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
-    }
-    .edit-photo-item img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-        cursor: zoom-in;
-    }
+    .edit-photo-item:hover { border-color: #2563EB; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15); }
+    .edit-photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; cursor: zoom-in; }
     .edit-photo-delete {
-        position: absolute;
-        top: 4px;
-        right: 4px;
-        width: 26px;
-        height: 26px;
-        border-radius: 50%;
-        background: rgba(220, 38, 38, 0.95);
-        color: #fff;
-        border: 1.5px solid #fff;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.7rem;
-        box-shadow: 0 2px 6px rgba(220, 38, 38, 0.4);
+        position: absolute; top: 4px; right: 4px;
+        width: 26px; height: 26px; border-radius: 50%;
+        background: rgba(220, 38, 38, 0.95); color: #fff;
+        border: 1.5px solid #fff; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.7rem; box-shadow: 0 2px 6px rgba(220, 38, 38, 0.4);
         transition: transform 0.15s ease;
     }
     .edit-photo-delete:hover { transform: scale(1.15); background: #DC2626; }
@@ -618,7 +594,7 @@
 </style>
 
 {{-- =========================================================
-     DONNÉES PHOTOS — enrichies avec id pour la suppression
+     DONNÉES PHOTOS — clés normalisées en STRING pour cohérence
 ========================================================= --}}
 <script>
 window.__allPhotosByObs = {
@@ -626,7 +602,8 @@ window.__allPhotosByObs = {
         $photosByObsJs = [];
         foreach ($photosParObs as $idObs => $photoList) {
             $list = is_array($photoList) ? $photoList : $photoList->all();
-            $photosByObsJs[$idObs] = array_map(function($p) {
+            // ✅ FORCER LA CLÉ EN STRING pour éviter les décalages
+            $photosByObsJs[(string) $idObs] = array_map(function($p) {
                 return [
                     'id'  => $p->id_photo ?? ($p->id ?? ($p->id_0 ?? null)),
                     'url' => asset('Backend/assets/photos/' . $p->chemin),
@@ -642,8 +619,13 @@ window.__typesPanneaux = @json($listes['types_panneaux'] ?? []);
 window.__baseSvg       = "{{ asset('Backend/assets/SVG') }}";
 window.__urlDeletePhoto = "{{ url('signalisation/photos') }}";
 
+/* ✅ DEBUG — Vérifiez dans la console */
 console.log('📋 Types panneaux:', window.__typesPanneaux.length);
 console.log('📁 Base SVG:', window.__baseSvg);
+console.log('📸 Clés photosByObs:', Object.keys(window.__allPhotosByObs));
+Object.keys(window.__allPhotosByObs).forEach(function(k) {
+    console.log('   → id_obs = ' + k + ' : ' + window.__allPhotosByObs[k].length + ' photo(s)');
+});
 </script>
 
 <div class="show-page">
@@ -1653,7 +1635,6 @@ console.log('📁 Base SVG:', window.__baseSvg);
                                 <i class="fa-solid fa-calendar"></i> Dates techniques
                             </button>
                         </li>
-                        {{-- ✅ NOUVEL ONGLET PHOTOS --}}
                         <li class="nav-item">
                             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#edit-tab-photos" type="button">
                                 <i class="fa-solid fa-camera"></i> Photos
@@ -1665,7 +1646,6 @@ console.log('📁 Base SVG:', window.__baseSvg);
 
                     <div class="tab-content">
 
-                        {{-- ===== ONGLET 1 : INSPECTION ===== --}}
                         <div class="tab-pane fade show active" id="edit-tab-insp">
                             <div class="row g-3">
                                 <div class="col-md-6">
@@ -1702,7 +1682,6 @@ console.log('📁 Base SVG:', window.__baseSvg);
                             </div>
                         </div>
 
-                        {{-- ===== ONGLET 2 : DATES ===== --}}
                         <div class="tab-pane fade" id="edit-tab-dates">
                             <div class="row g-3">
                                 <div class="col-md-4">
@@ -1720,10 +1699,8 @@ console.log('📁 Base SVG:', window.__baseSvg);
                             </div>
                         </div>
 
-                        {{-- ===== ONGLET 3 : PHOTOS ===== --}}
                         <div class="tab-pane fade" id="edit-tab-photos">
 
-                            {{-- Section 1 : Photos existantes --}}
                             <div style="margin-bottom: 22px;">
                                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
                                     <i class="fa-solid fa-images" style="color:#2563EB;"></i>
@@ -1745,7 +1722,6 @@ console.log('📁 Base SVG:', window.__baseSvg);
                                 </div>
                             </div>
 
-                            {{-- Section 2 : Ajouter de nouvelles photos --}}
                             <div>
                                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
                                     <i class="fa-solid fa-plus-circle" style="color:#10B981;"></i>
@@ -2311,7 +2287,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     window.openLightbox = function(idObs, startIndex = 0) {
-        const photos = (window.__allPhotosByObs || {})[idObs] || [];
+        const photos = (window.__allPhotosByObs || {})[String(idObs)] || [];
         window.ouvrirPhotos(photos, startIndex);
     };
 
@@ -2658,7 +2634,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /* =========================================================
-       MODALE ÉDITION OBSERVATION — avec photos
+       MODALE ÉDITION OBSERVATION — CHARGEMENT ROBUSTE DES PHOTOS
     ========================================================= */
     const modalEditObs = document.getElementById('modalEditObservation');
     let currentEditObsId = null;
@@ -2681,6 +2657,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             currentEditObsId = idObs;
 
+            console.log('🔍 Ouverture modale édition — idObs reçu:', idObs, '(type: ' + typeof idObs + ')');
+
             document.getElementById('edit_etat').value      = etat || '';
             document.getElementById('edit_classe').value    = classe || '';
             document.getElementById('edit_num_agrem').value = numAgrem || '';
@@ -2702,8 +2680,36 @@ document.addEventListener('DOMContentLoaded', function () {
             const form = document.getElementById('formEditObservation');
             form.action = '/signalisation/observation/' + idObs;
 
-            // ✅ Charger les photos existantes
-            currentEditPhotos = (window.__allPhotosByObs || {})[idObs] || [];
+            /* ✅✅✅ CHARGEMENT ROBUSTE DES PHOTOS ✅✅✅ */
+            const allPhotos = window.__allPhotosByObs || {};
+            const keyStr = String(idObs);
+            const keyNum = Number(idObs);
+
+            console.log('🔑 Recherche avec clés:', keyStr, '/', keyNum);
+            console.log('📚 Toutes les clés disponibles:', Object.keys(allPhotos));
+
+            // Tentative 1 : par string
+            let photosForObs = allPhotos[keyStr];
+
+            // Tentative 2 : par number
+            if (!photosForObs) photosForObs = allPhotos[keyNum];
+
+            // Tentative 3 : recherche manuelle (fallback extrême)
+            if (!photosForObs) {
+                for (const k of Object.keys(allPhotos)) {
+                    if (String(k) === keyStr || Number(k) === keyNum) {
+                        photosForObs = allPhotos[k];
+                        console.log('✅ Trouvé via clé alternative:', k);
+                        break;
+                    }
+                }
+            }
+
+            // Normalisation finale
+            currentEditPhotos = Array.isArray(photosForObs) ? photosForObs : [];
+
+            console.log('📸 Photos trouvées:', currentEditPhotos.length, currentEditPhotos);
+
             renderEditExistingPhotos();
             clearEditNewPhotos();
         });
