@@ -280,6 +280,156 @@
     .form-group-block { margin-bottom: 24px; }
     .form-group-block:last-child { margin-bottom: 0; }
 
+    /* =========================================================
+       ✅ CUSTOM SELECT AVEC SVG — CODE NOMENCLATURE
+       ========================================================= */
+    .nomen-custom-select {
+        position: relative;
+        width: 100%;
+        font-family: 'Inter', sans-serif;
+    }
+    .nomen-custom-select__trigger {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 12px;
+        border: 1.5px solid #E2E8F0;
+        border-radius: 8px;
+        background: #fff;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        min-height: 38px;
+    }
+    .nomen-custom-select__trigger:hover { border-color: #CBD5E1; }
+    .nomen-custom-select.open .nomen-custom-select__trigger {
+        border-color: #2563EB;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .nomen-custom-select__arrow {
+        color: #64748B;
+        font-size: 0.75rem;
+        transition: transform 0.2s ease;
+        flex-shrink: 0;
+        margin-left: 8px;
+    }
+    .nomen-custom-select.open .nomen-custom-select__arrow { transform: rotate(180deg); }
+    .nomen-custom-select__value { flex: 1; min-width: 0; }
+
+    .nomen-custom-select__dropdown {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0;
+        right: 0;
+        background: #fff;
+        border: 1.5px solid #E2E8F0;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
+        z-index: 3000;
+        max-height: 340px;
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    .nomen-custom-select.open .nomen-custom-select__dropdown { display: flex; }
+    .nomen-custom-select__search {
+        position: relative;
+        padding: 8px;
+        border-bottom: 1px solid #F1F5F9;
+        flex-shrink: 0;
+    }
+    .nomen-custom-select__search i {
+        position: absolute;
+        left: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94A3B8;
+        font-size: 0.8rem;
+    }
+    .nomen-custom-select__search input {
+        width: 100%;
+        padding: 8px 12px 8px 32px;
+        border: 1.5px solid #E2E8F0;
+        border-radius: 8px;
+        font-size: 0.82rem;
+        outline: none;
+        font-family: 'Inter', sans-serif;
+        box-sizing: border-box;
+    }
+    .nomen-custom-select__search input:focus {
+        border-color: #2563EB;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .nomen-custom-select__options {
+        overflow-y: auto;
+        max-height: 280px;
+        padding: 4px 0;
+    }
+    .nomen-custom-select__options::-webkit-scrollbar { width: 5px; }
+    .nomen-custom-select__options::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+
+    .nomen-custom-option {
+        cursor: pointer;
+        transition: background 0.15s ease;
+        padding: 0;
+    }
+    .nomen-custom-option:hover { background: #EFF6FF; }
+    .nomen-custom-option.active { background: #EFF6FF; }
+
+    .nomen-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+    }
+    .nomen-option__svg {
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+        background: #F8FAFC;
+        border: 1px solid #E2E8F0;
+        border-radius: 6px;
+        padding: 3px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+    .nomen-option__svg img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        display: block;
+    }
+    .nomen-option__svg i {
+        color: #CBD5E1;
+        font-size: 16px;
+    }
+    .nomen-option__text { flex: 1; min-width: 0; }
+    .nomen-option__code {
+        font-weight: 800;
+        color: #1E40AF;
+        font-size: 0.85rem;
+        line-height: 1.2;
+    }
+    .nomen-option__name {
+        font-size: 0.72rem;
+        color: #64748B;
+        line-height: 1.3;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .nomen-option__name.obsolete { color: #EA580C; font-style: italic; }
+    .nomen-custom-option.active .nomen-option__svg {
+        border-color: #2563EB;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    }
+
+    .nomen-custom-select__trigger .nomen-option { padding: 0; gap: 8px; }
+    .nomen-custom-select__trigger .nomen-option__svg { width: 26px; height: 26px; padding: 2px; }
+    .nomen-custom-select__trigger .nomen-option__name { display: none; }
+    .nomen-custom-select__trigger .nomen-option__code { font-size: 0.82rem; }
+
     /* Photos upload */
     .photo-upload-zone {
         border: 2px dashed #CBD5E1; border-radius: 12px; padding: 24px;
@@ -418,10 +568,8 @@
     .lb-img.animate { animation: lbImageIn 0.3s ease; }
 
     /* =========================================================
-       RESPONSIVE — TABLETTE & SMARTPHONE
+       RESPONSIVE
        ========================================================= */
-
-    /* TABLETTE (≤ 1024px) */
     @media (max-width: 1024px) {
         .show-page { padding: 18px; }
         .show-hero { padding: 22px 24px; gap: 18px; border-radius: 16px; }
@@ -432,11 +580,9 @@
         .modal .tab-content { padding: 20px 20px; }
     }
 
-    /* SMARTPHONE (≤ 768px) */
     @media (max-width: 768px) {
         .show-page { padding: 12px; }
 
-        /* HERO — empilé verticalement */
         .show-hero {
             flex-direction: column;
             align-items: stretch;
@@ -472,7 +618,6 @@
             gap: 6px;
         }
 
-        /* KPI — 2 colonnes */
         .kpi-strip { grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
         .kpi-box { padding: 14px 14px; gap: 10px; border-radius: 12px; }
         .kpi-icon-box { width: 40px; height: 40px; font-size: 1rem; border-radius: 10px; }
@@ -480,21 +625,18 @@
         .kpi-label { font-size: 0.65rem; }
         .kpi-box .badge-etat-lg { font-size: 0.7rem; padding: 5px 10px; }
 
-        /* PANELS */
         .panel { border-radius: 14px; margin-bottom: 14px; }
         .panel-header { padding: 14px 16px; gap: 10px; }
         .panel-title { font-size: 0.88rem; gap: 6px; }
         .panel-body { padding: 16px 16px; }
         .btn-edit-panel { padding: 6px 12px; font-size: 0.72rem; }
 
-        /* INFO BLOCKS */
         .info-grid-3 { grid-template-columns: 1fr; gap: 12px; }
         .info-block { padding: 14px 14px; border-radius: 10px; }
         .info-block-title { font-size: 0.72rem; padding-bottom: 6px; margin-bottom: 10px; }
         .info-label { font-size: 0.66rem; }
         .info-value { font-size: 0.84rem; }
 
-        /* TABLEAU — scroll horizontal */
         .obs-table { font-size: 0.76rem; min-width: 820px; }
         .obs-table th { padding: 10px 10px; font-size: 0.65rem; }
         .obs-table td { padding: 10px 10px; }
@@ -502,11 +644,9 @@
         .obs-photo-thumb { width: 36px; height: 36px; }
         .btn-obs-action { width: 28px; height: 28px; font-size: 0.7rem; }
 
-        /* MAP */
         #map-detail { height: 260px; }
         .map-coords { padding: 10px 16px; font-size: 0.72rem; }
 
-        /* MODALES — plein écran / bottom sheet */
         .modal-dialog { margin: 8px; max-width: calc(100vw - 16px) !important; }
         .modal-dialog.modal-dialog-centered {
             min-height: calc(100% - 16px);
@@ -523,7 +663,6 @@
         .modal-footer { padding: 12px 16px !important; gap: 8px; }
         .modal-footer button { padding: 8px 14px !important; font-size: 0.82rem !important; }
 
-        /* Onglets modale : scroll horizontal */
         .modal .nav-tabs {
             padding: 0 10px;
             overflow-x: auto;
@@ -540,17 +679,14 @@
         .modal .nav-tabs .nav-link i { margin-right: 4px; }
         .modal .tab-content { padding: 16px 16px; }
 
-        /* Sections de formulaire */
         .modal-section-title { font-size: 0.72rem; padding: 8px 12px; margin-bottom: 12px; }
         .modal .form-label { font-size: 0.68rem; }
         .modal .form-control,
         .modal .form-select { font-size: 0.82rem; padding: 8px 10px; }
 
-        /* Upload photos */
         .photo-upload-zone { padding: 18px 14px; }
         .photo-preview-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
 
-        /* LIGHTBOX */
         .lb-topbar { padding: 10px 12px; }
         .lb-btn { width: 36px; height: 36px; font-size: 0.85rem; }
         .lb-counter { font-size: 0.75rem; padding: 5px 10px; }
@@ -562,7 +698,6 @@
         .lb-img.zoomed { transform: scale(1.4); }
     }
 
-    /* TRÈS PETIT (≤ 420px) */
     @media (max-width: 420px) {
         .show-page { padding: 10px; }
         .hero-code { font-size: 1.25rem; }
@@ -581,7 +716,7 @@
 </style>
 
 {{-- =========================================================
-     DONNÉES PHOTOS — DOIT ÊTRE CHARGÉ EN PREMIER
+     DONNÉES PHOTOS
 ========================================================= --}}
 <script>
 window.__allPhotosByObs = {
@@ -595,6 +730,13 @@ window.__allPhotosByObs = {
     @endphp
     @json($photosByObsJs)
 };
+
+/* ✅ Types de panneaux pour le custom select */
+window.__typesPanneaux = @json($listes['types_panneaux'] ?? []);
+window.__baseSvg       = "{{ asset('Backend/assets/SVG') }}";
+
+console.log('📋 Types panneaux:', window.__typesPanneaux.length);
+console.log('📁 Base SVG:', window.__baseSvg);
 </script>
 
 <div class="show-page">
@@ -1039,46 +1181,46 @@ window.__allPhotosByObs = {
 
                                 {{-- PHOTOS --}}
                                 <td>
-    @if (!empty($photos))
-        <div class="obs-photos">
-            @foreach (array_slice($photos, 0, 3) as $idx => $photo)
-                @php
-                    $photoUrl = asset('Backend/assets/photos/' . $photo->chemin);
-                    $obsPhotosUrls = array_map(function($p) {
-                        return asset('Backend/assets/photos/' . $p->chemin);
-                    }, $photos);
-                    $obsPhotosJson = json_encode(array_values($obsPhotosUrls));
-                @endphp
-                <div class="obs-photo-thumb"
-                     onclick='ouvrirPhotos({{ $obsPhotosJson }}, {{ $idx }})'
-                     title="{{ $photo->nom_fichier ?? '' }}">
-                    <img src="{{ $photoUrl }}"
-                         alt="{{ $photo->nom_fichier ?? 'photo' }}"
-                         loading="lazy"
-                         onerror="this.parentElement.classList.add('broken'); this.parentElement.innerHTML='<i class=\'fa-solid fa-image-slash\'></i>';">
-                </div>
-            @endforeach
+                                    @if (!empty($photos))
+                                        <div class="obs-photos">
+                                            @foreach (array_slice($photos, 0, 3) as $idx => $photo)
+                                                @php
+                                                    $photoUrl = asset('Backend/assets/photos/' . $photo->chemin);
+                                                    $obsPhotosUrls = array_map(function($p) {
+                                                        return asset('Backend/assets/photos/' . $p->chemin);
+                                                    }, $photos);
+                                                    $obsPhotosJson = json_encode(array_values($obsPhotosUrls));
+                                                @endphp
+                                                <div class="obs-photo-thumb"
+                                                     onclick='ouvrirPhotos({{ $obsPhotosJson }}, {{ $idx }})'
+                                                     title="{{ $photo->nom_fichier ?? '' }}">
+                                                    <img src="{{ $photoUrl }}"
+                                                         alt="{{ $photo->nom_fichier ?? 'photo' }}"
+                                                         loading="lazy"
+                                                         onerror="this.parentElement.classList.add('broken'); this.parentElement.innerHTML='<i class=\'fa-solid fa-image-slash\'></i>';">
+                                                </div>
+                                            @endforeach
 
-            @if (count($photos) > 3)
-                @php
-                    $obsPhotosUrls = array_map(function($p) {
-                        return asset('Backend/assets/photos/' . $p->chemin);
-                    }, $photos);
-                    $obsPhotosJson = json_encode(array_values($obsPhotosUrls));
-                @endphp
-                <div class="obs-photo-thumb obs-photo-more"
-                     onclick='ouvrirPhotos({{ $obsPhotosJson }}, 0)'
-                     title="Voir toutes les photos">
-                    <span>+{{ count($photos) - 3 }}</span>
-                </div>
-            @endif
-        </div>
-    @else
-        <span style="color:#CBD5E1; font-size:0.75rem;">
-            <i class="fa-regular fa-image"></i> Aucune
-        </span>
-    @endif
-</td>
+                                            @if (count($photos) > 3)
+                                                @php
+                                                    $obsPhotosUrls = array_map(function($p) {
+                                                        return asset('Backend/assets/photos/' . $p->chemin);
+                                                    }, $photos);
+                                                    $obsPhotosJson = json_encode(array_values($obsPhotosUrls));
+                                                @endphp
+                                                <div class="obs-photo-thumb obs-photo-more"
+                                                     onclick='ouvrirPhotos({{ $obsPhotosJson }}, 0)'
+                                                     title="Voir toutes les photos">
+                                                    <span>+{{ count($photos) - 3 }}</span>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <span style="color:#CBD5E1; font-size:0.75rem;">
+                                            <i class="fa-regular fa-image"></i> Aucune
+                                        </span>
+                                    @endif
+                                </td>
 
                                 <td>
                                     <div style="display:flex; gap:6px; justify-content:center;">
@@ -1128,7 +1270,7 @@ window.__allPhotosByObs = {
 </div>
 
 {{-- =========================================================
-     MODALE 1 : ÉDITION DU PANNEAU
+     MODALE 1 : ÉDITION DU PANNEAU — avec custom select
 ========================================================= --}}
 <div class="modal fade" id="modalEditPanneau" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width: 1000px;">
@@ -1180,17 +1322,25 @@ window.__allPhotosByObs = {
                             <div class="row g-3 form-group-block">
                                 <div class="col-md-6">
                                     <label class="form-label">Code nomenclature</label>
-                                    <select name="code_nomen" class="form-select">
-                                        <option value="">— Non renseigné —</option>
-                                        @if (!empty($panneau->code_nomen) && !$listes['types_panneaux']->contains('code_type', $panneau->code_nomen))
-                                            <option value="{{ $panneau->code_nomen }}" selected>{{ $panneau->code_nomen }} (actuel)</option>
-                                        @endif
-                                        @foreach ($listes['types_panneaux'] as $tp)
-                                            <option value="{{ $tp->code_type }}" @selected(($panneau->code_nomen ?? '') === $tp->code_type)>
-                                                {{ $tp->code_type }} — {{ $tp->nom }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                    {{-- ✅ Input hidden qui sera envoyé au serveur --}}
+                                    <input type="hidden" name="code_nomen" id="edit_code_nomen_hidden" value="{{ $panneau->code_nomen ?? '' }}">
+
+                                    {{-- ✅ Custom select avec SVG --}}
+                                    <div class="nomen-custom-select" id="editNomenCustomSelect">
+                                        <div class="nomen-custom-select__trigger" onclick="toggleEditNomenDropdown()">
+                                            <div class="nomen-custom-select__value" id="editNomenSelectedDisplay">
+                                                {{-- Rempli dynamiquement --}}
+                                            </div>
+                                            <i class="fa-solid fa-chevron-down nomen-custom-select__arrow"></i>
+                                        </div>
+                                        <div class="nomen-custom-select__dropdown" id="editNomenDropdown">
+                                            <div class="nomen-custom-select__search">
+                                                <i class="fa-solid fa-magnifying-glass"></i>
+                                                <input type="text" id="editNomenSearch" placeholder="Rechercher code ou nom..." oninput="filterEditNomenOptions(this.value)">
+                                            </div>
+                                            <div class="nomen-custom-select__options" id="editNomenOptionsList"></div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">HC caractère (mm)</label>
@@ -1203,7 +1353,7 @@ window.__allPhotosByObs = {
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Nom</label>
-                                    <input type="text" name="name" class="form-control" value="{{ $panneau->name ?? '' }}">
+                                    <input type="text" name="name" id="edit_name" class="form-control" value="{{ $panneau->name ?? '' }}">
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Dimensions CCTP</label>
@@ -1411,7 +1561,7 @@ window.__allPhotosByObs = {
 </div>
 
 {{-- =========================================================
-     MODALE 2 : NOUVELLE OBSERVATION
+     MODALE 2 : NOUVELLE OBSERVATION — import Android corrigé
 ========================================================= --}}
 <div class="modal fade" id="modalNewObservation" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width: 900px;">
@@ -1511,13 +1661,31 @@ window.__allPhotosByObs = {
                             </div>
                         </div>
 
+                        {{-- ✅ PHOTOS — Import Android corrigé --}}
                         <div class="tab-pane fade" id="new-tab-photos">
-                            <div class="photo-upload-zone" onclick="document.getElementById('newObsPhotos').click();">
-                                <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; color: #2563EB; margin-bottom: 8px; display: block;"></i>
-                                <div style="font-weight: 700; color: #0F172A; margin-bottom: 4px;">Cliquez pour ajouter des photos</div>
-                                <div style="font-size: 0.8rem; color: #64748B;">JPG, PNG, WEBP — max 10 Mo par photo (10 photos max)</div>
-                                <input type="file" id="newObsPhotos" name="photos[]" accept="image/*" multiple onchange="previewPhotos(this, 'photoPreviewNew')">
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:14px;">
+                                {{-- Bouton 1 : Prendre une photo (appareil photo) --}}
+                                <label for="newObsPhotosCamera" class="photo-upload-zone" style="margin:0; cursor:pointer;">
+                                    <i class="fa-solid fa-camera" style="font-size: 1.8rem; color: #10B981; margin-bottom: 8px; display: block;"></i>
+                                    <div style="font-weight: 700; color: #0F172A; margin-bottom: 4px; font-size: 0.85rem;">Prendre une photo</div>
+                                    <div style="font-size: 0.72rem; color: #64748B;">Appareil photo</div>
+                                    <input type="file" id="newObsPhotosCamera" name="photos[]" accept="image/*" capture="environment" multiple onchange="previewPhotos(this, 'photoPreviewNew')">
+                                </label>
+
+                                {{-- Bouton 2 : Choisir depuis la galerie --}}
+                                <label for="newObsPhotosGallery" class="photo-upload-zone" style="margin:0; cursor:pointer;">
+                                    <i class="fa-solid fa-images" style="font-size: 1.8rem; color: #2563EB; margin-bottom: 8px; display: block;"></i>
+                                    <div style="font-weight: 700; color: #0F172A; margin-bottom: 4px; font-size: 0.85rem;">Choisir une photo</div>
+                                    <div style="font-size: 0.72rem; color: #64748B;">Galerie / Fichiers</div>
+                                    <input type="file" id="newObsPhotosGallery" name="photos[]" accept="image/*" multiple onchange="previewPhotos(this, 'photoPreviewNew')">
+                                </label>
                             </div>
+
+                            <div style="font-size: 0.72rem; color: #94A3B8; text-align: center; margin-bottom: 10px;">
+                                <i class="fa-solid fa-circle-info"></i>
+                                JPG, PNG, WEBP — max 10 Mo (10 photos max)
+                            </div>
+
                             <div class="photo-preview-grid" id="photoPreviewNew"></div>
                         </div>
 
@@ -1646,7 +1814,7 @@ window.__allPhotosByObs = {
 </div>
 
 {{-- =========================================================
-     LIGHTBOX PHOTOS (structure HTML)
+     LIGHTBOX PHOTOS
 ========================================================= --}}
 <div class="photo-lightbox" id="photoLightbox" role="dialog" aria-modal="true" aria-label="Visionneuse de photos">
     <div class="lb-topbar">
@@ -1774,7 +1942,6 @@ document.addEventListener('DOMContentLoaded', function () {
     marker.on('click', function () { this.openPopup(); });
     setTimeout(() => marker.openPopup(), 300);
 
-    // Recalcul de taille sur rotation / resize
     window.addEventListener('orientationchange', function () {
         setTimeout(function () { map.invalidateSize(true); }, 300);
     });
@@ -1786,32 +1953,212 @@ document.addEventListener('DOMContentLoaded', function () {
 @endif
 
 {{-- =========================================================
-     SCRIPT PRINCIPAL (lightbox + modales)
+     SCRIPT PRINCIPAL
 ========================================================= --}}
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
     /* =========================================================
-       PREVIEW DES PHOTOS AVANT UPLOAD
+       ✅ CUSTOM SELECT AVEC SVG — CODE NOMENCLATURE (MODALE ÉDITION)
+       ========================================================= */
+    const nomenTypes = window.__typesPanneaux || [];
+    const BASE_SVG   = window.__baseSvg || '';
+
+    function buildNomenOptionHtml(tp, opts) {
+        opts = opts || {};
+        const isSelected = !!opts.selected;
+        const isObsolete = !!opts.obsolete;
+
+        const svgUrl = tp.code_type ? (BASE_SVG + '/' + tp.code_type + '.svg') : null;
+        const svgContent = svgUrl
+            ? '<img src="' + svgUrl + '" alt="" loading="lazy" onerror="this.style.display=\'none\';this.parentElement.innerHTML=\'<i class=&quot;fa-solid fa-sign-hanging&quot;></i>\';">'
+            : '<i class="fa-solid fa-sign-hanging"></i>';
+
+        const nameClass = 'nomen-option__name' + (isObsolete ? ' obsolete' : '');
+        const nameText  = isObsolete ? 'Code obsolète' : (tp.nom || '');
+
+        return '<div class="nomen-option' + (isSelected ? ' nomen-option--selected' : '') + '">' +
+            '<div class="nomen-option__svg">' + svgContent + '</div>' +
+            '<div class="nomen-option__text">' +
+                '<div class="nomen-option__code">' + tp.code_type + (isObsolete ? ' (actuel)' : '') + '</div>' +
+                '<div class="' + nameClass + '">' + nameText + '</div>' +
+            '</div>' +
+        '</div>';
+    }
+
+    function renderEditNomenOptions(types) {
+        const list = document.getElementById('editNomenOptionsList');
+        if (!list) return;
+
+        let html = '<div class="nomen-custom-option" data-value="" onclick="selectEditNomenOption(\'\', this)">' +
+            '<div class="nomen-option">' +
+                '<div class="nomen-option__svg"><i class="fa-solid fa-ban"></i></div>' +
+                '<div class="nomen-option__text">' +
+                    '<div class="nomen-option__code" style="color:#94A3B8;font-weight:600;">— Non renseigné —</div>' +
+                '</div>' +
+            '</div>' +
+        '</div>';
+
+        types.forEach(function (tp) {
+            const safeCode = (tp.code_type || '').replace(/'/g, "\\'");
+            html += '<div class="nomen-custom-option" data-value="' + safeCode + '" onclick="selectEditNomenOption(\'' + safeCode + '\', this)">' +
+                buildNomenOptionHtml(tp, {}) +
+            '</div>';
+        });
+
+        list.innerHTML = html;
+    }
+
+    function initEditNomenDisplay() {
+        const hidden   = document.getElementById('edit_code_nomen_hidden');
+        const display  = document.getElementById('editNomenSelectedDisplay');
+        if (!display) return;
+
+        const codeActuel = hidden ? (hidden.value || '') : '';
+
+        if (!codeActuel) {
+            display.innerHTML = '<div class="nomen-option">' +
+                '<div class="nomen-option__svg"><i class="fa-solid fa-sign-hanging"></i></div>' +
+                '<div class="nomen-option__text"><div class="nomen-option__code" style="color:#94A3B8;">— Non renseigné —</div></div>' +
+            '</div>';
+        } else {
+            const tpExiste = nomenTypes.find(function (t) { return t.code_type === codeActuel; });
+            const tp = tpExiste || { code_type: codeActuel, nom: '{{ $panneau->type_nom ?? $panneau->name ?? "" }}', obsolete: true };
+            display.innerHTML = buildNomenOptionHtml(tp, { selected: true, obsolete: !tpExiste });
+        }
+
+        document.querySelectorAll('#editNomenOptionsList .nomen-custom-option').forEach(function (o) {
+            o.classList.toggle('active', o.dataset.value === codeActuel);
+        });
+    }
+
+    window.toggleEditNomenDropdown = function () {
+        const el = document.getElementById('editNomenCustomSelect');
+        if (!el) return;
+        el.classList.toggle('open');
+        if (el.classList.contains('open')) {
+            const search = document.getElementById('editNomenSearch');
+            if (search) { search.value = ''; renderEditNomenOptions(nomenTypes); setTimeout(function() { search.focus(); }, 50); }
+        }
+    };
+
+    window.selectEditNomenOption = function (value, el) {
+        const hidden = document.getElementById('edit_code_nomen_hidden');
+        if (hidden) hidden.value = value;
+
+        const display = document.getElementById('editNomenSelectedDisplay');
+        if (display) {
+            if (!value) {
+                display.innerHTML = '<div class="nomen-option">' +
+                    '<div class="nomen-option__svg"><i class="fa-solid fa-sign-hanging"></i></div>' +
+                    '<div class="nomen-option__text"><div class="nomen-option__code" style="color:#94A3B8;">— Non renseigné —</div></div>' +
+                '</div>';
+            } else {
+                const tp = nomenTypes.find(function (t) { return t.code_type === value; })
+                        || { code_type: value, nom: '' };
+                display.innerHTML = buildNomenOptionHtml(tp, { selected: true });
+            }
+        }
+
+        /* ✅ Auto-remplissage du champ Nom */
+        const nomInput = document.getElementById('edit_name');
+        if (nomInput) {
+            if (!value) {
+                nomInput.value = '';
+            } else {
+                const tp = nomenTypes.find(function (t) { return t.code_type === value; });
+                nomInput.value = tp ? (tp.nom || '') : '';
+            }
+        }
+
+        document.querySelectorAll('#editNomenOptionsList .nomen-custom-option').forEach(function (o) {
+            o.classList.toggle('active', o.dataset.value === value);
+        });
+
+        const el2 = document.getElementById('editNomenCustomSelect');
+        if (el2) el2.classList.remove('open');
+    };
+
+    window.filterEditNomenOptions = function (q) {
+        q = (q || '').toLowerCase().trim();
+        const filtered = !q ? nomenTypes : nomenTypes.filter(function (tp) {
+            return (tp.code_type || '').toLowerCase().indexOf(q) !== -1
+                || (tp.nom || '').toLowerCase().indexOf(q) !== -1;
+        });
+        renderEditNomenOptions(filtered);
+    };
+
+    document.addEventListener('click', function (e) {
+        const el = document.getElementById('editNomenCustomSelect');
+        if (el && !el.contains(e.target)) el.classList.remove('open');
+    });
+
+    /* Init au chargement */
+    renderEditNomenOptions(nomenTypes);
+    initEditNomenDisplay();
+
+    /* Reset à l'ouverture de la modale d'édition */
+    const modalEditPanneauEl = document.getElementById('modalEditPanneau');
+    if (modalEditPanneauEl) {
+        modalEditPanneauEl.addEventListener('show.bs.modal', function () {
+            renderEditNomenOptions(nomenTypes);
+            initEditNomenDisplay();
+        });
+    }
+
+    /* =========================================================
+       PREVIEW DES PHOTOS AVANT UPLOAD (Android + Desktop)
     ========================================================= */
     window.previewPhotos = function(input, containerId) {
         const container = document.getElementById(containerId);
         if (!container) return;
+
+        /* ✅ Accumuler les photos des 2 inputs (caméra + galerie) */
+        const cameraInput  = document.getElementById('newObsPhotosCamera');
+        const galleryInput = document.getElementById('newObsPhotosGallery');
+
+        let allFiles = [];
+
+        if (cameraInput && cameraInput.files) {
+            Array.from(cameraInput.files).forEach(function (f) { allFiles.push(f); });
+        }
+        if (galleryInput && galleryInput.files) {
+            Array.from(galleryInput.files).forEach(function (f) { allFiles.push(f); });
+        }
+
+        /* Éviter les doublons (nom + taille) */
+        const seen = new Set();
+        const uniqueFiles = [];
+        allFiles.forEach(function (f) {
+            const key = f.name + '|' + f.size + '|' + f.lastModified;
+            if (!seen.has(key)) {
+                seen.add(key);
+                uniqueFiles.push(f);
+            }
+        });
+
         container.innerHTML = '';
 
-        if (input.files && input.files.length > 0) {
-            Array.from(input.files).forEach(function(file) {
-                if (!file.type.startsWith('image/')) return;
+        if (uniqueFiles.length === 0) return;
 
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const div = document.createElement('div');
-                    div.className = 'photo-preview-item';
-                    div.innerHTML = `<img src="${e.target.result}" alt="preview">`;
-                    container.appendChild(div);
-                };
-                reader.readAsDataURL(file);
-            });
+        uniqueFiles.forEach(function(file) {
+            if (!file.type.startsWith('image/')) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const div = document.createElement('div');
+                div.className = 'photo-preview-item';
+                div.innerHTML = '<img src="' + e.target.result + '" alt="preview">';
+                container.appendChild(div);
+            };
+            reader.readAsDataURL(file);
+        });
+
+        /* Compteur */
+        const counter = document.getElementById('photoPreviewCounter');
+        if (counter) {
+            counter.textContent = uniqueFiles.length + ' photo(s) sélectionnée(s)';
+            counter.style.display = uniqueFiles.length > 0 ? 'block' : 'none';
         }
     };
 
@@ -1833,10 +2180,7 @@ document.addEventListener('DOMContentLoaded', function () {
         lbCurrent = Math.max(0, Math.min(startIndex, photos.length - 1));
 
         const lightbox = document.getElementById('photoLightbox');
-        if (!lightbox) {
-            console.error('#photoLightbox introuvable');
-            return;
-        }
+        if (!lightbox) return;
 
         lightbox.classList.add('active');
         document.body.style.overflow = 'hidden';
@@ -1873,7 +2217,7 @@ document.addEventListener('DOMContentLoaded', function () {
         lbPhotos.forEach(function(photoUrl, idx) {
             const thumb = document.createElement('div');
             thumb.className = 'lb-thumb' + (idx === lbCurrent ? ' active' : '');
-            thumb.innerHTML = `<img src="${photoUrl}" alt="Miniature ${idx + 1}" loading="lazy">`;
+            thumb.innerHTML = '<img src="' + photoUrl + '" alt="Miniature ' + (idx + 1) + '" loading="lazy">';
             thumb.onclick = function(e) {
                 e.stopPropagation();
                 lbCurrent = idx;
@@ -1903,7 +2247,6 @@ document.addEventListener('DOMContentLoaded', function () {
         lbCurrent = 0;
     };
 
-    /* Boutons */
     document.getElementById('lbCloseBtn')?.addEventListener('click', function(e) {
         e.stopPropagation();
         closeLightbox();
@@ -1917,14 +2260,12 @@ document.addEventListener('DOMContentLoaded', function () {
         lbNavigate(1);
     });
 
-    /* Zoom */
     document.getElementById('lbZoomBtn')?.addEventListener('click', function(e) {
         e.stopPropagation();
         const img = document.getElementById('lbImage');
         img.classList.toggle('zoomed');
     });
 
-    /* Télécharger */
     document.getElementById('lbDownloadBtn')?.addEventListener('click', function(e) {
         e.stopPropagation();
         const url = lbPhotos[lbCurrent];
@@ -1937,13 +2278,11 @@ document.addEventListener('DOMContentLoaded', function () {
         document.body.removeChild(a);
     });
 
-    /* Clic sur l'image = zoom */
     document.getElementById('lbImage')?.addEventListener('click', function(e) {
         e.stopPropagation();
         this.classList.toggle('zoomed');
     });
 
-    /* Clic sur le fond = fermer */
     document.getElementById('photoLightbox')?.addEventListener('click', function(e) {
         if (e.target === this ||
             e.target.classList.contains('lb-stage') ||
@@ -1952,31 +2291,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    /* Clavier */
     document.addEventListener('keydown', function(e) {
         const lightbox = document.getElementById('photoLightbox');
         if (!lightbox || !lightbox.classList.contains('active')) return;
 
         switch (e.key) {
-            case 'Escape':
-                closeLightbox();
-                break;
-            case 'ArrowLeft':
-                e.preventDefault();
-                lbNavigate(-1);
-                break;
-            case 'ArrowRight':
-                e.preventDefault();
-                lbNavigate(1);
-                break;
-            case 'z':
-            case 'Z':
-                document.getElementById('lbZoomBtn')?.click();
-                break;
+            case 'Escape': closeLightbox(); break;
+            case 'ArrowLeft': e.preventDefault(); lbNavigate(-1); break;
+            case 'ArrowRight': e.preventDefault(); lbNavigate(1); break;
+            case 'z': case 'Z': document.getElementById('lbZoomBtn')?.click(); break;
         }
     });
 
-    /* Swipe mobile */
     (function() {
         let touchStartX = 0;
         let touchEndX = 0;
@@ -2109,7 +2435,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /* =========================================================
-       MODALE ÉDITION OBSERVATION : PRÉ-REMPLIR
+       MODALE ÉDITION OBSERVATION
     ========================================================= */
     const modalEditObs = document.getElementById('modalEditObservation');
     if (modalEditObs) {
@@ -2246,14 +2572,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 </script>
+
 {{-- =========================================================
-     MODALE PHOTO UNIVERSELLE
+     MODALE PHOTO UNIVERSELLE (legacy — peut être supprimée si non utilisée)
 ========================================================= --}}
 <div class="modal fade" id="modalPhotoViewer" tabindex="-1" aria-hidden="true" data-bs-backdrop="true" data-bs-keyboard="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content" style="background: #0F172A; border: none;">
-
-            {{-- Header avec compteur et contrôles --}}
             <div class="modal-header" style="background: rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.1); padding: 12px 20px;">
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <span style="color: #fff; font-weight: 700; font-size: 0.9rem;" id="photoCounter">1 / 1</span>
@@ -2270,52 +2595,35 @@ document.addEventListener('DOMContentLoaded', function () {
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
                 </div>
             </div>
-
-            {{-- Corps avec l'image --}}
             <div class="modal-body" style="padding: 0; position: relative; min-height: 500px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-
-                {{-- Bouton précédent --}}
-                <button type="button" id="btnPrevPhoto"
-                        onclick="naviguerPhoto(-1)"
-                        style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); z-index: 10; width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #fff; font-size: 1.3rem; cursor: pointer; transition: all 0.2s ease;">
+                <button type="button" id="btnPrevPhoto" onclick="naviguerPhoto(-1)"
+                        style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); z-index: 10; width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #fff; font-size: 1.3rem; cursor: pointer;">
                     <i class="fa-solid fa-chevron-left"></i>
                 </button>
-
-                {{-- Image principale --}}
                 <img id="photoViewerImg" src="" alt="Photo"
                      style="max-width: 100%; max-height: 75vh; object-fit: contain; border-radius: 8px; transition: transform 0.3s ease; cursor: pointer;"
-                     onclick="zoomerPhoto()"
-                     onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22300%22%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 fill=%22%2394A3B8%22 font-family=%22sans-serif%22 font-size=%2216%22%3EImage introuvable%3C/text%3E%3C/svg%3E'">
-
-                {{-- Bouton suivant --}}
-                <button type="button" id="btnNextPhoto"
-                        onclick="naviguerPhoto(1)"
-                        style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); z-index: 10; width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #fff; font-size: 1.3rem; cursor: pointer; transition: all 0.2s ease;">
+                     onclick="zoomerPhoto()">
+                <button type="button" id="btnNextPhoto" onclick="naviguerPhoto(1)"
+                        style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); z-index: 10; width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #fff; font-size: 1.3rem; cursor: pointer;">
                     <i class="fa-solid fa-chevron-right"></i>
                 </button>
-
             </div>
-
-            {{-- Footer avec miniatures --}}
             <div class="modal-footer" id="photoThumbsBar"
                  style="background: rgba(255,255,255,0.05); border-top: 1px solid rgba(255,255,255,0.1); padding: 12px 20px; justify-content: center; gap: 8px; overflow-x: auto;">
-                {{-- Miniatures ajoutées dynamiquement --}}
             </div>
-
         </div>
     </div>
 </div>
+
 <script>
 // =========================================================
-// VISIONNEUSE DE PHOTOS — VERSION MODALE BOOTSTRAP
+// VISIONNEUSE DE PHOTOS — VERSION LEGACY
 // =========================================================
 var photosCourantes = [];
 var photoIndex = 0;
 var estZoomee = false;
 
 function ouvrirPhotos(photos, index) {
-    console.log('ouvrirPhotos appelé avec', photos, index);
-
     if (!photos || photos.length === 0) {
         alert('Aucune photo à afficher');
         return;
@@ -2408,28 +2716,6 @@ function telechargerPhoto() {
     a.click();
     document.body.removeChild(a);
 }
-
-document.addEventListener('keydown', function(e) {
-    var modalEl = document.getElementById('modalPhotoViewer');
-    if (!modalEl || !modalEl.classList.contains('show')) return;
-
-    switch (e.key) {
-        case 'ArrowLeft':
-            e.preventDefault();
-            naviguerPhoto(-1);
-            break;
-        case 'ArrowRight':
-            e.preventDefault();
-            naviguerPhoto(1);
-            break;
-        case 'Escape':
-            break;
-        case 'z':
-        case 'Z':
-            zoomerPhoto();
-            break;
-    }
-});
 
 console.log('✅ Visionneuse de photos chargée');
 </script>
