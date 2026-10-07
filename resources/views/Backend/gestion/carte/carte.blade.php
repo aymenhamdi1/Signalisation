@@ -583,12 +583,131 @@
     .btn-coord-gps:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(37,99,235,0.35); color: #fff !important; }
     .btn-coord:disabled { opacity: 0.7; cursor: not-allowed; }
 
+    /* =========================================================
+       ✅ PHOTOS — 2 BOUTONS (CAMÉRA + GALERIE)
+       ========================================================= */
     .photo-upload-zone { border: 2px dashed #CBD5E1; border-radius: 12px; padding: 24px; text-align: center; background: #F8FAFC; cursor: pointer; transition: all 0.2s ease; }
     .photo-upload-zone:hover { border-color: #2563EB; background: #EFF6FF; }
     .photo-upload-zone input[type="file"] { display: none; }
     .photo-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; margin-top: 12px; }
     .photo-preview-item { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 1px solid #E2E8F0; }
     .photo-preview-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    /* =========================================================
+       ✅ USER LOCATION MARKER (Google Maps style)
+       ========================================================= */
+    .user-location-marker {
+        background: transparent !important;
+        border: none !important;
+    }
+    .user-location-marker .pulse-ring {
+        position: absolute;
+        width: 60px; height: 60px;
+        left: -30px; top: -30px;
+        border-radius: 50%;
+        background: rgba(37, 99, 235, 0.25);
+        animation: pulseRing 2s ease-out infinite;
+    }
+    .user-location-marker .pulse-dot {
+        position: absolute;
+        width: 18px; height: 18px;
+        left: -9px; top: -9px;
+        border-radius: 50%;
+        background: #2563EB;
+        border: 3px solid #fff;
+        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.6);
+    }
+    @keyframes pulseRing {
+        0%   { transform: scale(0.5); opacity: 0.8; }
+        100% { transform: scale(1.8); opacity: 0; }
+    }
+
+    /* BANNIÈRE INFO POSITION */
+    .user-location-banner {
+        position: absolute;
+        top: 16px; left: 50%;
+        transform: translateX(-50%);
+        display: none;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18);
+        border: 1px solid #E2E8F0;
+        z-index: 1200;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #0F172A;
+        max-width: calc(100vw - 40px);
+        transition: all 0.3s ease;
+    }
+    .user-location-banner.active { display: flex; }
+    .user-location-banner .loc-dot {
+        width: 10px; height: 10px;
+        border-radius: 50%;
+        background: #2563EB;
+        animation: locDotPulse 1.5s ease infinite;
+        flex-shrink: 0;
+    }
+    @keyframes locDotPulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50%      { opacity: 0.5; transform: scale(1.3); }
+    }
+    .user-location-banner .loc-text { flex: 1; }
+    .user-location-banner .loc-close {
+        width: 26px; height: 26px;
+        border-radius: 6px;
+        background: #F1F5F9;
+        border: none; color: #64748B;
+        cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.75rem;
+        transition: all 0.15s ease;
+        flex-shrink: 0;
+    }
+    .user-location-banner .loc-close:hover { background: #E2E8F0; color: #0F172A; }
+
+    /* BOUTON "MA POSITION" — état loading */
+    .btn-topbar-locate.loading i { animation: spin 1s linear infinite; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    /* BOUTON FLOTTANT RECENTRER */
+    .btn-recenter-map {
+        position: absolute;
+        right: 16px;
+        bottom: 100px;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: #fff;
+        border: 1px solid #E2E8F0;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.18);
+        color: #2563EB;
+        font-size: 1.15rem;
+        cursor: pointer;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .btn-recenter-map:hover {
+        background: #EFF6FF;
+        color: #1E40AF;
+        transform: scale(1.08);
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+    }
+    .btn-recenter-map:active { transform: scale(0.95); }
+    .btn-recenter-map.active {
+        background: linear-gradient(135deg, #2563EB, #1E40AF);
+        color: #fff !important;
+        border-color: transparent;
+    }
 
     /* =========================================================
        RESPONSIVE — TABLETTE (≤ 1024px)
@@ -608,7 +727,6 @@
        ========================================================= */
     @media (max-width: 768px) {
 
-        /* TOPBAR */
         .carte-topbar { flex-direction: column; align-items: stretch; padding: 10px 12px; gap: 8px; }
         .topbar-left { justify-content: flex-start; }
         .topbar-icon { width: 36px; height: 36px; border-radius: 9px; }
@@ -621,13 +739,11 @@
         .btn-topbar { justify-content: center; padding: 8px 6px; font-size: 0.7rem; gap: 4px; }
         .btn-topbar i { font-size: 0.75rem; }
 
-        /* KPI BAR */
         .carte-kpibar { padding: 8px 12px; gap: 6px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
         .carte-kpibar::-webkit-scrollbar { display: none; }
         .kpi-chip { padding: 5px 10px; font-size: 0.7rem; gap: 6px; }
         .kpi-chip .chip-count { font-size: 0.65rem; padding: 1px 6px; }
 
-        /* SLIDE PANEL */
         .slide-panel { width: 100vw !important; max-width: 100vw !important; }
         .slide-header { padding: 14px 16px; }
         .slide-title { font-size: 0.85rem; }
@@ -654,7 +770,6 @@
         .slide-actions { gap: 6px; }
         .btn-slide { padding: 9px 12px; font-size: 0.75rem; border-radius: 8px; }
 
-        /* MODALES */
         .modal-dialog { margin: 0 !important; max-width: 100% !important; width: 100% !important; height: 100% !important; }
         .modal-dialog.modal-dialog-centered { min-height: 100% !important; align-items: stretch !important; }
         .modal-content { border-radius: 0 !important; height: 100% !important; max-height: 100vh !important; display: flex; flex-direction: column; }
@@ -676,7 +791,6 @@
         .btn-coord { width: 100%; justify-content: center; padding: 9px 12px; font-size: 0.78rem; }
         .photo-preview-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
 
-        /* BANDEAU PLACEMENT */
         .placement-banner {
             top: auto;
             bottom: 90px;
@@ -694,12 +808,10 @@
         .placement-banner.active { display: flex; }
         .placement-banner .btn-cancel-placement { flex-shrink: 0; }
 
-        /* POPUP LEAFLET */
         .leaflet-popup-content-wrapper { max-width: calc(100vw - 40px) !important; }
         .leaflet-popup-content { margin: 10px 12px !important; }
         .leaflet-popup { max-width: calc(100vw - 30px); }
 
-        /* FILTRES */
         .filters-panel {
             top: auto;
             bottom: 80px;
@@ -711,9 +823,6 @@
         }
         .filters-panel.open { transform: translateY(0); }
 
-        /* =========================================================
-           LÉGENDE DES ZONES — VERSION MOBILE COMPACTE ET REPLIABLE
-           ========================================================= */
         .zones-legend {
             bottom: 20px;
             left: 12px;
@@ -725,325 +834,161 @@
             border-radius: 10px;
             box-shadow: 0 4px 16px rgba(15, 23, 42, 0.22);
         }
+        .zones-legend:not(.expanded) .zones-legend-body { max-height: 0 !important; padding: 0 !important; overflow: hidden; }
+        .zones-legend.expanded { max-height: 45vh; width: calc(100vw - 24px); max-width: calc(100vw - 24px); }
+        .zones-legend.expanded .zones-legend-body { max-height: 40vh; padding: 4px 0; }
 
-        /* Par défaut repliée sur mobile */
-        .zones-legend:not(.expanded) .zones-legend-body {
-            max-height: 0 !important;
-            padding: 0 !important;
-            overflow: hidden;
-        }
-
-        /* Quand dépliée, elle s'étend mais reste limitée */
-        .zones-legend.expanded {
-            max-height: 45vh;
-            width: calc(100vw - 24px);
-            max-width: calc(100vw - 24px);
-        }
-        .zones-legend.expanded .zones-legend-body {
-            max-height: 40vh;
-            padding: 4px 0;
-        }
-
-        .zones-legend-header {
-            padding: 9px 12px;
-            font-size: 0.75rem;
-            border-radius: 10px;
-        }
+        .zones-legend-header { padding: 9px 12px; font-size: 0.75rem; border-radius: 10px; }
         .zones-legend-header i { font-size: 0.78rem; }
         .zones-legend-header .legend-toggle-icon { font-size: 0.7rem; }
 
-        .zones-legend-item {
-            padding: 7px 12px;
-            font-size: 0.75rem;
-            gap: 8px;
-        }
+        .zones-legend-item { padding: 7px 12px; font-size: 0.75rem; gap: 8px; }
         .zones-legend-color { width: 16px; height: 3px; }
-        .zones-legend-name {
-            max-width: calc(100vw - 90px);
-            font-size: 0.75rem;
-        }
+        .zones-legend-name { max-width: calc(100vw - 90px); font-size: 0.75rem; }
 
         .leaflet-control-layers-toggle { width: 38px !important; height: 38px !important; background-size: 20px 20px !important; }
+
+        .btn-recenter-map { right: 12px; bottom: 150px; width: 44px; height: 44px; font-size: 1.05rem; }
+
+        .user-location-banner { font-size: 0.75rem; padding: 8px 12px; }
+        .user-location-banner .loc-close { width: 22px; height: 22px; font-size: 0.7rem; }
     }
 
-    /* =========================================================
-       TRÈS PETIT ÉCRAN (≤ 420px)
-       ========================================================= */
     @media (max-width: 420px) {
         .btn-topbar span { display: none; }
         .btn-topbar { font-size: 0.85rem; padding: 8px 4px; }
-
-        .zones-legend.expanded {
-            width: calc(100vw - 20px);
-            max-width: calc(100vw - 20px);
-        }
+        .zones-legend.expanded { width: calc(100vw - 20px); max-width: calc(100vw - 20px); }
         .zones-legend-name { max-width: calc(100vw - 80px); }
+        .btn-recenter-map { bottom: 140px; width: 42px; height: 42px; font-size: 1rem; }
     }
 
-    /* =========================================================
-       TRÈS TRÈS PETIT ÉCRAN (≤ 380px)
-       ========================================================= */
     @media (max-width: 380px) {
         .topbar-title { font-size: 0.82rem; }
         .topbar-subtitle { display: none; }
         .kpi-chip { padding: 4px 8px; font-size: 0.65rem; }
         .btn-slide { font-size: 0.7rem; padding: 8px 10px; }
         .detail-svg-box { height: 90px; }
-
-        .zones-legend {
-            bottom: 16px;
-            left: 10px;
-            max-width: calc(100vw - 80px);
-        }
-        .zones-legend.expanded {
-            width: calc(100vw - 16px);
-            max-width: calc(100vw - 16px);
-        }
+        .zones-legend { bottom: 16px; left: 10px; max-width: calc(100vw - 80px); }
+        .zones-legend.expanded { width: calc(100vw - 16px); max-width: calc(100vw - 16px); }
         .zones-legend-name { max-width: calc(100vw - 70px); }
     }
+
     /* =========================================================
-   BOUTON FLOTTANT DE RECENTRAGE
-   ========================================================= */
-.btn-recenter-map {
-    position: absolute;
-    right: 16px;
-    bottom: 100px;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: #fff;
-    border: 1px solid #E2E8F0;
-    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.18);
-    color: #2563EB;
-    font-size: 1.15rem;
-    cursor: pointer;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    -webkit-tap-highlight-color: transparent;
-}
-.btn-recenter-map:hover {
-    background: #EFF6FF;
-    color: #1E40AF;
-    transform: scale(1.08);
-    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
-}
-.btn-recenter-map:active {
-    transform: scale(0.95);
-}
-.btn-recenter-map.active {
-    background: linear-gradient(135deg, #2563EB, #1E40AF);
-    color: #fff !important;
-    border-color: transparent;
-}
-
-/* Position du bouton sur mobile */
-@media (max-width: 768px) {
-    .btn-recenter-map {
-        right: 12px;
-        bottom: 150px;
-        width: 44px;
-        height: 44px;
-        font-size: 1.05rem;
+       ✅ CUSTOM SELECT AVEC SVG — CODE NOMENCLATURE
+       ========================================================= */
+    .nomen-custom-select { position: relative; width: 100%; font-family: 'Inter', sans-serif; }
+    .nomen-custom-select__trigger {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 6px 12px;
+        border: 1.5px solid #E2E8F0;
+        border-radius: 8px;
+        background: #fff;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        min-height: 38px;
     }
-}
-
-@media (max-width: 420px) {
-    .btn-recenter-map {
-        bottom: 140px;
-        width: 42px;
-        height: 42px;
-        font-size: 1rem;
+    .nomen-custom-select__trigger:hover { border-color: #CBD5E1; }
+    .nomen-custom-select.open .nomen-custom-select__trigger {
+        border-color: #2563EB;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
-}
-.btn-recenter-map {
-    position: absolute;
-    right: 16px;
-    bottom: 100px;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: #fff;
-    border: 1px solid #E2E8F0;
-    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.18);
-    color: #2563EB;
-    font-size: 1.15rem;
-    cursor: pointer;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-}
-.btn-recenter-map:hover {
-    background: #EFF6FF;
-    transform: scale(1.08);
-}
-.btn-recenter-map.active {
-    background: linear-gradient(135deg, #2563EB, #1E40AF);
-    color: #fff !important;
-    border-color: transparent;
-}
-@media (max-width: 768px) {
-    .btn-recenter-map {
-        right: 12px;
-        bottom: 150px;
-        width: 44px;
-        height: 44px;
+    .nomen-custom-select__arrow {
+        color: #64748B;
+        font-size: 0.75rem;
+        transition: transform 0.2s ease;
+        flex-shrink: 0;
+        margin-left: 8px;
     }
-}
-/* =========================================================
-   ✅ CUSTOM SELECT AVEC SVG — CODE NOMENCLATURE
-   ========================================================= */
-.nomen-custom-select {
-    position: relative;
-    width: 100%;
-    font-family: 'Inter', sans-serif;
-}
-.nomen-custom-select__trigger {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 6px 12px;
-    border: 1.5px solid #E2E8F0;
-    border-radius: 8px;
-    background: #fff;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    min-height: 38px;
-}
-.nomen-custom-select__trigger:hover { border-color: #CBD5E1; }
-.nomen-custom-select.open .nomen-custom-select__trigger {
-    border-color: #2563EB;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-.nomen-custom-select__arrow {
-    color: #64748B;
-    font-size: 0.75rem;
-    transition: transform 0.2s ease;
-    flex-shrink: 0;
-    margin-left: 8px;
-}
-.nomen-custom-select.open .nomen-custom-select__arrow { transform: rotate(180deg); }
-.nomen-custom-select__value { flex: 1; min-width: 0; }
+    .nomen-custom-select.open .nomen-custom-select__arrow { transform: rotate(180deg); }
+    .nomen-custom-select__value { flex: 1; min-width: 0; }
 
-.nomen-custom-select__dropdown {
-    position: absolute;
-    top: calc(100% + 6px);
-    left: 0;
-    right: 0;
-    background: #fff;
-    border: 1.5px solid #E2E8F0;
-    border-radius: 10px;
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
-    z-index: 3000;
-    max-height: 340px;
-    display: none;
-    flex-direction: column;
-    overflow: hidden;
-}
-.nomen-custom-select.open .nomen-custom-select__dropdown { display: flex; }
-.nomen-custom-select__search {
-    position: relative;
-    padding: 8px;
-    border-bottom: 1px solid #F1F5F9;
-    flex-shrink: 0;
-}
-.nomen-custom-select__search i {
-    position: absolute;
-    left: 18px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #94A3B8;
-    font-size: 0.8rem;
-}
-.nomen-custom-select__search input {
-    width: 100%;
-    padding: 8px 12px 8px 32px;
-    border: 1.5px solid #E2E8F0;
-    border-radius: 8px;
-    font-size: 0.82rem;
-    outline: none;
-    font-family: 'Inter', sans-serif;
-    box-sizing: border-box;
-}
-.nomen-custom-select__search input:focus {
-    border-color: #2563EB;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-.nomen-custom-select__options {
-    overflow-y: auto;
-    max-height: 280px;
-    padding: 4px 0;
-}
-.nomen-custom-select__options::-webkit-scrollbar { width: 5px; }
-.nomen-custom-select__options::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+    .nomen-custom-select__dropdown {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0; right: 0;
+        background: #fff;
+        border: 1.5px solid #E2E8F0;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
+        z-index: 3000;
+        max-height: 340px;
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    .nomen-custom-select.open .nomen-custom-select__dropdown { display: flex; }
+    .nomen-custom-select__search {
+        position: relative;
+        padding: 8px;
+        border-bottom: 1px solid #F1F5F9;
+        flex-shrink: 0;
+    }
+    .nomen-custom-select__search i {
+        position: absolute;
+        left: 18px; top: 50%;
+        transform: translateY(-50%);
+        color: #94A3B8;
+        font-size: 0.8rem;
+    }
+    .nomen-custom-select__search input {
+        width: 100%;
+        padding: 8px 12px 8px 32px;
+        border: 1.5px solid #E2E8F0;
+        border-radius: 8px;
+        font-size: 0.82rem;
+        outline: none;
+        font-family: 'Inter', sans-serif;
+        box-sizing: border-box;
+    }
+    .nomen-custom-select__search input:focus {
+        border-color: #2563EB;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .nomen-custom-select__options {
+        overflow-y: auto;
+        max-height: 280px;
+        padding: 4px 0;
+    }
+    .nomen-custom-select__options::-webkit-scrollbar { width: 5px; }
+    .nomen-custom-select__options::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
 
-.nomen-custom-option {
-    cursor: pointer;
-    transition: background 0.15s ease;
-    padding: 0;
-}
-.nomen-custom-option:hover { background: #EFF6FF; }
-.nomen-custom-option.active { background: #EFF6FF; }
+    .nomen-custom-option { cursor: pointer; transition: background 0.15s ease; padding: 0; }
+    .nomen-custom-option:hover { background: #EFF6FF; }
+    .nomen-custom-option.active { background: #EFF6FF; }
 
-.nomen-option {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 12px;
-}
-.nomen-option__svg {
-    width: 36px;
-    height: 36px;
-    flex-shrink: 0;
-    background: #F8FAFC;
-    border: 1px solid #E2E8F0;
-    border-radius: 6px;
-    padding: 3px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-}
-.nomen-option__svg img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    display: block;
-}
-.nomen-option__svg i {
-    color: #CBD5E1;
-    font-size: 16px;
-}
-.nomen-option__text { flex: 1; min-width: 0; }
-.nomen-option__code {
-    font-weight: 800;
-    color: #1E40AF;
-    font-size: 0.85rem;
-    line-height: 1.2;
-}
-.nomen-option__name {
-    font-size: 0.72rem;
-    color: #64748B;
-    line-height: 1.3;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-.nomen-option__name.obsolete { color: #EA580C; font-style: italic; }
-.nomen-custom-option.active .nomen-option__svg {
-    border-color: #2563EB;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
-}
+    .nomen-option { display: flex; align-items: center; gap: 10px; padding: 8px 12px; }
+    .nomen-option__svg {
+        width: 36px; height: 36px;
+        flex-shrink: 0;
+        background: #F8FAFC;
+        border: 1px solid #E2E8F0;
+        border-radius: 6px;
+        padding: 3px;
+        display: flex; align-items: center; justify-content: center;
+        overflow: hidden;
+    }
+    .nomen-option__svg img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+    .nomen-option__svg i { color: #CBD5E1; font-size: 16px; }
+    .nomen-option__text { flex: 1; min-width: 0; }
+    .nomen-option__code { font-weight: 800; color: #1E40AF; font-size: 0.85rem; line-height: 1.2; }
+    .nomen-option__name {
+        font-size: 0.72rem;
+        color: #64748B;
+        line-height: 1.3;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .nomen-option__name.obsolete { color: #EA580C; font-style: italic; }
+    .nomen-custom-option.active .nomen-option__svg {
+        border-color: #2563EB;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    }
 
-/* Trigger compact (sans le nom) */
-.nomen-custom-select__trigger .nomen-option { padding: 0; gap: 8px; }
-.nomen-custom-select__trigger .nomen-option__svg { width: 26px; height: 26px; padding: 2px; }
-.nomen-custom-select__trigger .nomen-option__name { display: none; }
-.nomen-custom-select__trigger .nomen-option__code { font-size: 0.82rem; }
+    .nomen-custom-select__trigger .nomen-option { padding: 0; gap: 8px; }
+    .nomen-custom-select__trigger .nomen-option__svg { width: 26px; height: 26px; padding: 2px; }
+    .nomen-custom-select__trigger .nomen-option__name { display: none; }
+    .nomen-custom-select__trigger .nomen-option__code { font-size: 0.82rem; }
 </style>
 </head>
 <body>
@@ -1081,7 +1026,6 @@ console.log('📋 Listes :', window.__listes);
         </div>
 
         <div class="topbar-right">
-            {{-- ✅ Bouton "Ma position" AJOUTÉ --}}
             <button type="button" class="btn-topbar btn-topbar-locate" id="btnLocateMe" onclick="locateMe()">
                 <i class="fa-solid fa-location-crosshairs"></i> <span>Ma position</span>
             </button>
@@ -1136,7 +1080,6 @@ console.log('📋 Listes :', window.__listes);
     <div class="carte-main">
         <div id="carte-globale"></div>
 
-        {{-- ✅ BOUTON FLOTTANT DE RECENTRAGE --}}
         <button type="button"
                 id="btnRecenter"
                 class="btn-recenter-map"
@@ -1146,7 +1089,6 @@ console.log('📋 Listes :', window.__listes);
             <i class="fa-solid fa-location-crosshairs"></i>
         </button>
 
-        {{-- ✅ BANDEAU INFO POSITION (correctement fermé !) --}}
         <div class="user-location-banner" id="userLocationBanner">
             <span class="loc-dot"></span>
             <span class="loc-text" id="userLocationText">Position en cours...</span>
@@ -1155,7 +1097,6 @@ console.log('📋 Listes :', window.__listes);
             </button>
         </div>
 
-        {{-- PANNEAU DE FILTRES AVANCÉS --}}
         <div class="filters-panel" id="filtersPanel">
             <div class="filters-header">
                 <div style="display:flex; align-items:center; gap:8px;">
@@ -1169,42 +1110,29 @@ console.log('📋 Listes :', window.__listes);
             </div>
 
             <div class="filters-body">
-
-                {{-- Route --}}
                 <div class="filter-group">
-                    <label class="filter-label">
-                        <i class="fa-solid fa-road"></i> Route
-                    </label>
+                    <label class="filter-label"><i class="fa-solid fa-road"></i> Route</label>
                     <select id="filterRoute" class="filter-select" onchange="applyFilters()">
                         <option value="">— Toutes les routes —</option>
                     </select>
                 </div>
 
-                {{-- Catégorie de panneau (types_panneaux.categorie) --}}
                 <div class="filter-group">
-                    <label class="filter-label">
-                        <i class="fa-solid fa-layer-group"></i> Catégorie
-                    </label>
+                    <label class="filter-label"><i class="fa-solid fa-layer-group"></i> Catégorie</label>
                     <select id="filterCategorie" class="filter-select" onchange="applyFilters()">
                         <option value="">— Toutes catégories —</option>
                     </select>
                 </div>
 
-                {{-- Nom du panneau (types_panneaux.nom) --}}
                 <div class="filter-group">
-                    <label class="filter-label">
-                        <i class="fa-solid fa-sign-hanging"></i> Nom du panneau
-                    </label>
+                    <label class="filter-label"><i class="fa-solid fa-sign-hanging"></i> Nom du panneau</label>
                     <select id="filterNom" class="filter-select" onchange="applyFilters()">
                         <option value="">— Tous les noms —</option>
                     </select>
                 </div>
 
-                {{-- État --}}
                 <div class="filter-group">
-                    <label class="filter-label">
-                        <i class="fa-solid fa-heart-pulse"></i> État
-                    </label>
+                    <label class="filter-label"><i class="fa-solid fa-heart-pulse"></i> État</label>
                     <select id="filterEtat" class="filter-select" onchange="applyFilters()">
                         <option value="">— Tous états —</option>
                         <option value="Bon">Bon</option>
@@ -1215,22 +1143,16 @@ console.log('📋 Listes :', window.__listes);
                     </select>
                 </div>
 
-                {{-- PK min/max --}}
                 <div class="filter-group">
-                    <label class="filter-label">
-                        <i class="fa-solid fa-ruler"></i> PK (min — max)
-                    </label>
+                    <label class="filter-label"><i class="fa-solid fa-ruler"></i> PK (min — max)</label>
                     <div style="display:flex; gap:6px;">
                         <input type="number" id="filterPkMin" class="filter-input" placeholder="Min" oninput="applyFilters()">
                         <input type="number" id="filterPkMax" class="filter-input" placeholder="Max" oninput="applyFilters()">
                     </div>
                 </div>
 
-                {{-- Date d'observation --}}
                 <div class="filter-group">
-                    <label class="filter-label">
-                        <i class="fa-solid fa-calendar"></i> Dernière observation
-                    </label>
+                    <label class="filter-label"><i class="fa-solid fa-calendar"></i> Dernière observation</label>
                     <select id="filterDateRange" class="filter-select" onchange="applyFilters()">
                         <option value="">— Toutes dates —</option>
                         <option value="7">7 derniers jours</option>
@@ -1240,7 +1162,6 @@ console.log('📋 Listes :', window.__listes);
                         <option value="__jamais__">Jamais observé</option>
                     </select>
                 </div>
-
             </div>
 
             <div class="filters-footer">
@@ -1253,7 +1174,6 @@ console.log('📋 Listes :', window.__listes);
             </div>
         </div>
 
-        {{-- LÉGENDE ZONES --}}
         <div class="zones-legend" id="zonesLegend">
             <div class="zones-legend-header">
                 <i class="fa-solid fa-map"></i>
@@ -1262,7 +1182,6 @@ console.log('📋 Listes :', window.__listes);
             <div class="zones-legend-body" id="zonesLegendBody"></div>
         </div>
 
-        {{-- BANDEAU PLACEMENT --}}
         <div class="placement-banner" id="placementBanner">
             <i class="fa-solid fa-crosshairs" id="placementIcon"></i>
             <span id="placementText">Cliquez sur la carte pour placer le nouveau panneau</span>
@@ -1347,29 +1266,29 @@ console.log('📋 Listes :', window.__listes);
                         <div class="tab-pane fade show active" id="p-tab-ident">
                             <div class="row g-3">
                                 <div class="col-md-6">
-    <label class="form-label">Code nomenclature</label>
-    <input type="hidden" name="code_nomen" id="p_code_nomen_hidden" value="">
-    <div class="nomen-custom-select" id="nomenCustomSelect">
-        <div class="nomen-custom-select__trigger" onclick="toggleNomenDropdown()">
-            <div class="nomen-custom-select__value" id="nomenSelectedDisplay">
-                <div class="nomen-option">
-                    <div class="nomen-option__svg"><i class="fa-solid fa-sign-hanging"></i></div>
-                    <div class="nomen-option__text">
-                        <div class="nomen-option__code" style="color:#94A3B8;">— Non renseigné —</div>
-                    </div>
-                </div>
-            </div>
-            <i class="fa-solid fa-chevron-down nomen-custom-select__arrow"></i>
-        </div>
-        <div class="nomen-custom-select__dropdown" id="nomenDropdown">
-            <div class="nomen-custom-select__search">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="nomenSearch" placeholder="Rechercher code ou nom..." oninput="filterNomenOptions(this.value)">
-            </div>
-            <div class="nomen-custom-select__options" id="nomenOptionsList"></div>
-        </div>
-    </div>
-</div>
+                                    <label class="form-label">Code nomenclature</label>
+                                    <input type="hidden" name="code_nomen" id="p_code_nomen_hidden" value="">
+                                    <div class="nomen-custom-select" id="nomenCustomSelect">
+                                        <div class="nomen-custom-select__trigger" onclick="toggleNomenDropdown()">
+                                            <div class="nomen-custom-select__value" id="nomenSelectedDisplay">
+                                                <div class="nomen-option">
+                                                    <div class="nomen-option__svg"><i class="fa-solid fa-sign-hanging"></i></div>
+                                                    <div class="nomen-option__text">
+                                                        <div class="nomen-option__code" style="color:#94A3B8;">— Non renseigné —</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <i class="fa-solid fa-chevron-down nomen-custom-select__arrow"></i>
+                                        </div>
+                                        <div class="nomen-custom-select__dropdown" id="nomenDropdown">
+                                            <div class="nomen-custom-select__search">
+                                                <i class="fa-solid fa-magnifying-glass"></i>
+                                                <input type="text" id="nomenSearch" placeholder="Rechercher code ou nom..." oninput="filterNomenOptions(this.value)">
+                                            </div>
+                                            <div class="nomen-custom-select__options" id="nomenOptionsList"></div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Fclass</label>
                                     <input type="text" name="fclass" id="p_fclass" class="form-control">
@@ -1652,13 +1571,29 @@ console.log('📋 Listes :', window.__listes);
                             </div>
                         </div>
 
+                        {{-- ✅ PHOTOS — 2 BOUTONS (CAMÉRA + GALERIE) avec compression --}}
                         <div class="tab-pane fade" id="new-tab-photos">
-                            <div class="photo-upload-zone" onclick="document.getElementById('newObsPhotos').click();">
-                                <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; color: #2563EB; margin-bottom: 8px; display: block;"></i>
-                                <div style="font-weight: 700; color: #0F172A; margin-bottom: 4px;">Cliquez pour ajouter des photos</div>
-                                <div style="font-size: 0.8rem; color: #64748B;">JPG, PNG, WEBP — max 10 Mo (10 photos max)</div>
-                                <input type="file" id="newObsPhotos" name="photos[]" accept="image/*" multiple capture="environment" onchange="previewPhotos(this, 'photoPreviewNew')">
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:14px;">
+                                <label for="newObsPhotosCamera" class="photo-upload-zone" style="margin:0; cursor:pointer;">
+                                    <i class="fa-solid fa-camera" style="font-size: 1.8rem; color: #10B981; margin-bottom: 8px; display: block;"></i>
+                                    <div style="font-weight: 700; color: #0F172A; margin-bottom: 4px; font-size: 0.85rem;">Prendre une photo</div>
+                                    <div style="font-size: 0.72rem; color: #64748B;">Appareil photo</div>
+                                    <input type="file" id="newObsPhotosCamera" name="photos[]" accept="image/*" capture="environment" multiple onchange="previewPhotosNewObs()">
+                                </label>
+
+                                <label for="newObsPhotosGallery" class="photo-upload-zone" style="margin:0; cursor:pointer;">
+                                    <i class="fa-solid fa-images" style="font-size: 1.8rem; color: #2563EB; margin-bottom: 8px; display: block;"></i>
+                                    <div style="font-weight: 700; color: #0F172A; margin-bottom: 4px; font-size: 0.85rem;">Choisir une photo</div>
+                                    <div style="font-size: 0.72rem; color: #64748B;">Galerie / Fichiers</div>
+                                    <input type="file" id="newObsPhotosGallery" name="photos[]" accept="image/*" multiple onchange="previewPhotosNewObs()">
+                                </label>
                             </div>
+
+                            <div style="font-size: 0.72rem; color: #94A3B8; text-align: center; margin-bottom: 10px;">
+                                <i class="fa-solid fa-circle-info"></i>
+                                JPG, PNG, WEBP — max 10 Mo (10 photos max) — Compression automatique activée
+                            </div>
+
                             <div class="photo-preview-grid" id="photoPreviewNew"></div>
                         </div>
                     </div>
@@ -1684,8 +1619,8 @@ console.log('📋 Listes :', window.__listes);
 document.addEventListener('DOMContentLoaded', function () {
 
     /* =========================================================
-       HELPERS PERFORMANCE
-    ========================================================= */
+       ✅ UTILITAIRES
+       ========================================================= */
     function debounce(fn, wait) {
         let t = null;
         return function () {
@@ -1707,8 +1642,95 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /* =========================================================
+       ✅ PARSE SÉCURISÉ DE LA RÉPONSE (corrige "Unexpected token '<'")
+       ========================================================= */
+    async function parseJsonResponse(response) {
+        const contentType = response.headers.get('content-type') || '';
+
+        if (!contentType.includes('application/json')) {
+            const text = await response.text();
+            console.error('❌ Réponse non-JSON (status ' + response.status + ') :', text.substring(0, 500));
+
+            if (response.status === 413 ||
+                text.includes('POST Content-Length') ||
+                text.includes('exceeds the limit') ||
+                text.includes('post_max_size')) {
+                throw new Error('Les photos sont trop volumineuses. Réduisez la taille ou le nombre de photos (max 10 Mo au total).');
+            }
+            if (response.status === 419) {
+                throw new Error('Session expirée. Rechargez la page et réessayez.');
+            }
+            if (response.status === 500) {
+                throw new Error('Erreur serveur (500). Vérifiez les logs Laravel.');
+            }
+            if (response.status === 404) {
+                throw new Error('Route introuvable (404).');
+            }
+            throw new Error('Erreur serveur (' + response.status + '). Réponse invalide.');
+        }
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            let messages = [];
+            if (data.errors) Object.values(data.errors).forEach(arr => arr.forEach(m => messages.push(m)));
+            else if (data.message) messages.push(data.message);
+            else messages.push('Une erreur est survenue.');
+            throw new Error(messages.join('<br>'));
+        }
+
+        return data;
+    }
+
+    /* =========================================================
+       ✅ COMPRESSION IMAGES CÔTÉ CLIENT
+       ========================================================= */
+    window.compresserImage = function(file, maxWidth = 1600, quality = 0.8) {
+        return new Promise((resolve) => {
+            if (file.size < 500 * 1024) {
+                return resolve(file);
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let { width, height } = img;
+
+                    if (width > maxWidth) {
+                        height = Math.round((height * maxWidth) / width);
+                        width = maxWidth;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    canvas.toBlob((blob) => {
+                        if (!blob) return resolve(file);
+                        const newFile = new File(
+                            [blob],
+                            file.name.replace(/\.[^.]+$/, '.jpg'),
+                            { type: 'image/jpeg', lastModified: Date.now() }
+                        );
+                        console.log('🗜️ Compression: ' + Math.round(file.size/1024) + ' Ko → ' + Math.round(newFile.size/1024) + ' Ko');
+                        resolve(newFile);
+                    }, 'image/jpeg', quality);
+                };
+                img.onerror = () => resolve(file);
+                img.src = e.target.result;
+            };
+            reader.onerror = () => resolve(file);
+            reader.readAsDataURL(file);
+        });
+    };
+
+    /* =========================================================
        NORMALISATION DES PANNEAUX
-    ========================================================= */
+       ========================================================= */
     const panneauxBruts = window.__panneaux || [];
     const panneauxListe = Array.isArray(panneauxBruts) ? panneauxBruts : Object.values(panneauxBruts);
 
@@ -1730,138 +1752,132 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('🚀 Panneaux valides :', panneaux.length, '/', panneauxListe.length);
 
     /* =========================================================
-       ✅ PEUPLEMENT DU SELECT "CODE NOMENCLATURE"
+       ✅ CUSTOM SELECT CODE NOMENCLATURE
        ========================================================= */
-/* =========================================================
-   ✅ CUSTOM SELECT AVEC SVG — CODE NOMENCLATURE
-   ========================================================= */
-let nomenTypes = [];
+    let nomenTypes = [];
 
-function buildNomenOptionHtml(tp, opts) {
-    opts = opts || {};
-    const isSelected = !!opts.selected;
-    const isObsolete = !!opts.obsolete;
+    function buildNomenOptionHtml(tp, opts) {
+        opts = opts || {};
+        const isSelected = !!opts.selected;
+        const isObsolete = !!opts.obsolete;
 
-    const svgUrl = tp.code_type ? (BASE_SVG + '/' + tp.code_type + '.svg') : null;
-    const svgContent = svgUrl
-        ? '<img src="' + svgUrl + '" alt="" loading="lazy" onerror="this.style.display=\'none\';this.parentElement.innerHTML=\'<i class=&quot;fa-solid fa-sign-hanging&quot;></i>\';">'
-        : '<i class="fa-solid fa-sign-hanging"></i>';
+        const svgUrl = tp.code_type ? (BASE_SVG + '/' + tp.code_type + '.svg') : null;
+        const svgContent = svgUrl
+            ? '<img src="' + svgUrl + '" alt="" loading="lazy" onerror="this.style.display=\'none\';this.parentElement.innerHTML=\'<i class=&quot;fa-solid fa-sign-hanging&quot;></i>\';">'
+            : '<i class="fa-solid fa-sign-hanging"></i>';
 
-    const nameClass = 'nomen-option__name' + (isObsolete ? ' obsolete' : '');
-    const nameText  = isObsolete ? 'Code obsolète' : (tp.nom || '');
+        const nameClass = 'nomen-option__name' + (isObsolete ? ' obsolete' : '');
+        const nameText  = isObsolete ? 'Code obsolète' : (tp.nom || '');
 
-    return '<div class="nomen-option' + (isSelected ? ' nomen-option--selected' : '') + '">' +
-        '<div class="nomen-option__svg">' + svgContent + '</div>' +
-        '<div class="nomen-option__text">' +
-            '<div class="nomen-option__code">' + tp.code_type + (isObsolete ? ' (actuel)' : '') + '</div>' +
-            '<div class="' + nameClass + '">' + nameText + '</div>' +
-        '</div>' +
-    '</div>';
-}
-
-function populateCodeNomenSelect() {
-    nomenTypes = (window.__listes && window.__listes.types_panneaux) || [];
-
-    if (!nomenTypes.length) {
-        console.warn('⚠️ Aucun type de panneau dans window.__listes.types_panneaux');
-    }
-
-    renderNomenOptions(nomenTypes);
-    console.log('✅ Custom select code_nomen peuplé avec', nomenTypes.length, 'options');
-}
-
-function renderNomenOptions(types) {
-    const list = document.getElementById('nomenOptionsList');
-    if (!list) return;
-
-    let html = '<div class="nomen-custom-option" data-value="" onclick="selectNomenOption(\'\', this)">' +
-        '<div class="nomen-option">' +
-            '<div class="nomen-option__svg"><i class="fa-solid fa-ban"></i></div>' +
+        return '<div class="nomen-option' + (isSelected ? ' nomen-option--selected' : '') + '">' +
+            '<div class="nomen-option__svg">' + svgContent + '</div>' +
             '<div class="nomen-option__text">' +
-                '<div class="nomen-option__code" style="color:#94A3B8;font-weight:600;">— Non renseigné —</div>' +
+                '<div class="nomen-option__code">' + tp.code_type + (isObsolete ? ' (actuel)' : '') + '</div>' +
+                '<div class="' + nameClass + '">' + nameText + '</div>' +
             '</div>' +
-        '</div>' +
-    '</div>';
-
-    types.forEach(function (tp) {
-        const safeCode = (tp.code_type || '').replace(/'/g, "\\'");
-        html += '<div class="nomen-custom-option" data-value="' + safeCode + '" onclick="selectNomenOption(\'' + safeCode + '\', this)">' +
-            buildNomenOptionHtml(tp, {}) +
         '</div>';
-    });
-
-    list.innerHTML = html;
-}
-
-function toggleNomenDropdown() {
-    const el = document.getElementById('nomenCustomSelect');
-    if (!el) return;
-    el.classList.toggle('open');
-    if (el.classList.contains('open')) {
-        const search = document.getElementById('nomenSearch');
-        if (search) { search.value = ''; renderNomenOptions(nomenTypes); setTimeout(function() { search.focus(); }, 50); }
     }
-}
 
-function selectNomenOption(value, el) {
-    const hidden = document.getElementById('p_code_nomen_hidden');
-    if (hidden) hidden.value = value;
+    function populateCodeNomenSelect() {
+        nomenTypes = (window.__listes && window.__listes.types_panneaux) || [];
 
-    const display = document.getElementById('nomenSelectedDisplay');
-    if (display) {
-        if (!value) {
-            display.innerHTML = '<div class="nomen-option">' +
-                '<div class="nomen-option__svg"><i class="fa-solid fa-sign-hanging"></i></div>' +
-                '<div class="nomen-option__text"><div class="nomen-option__code" style="color:#94A3B8;">— Non renseigné —</div></div>' +
+        if (!nomenTypes.length) {
+            console.warn('⚠️ Aucun type de panneau dans window.__listes.types_panneaux');
+        }
+
+        renderNomenOptions(nomenTypes);
+        console.log('✅ Custom select code_nomen peuplé avec', nomenTypes.length, 'options');
+    }
+
+    function renderNomenOptions(types) {
+        const list = document.getElementById('nomenOptionsList');
+        if (!list) return;
+
+        let html = '<div class="nomen-custom-option" data-value="" onclick="selectNomenOption(\'\', this)">' +
+            '<div class="nomen-option">' +
+                '<div class="nomen-option__svg"><i class="fa-solid fa-ban"></i></div>' +
+                '<div class="nomen-option__text">' +
+                    '<div class="nomen-option__code" style="color:#94A3B8;font-weight:600;">— Non renseigné —</div>' +
+                '</div>' +
+            '</div>' +
+        '</div>';
+
+        types.forEach(function (tp) {
+            const safeCode = (tp.code_type || '').replace(/'/g, "\\'");
+            html += '<div class="nomen-custom-option" data-value="' + safeCode + '" onclick="selectNomenOption(\'' + safeCode + '\', this)">' +
+                buildNomenOptionHtml(tp, {}) +
             '</div>';
-        } else {
-            const tp = nomenTypes.find(function (t) { return t.code_type === value; })
-                    || { code_type: value, nom: '' };
-            display.innerHTML = buildNomenOptionHtml(tp, { selected: true });
+        });
+
+        list.innerHTML = html;
+    }
+
+    function toggleNomenDropdown() {
+        const el = document.getElementById('nomenCustomSelect');
+        if (!el) return;
+        el.classList.toggle('open');
+        if (el.classList.contains('open')) {
+            const search = document.getElementById('nomenSearch');
+            if (search) { search.value = ''; renderNomenOptions(nomenTypes); setTimeout(function() { search.focus(); }, 50); }
         }
     }
 
-    /* ✅ AUTO-REMPLISSAGE DU CHAMP "NOM" */
-    const nomInput = document.getElementById('p_name');
-    if (nomInput) {
-        if (!value) {
-            nomInput.value = '';
-        } else {
-            const tp = nomenTypes.find(function (t) { return t.code_type === value; });
-            nomInput.value = tp ? (tp.nom || '') : '';
+    function selectNomenOption(value, el) {
+        const hidden = document.getElementById('p_code_nomen_hidden');
+        if (hidden) hidden.value = value;
+
+        const display = document.getElementById('nomenSelectedDisplay');
+        if (display) {
+            if (!value) {
+                display.innerHTML = '<div class="nomen-option">' +
+                    '<div class="nomen-option__svg"><i class="fa-solid fa-sign-hanging"></i></div>' +
+                    '<div class="nomen-option__text"><div class="nomen-option__code" style="color:#94A3B8;">— Non renseigné —</div></div>' +
+                '</div>';
+            } else {
+                const tp = nomenTypes.find(function (t) { return t.code_type === value; })
+                        || { code_type: value, nom: '' };
+                display.innerHTML = buildNomenOptionHtml(tp, { selected: true });
+            }
         }
+
+        const nomInput = document.getElementById('p_name');
+        if (nomInput) {
+            if (!value) {
+                nomInput.value = '';
+            } else {
+                const tp = nomenTypes.find(function (t) { return t.code_type === value; });
+                nomInput.value = tp ? (tp.nom || '') : '';
+            }
+        }
+
+        document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
+            o.classList.toggle('active', o.dataset.value === value);
+        });
+
+        const el2 = document.getElementById('nomenCustomSelect');
+        if (el2) el2.classList.remove('open');
     }
 
-    /* ✅ Marquer comme actif */
-    document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
-        o.classList.toggle('active', o.dataset.value === value);
+    function filterNomenOptions(q) {
+        q = (q || '').toLowerCase().trim();
+        const filtered = !q ? nomenTypes : nomenTypes.filter(function (tp) {
+            return (tp.code_type || '').toLowerCase().indexOf(q) !== -1
+                || (tp.nom || '').toLowerCase().indexOf(q) !== -1;
+        });
+        renderNomenOptions(filtered);
+    }
+
+    document.addEventListener('click', function (e) {
+        const el = document.getElementById('nomenCustomSelect');
+        if (el && !el.contains(e.target)) el.classList.remove('open');
     });
 
-    /* ✅ Fermer le dropdown */
-    const el2 = document.getElementById('nomenCustomSelect');
-    if (el2) el2.classList.remove('open');
-}
+    window.populateCodeNomenSelect = populateCodeNomenSelect;
+    window.toggleNomenDropdown = toggleNomenDropdown;
+    window.selectNomenOption = selectNomenOption;
+    window.filterNomenOptions = filterNomenOptions;
 
-function filterNomenOptions(q) {
-    q = (q || '').toLowerCase().trim();
-    const filtered = !q ? nomenTypes : nomenTypes.filter(function (tp) {
-        return (tp.code_type || '').toLowerCase().indexOf(q) !== -1
-            || (tp.nom || '').toLowerCase().indexOf(q) !== -1;
-    });
-    renderNomenOptions(filtered);
-}
-
-document.addEventListener('click', function (e) {
-    const el = document.getElementById('nomenCustomSelect');
-    if (el && !el.contains(e.target)) el.classList.remove('open');
-});
-
-window.populateCodeNomenSelect = populateCodeNomenSelect;
-window.toggleNomenDropdown = toggleNomenDropdown;
-window.selectNomenOption = selectNomenOption;
-window.filterNomenOptions = filterNomenOptions;
-
-populateCodeNomenSelect();
+    populateCodeNomenSelect();
 
     let placementMode = null;
     let movePanneauId = null;
@@ -2010,7 +2026,6 @@ populateCodeNomenSelect();
         legendBody.innerHTML = '';
         legendBody.appendChild(fragment);
 
-        /* Repli/dépli légende sur mobile */
         const legendEl = document.getElementById('zonesLegend');
         const legendHeader = legendEl ? legendEl.querySelector('.zones-legend-header') : null;
         if (legendEl && legendHeader && !legendEl.dataset.bound) {
@@ -2153,9 +2168,6 @@ populateCodeNomenSelect();
     const allMarkers  = [];
     const markersById = {};
 
-    /* =========================================================
-       CRÉATION DES MARQUEURS (lazy batch)
-    ========================================================= */
     const groupes = {};
     panneaux.forEach(function (p) {
         const key = p.lat.toFixed(5) + ',' + p.lng.toFixed(5);
@@ -2387,9 +2399,6 @@ populateCodeNomenSelect();
     document.getElementById('p_lat').addEventListener('input', updateCoordsLabels);
     document.getElementById('p_lng').addEventListener('input', updateCoordsLabels);
 
-    /* =========================================================
-       ✅ CRÉATION D'UN PANNEAU
-       ========================================================= */
     window.openCreatePanneau = function (lat, lng) {
         currentMode = 'create';
 
@@ -2402,21 +2411,20 @@ populateCodeNomenSelect();
         document.getElementById('formPanneauMethod').value = 'POST';
         form.reset();
 
-      /* ✅ Reset custom select code_nomen */
-const hiddenCode = document.getElementById('p_code_nomen_hidden');
-if (hiddenCode) hiddenCode.value = '';
+        const hiddenCode = document.getElementById('p_code_nomen_hidden');
+        if (hiddenCode) hiddenCode.value = '';
 
-const display = document.getElementById('nomenSelectedDisplay');
-if (display) {
-    display.innerHTML = '<div class="nomen-option">' +
-        '<div class="nomen-option__svg"><i class="fa-solid fa-sign-hanging"></i></div>' +
-        '<div class="nomen-option__text"><div class="nomen-option__code" style="color:#94A3B8;">— Non renseigné —</div></div>' +
-    '</div>';
-}
+        const display = document.getElementById('nomenSelectedDisplay');
+        if (display) {
+            display.innerHTML = '<div class="nomen-option">' +
+                '<div class="nomen-option__svg"><i class="fa-solid fa-sign-hanging"></i></div>' +
+                '<div class="nomen-option__text"><div class="nomen-option__code" style="color:#94A3B8;">— Non renseigné —</div></div>' +
+            '</div>';
+        }
 
-document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
-    o.classList.remove('active');
-});
+        document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
+            o.classList.remove('active');
+        });
 
         document.getElementById('p_lat').value = lat.toFixed(7);
         document.getElementById('p_lng').value = lng.toFixed(7);
@@ -2429,9 +2437,6 @@ document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
         bsModalPanneau.show();
     };
 
-    /* =========================================================
-       ✅ ÉDITION D'UN PANNEAU
-       ========================================================= */
     window.openEditPanneau = function (id) {
         const p = panneaux.find(function (x) { return String(x.panneau_id) === String(id); });
         if (!p) { alert('Panneau introuvable'); return; }
@@ -2445,30 +2450,28 @@ document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
         form.action = '/carte/panneau/' + id;
         document.getElementById('formPanneauMethod').value = 'PUT';
 
-     /* ✅ Code nomenclature (custom select) */
-const hiddenCode = document.getElementById('p_code_nomen_hidden');
-const codeActuel = p.code_nomen || '';
-if (hiddenCode) hiddenCode.value = codeActuel;
+        const hiddenCode = document.getElementById('p_code_nomen_hidden');
+        const codeActuel = p.code_nomen || '';
+        if (hiddenCode) hiddenCode.value = codeActuel;
 
-const display = document.getElementById('nomenSelectedDisplay');
-if (display) {
-    if (!codeActuel) {
-        display.innerHTML = '<div class="nomen-option">' +
-            '<div class="nomen-option__svg"><i class="fa-solid fa-sign-hanging"></i></div>' +
-            '<div class="nomen-option__text"><div class="nomen-option__code" style="color:#94A3B8;">— Non renseigné —</div></div>' +
-        '</div>';
-    } else {
-        const tpExiste = nomenTypes.find(function (t) { return t.code_type === codeActuel; });
-        const tp = tpExiste || { code_type: codeActuel, nom: p.type_nom || p.name || '', obsolete: true };
-        display.innerHTML = buildNomenOptionHtml(tp, { selected: true, obsolete: !tpExiste });
-    }
-}
+        const display = document.getElementById('nomenSelectedDisplay');
+        if (display) {
+            if (!codeActuel) {
+                display.innerHTML = '<div class="nomen-option">' +
+                    '<div class="nomen-option__svg"><i class="fa-solid fa-sign-hanging"></i></div>' +
+                    '<div class="nomen-option__text"><div class="nomen-option__code" style="color:#94A3B8;">— Non renseigné —</div></div>' +
+                '</div>';
+            } else {
+                const tpExiste = nomenTypes.find(function (t) { return t.code_type === codeActuel; });
+                const tp = tpExiste || { code_type: codeActuel, nom: p.type_nom || p.name || '', obsolete: true };
+                display.innerHTML = buildNomenOptionHtml(tp, { selected: true, obsolete: !tpExiste });
+            }
+        }
 
-document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
-    o.classList.toggle('active', o.dataset.value === codeActuel);
-});
+        document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
+            o.classList.toggle('active', o.dataset.value === codeActuel);
+        });
 
-        /* Mapping des autres champs (sans code_nomen) */
         const map = {
             p_fclass: 'fclass', p_name: 'name',
             p_num_agrement: 'num_agrement', p_code_panneau_cctp: 'code_panneau_cctp',
@@ -2508,11 +2511,7 @@ document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
     };
 
     /* =========================================================
-       GÉOLOCALISATION — MA POSITION (style Google Maps)
-       - Zoom automatique
-       - Suivi continu (watchPosition)
-       - Bouton flottant de recentrage
-       - Cercle de précision dynamique
+       GÉOLOCALISATION
     ========================================================= */
     let userLocationMarker = null;
     let userAccuracyCircle = null;
@@ -2524,7 +2523,6 @@ document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
     const userLocationText   = document.getElementById('userLocationText');
     const btnLocateMe        = document.getElementById('btnLocateMe');
 
-    /* Icône style Google Maps */
     const userIcon = L.divIcon({
         className: 'user-location-marker',
         html: '<div class="pulse-ring"></div><div class="pulse-dot"></div>',
@@ -2561,11 +2559,9 @@ document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
             || location.hostname === '127.0.0.1';
     }
 
-    /* Mettre à jour la position sur la carte */
     function updateUserPositionOnMap(lat, lng, accuracy, shouldZoom) {
         userLastPosition = { lat: lat, lng: lng, accuracy: accuracy };
 
-        /* Cercle de précision */
         if (userAccuracyCircle) {
             userAccuracyCircle.setLatLng([lat, lng]);
             userAccuracyCircle.setRadius(accuracy);
@@ -2581,7 +2577,6 @@ document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
             }).addTo(carte);
         }
 
-        /* Marqueur */
         if (userLocationMarker) {
             userLocationMarker.setLatLng([lat, lng]);
         } else {
@@ -2612,7 +2607,6 @@ document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
             }, { maxWidth: 260 });
         }
 
-        /* ✅ ZOOM AUTOMATIQUE style Google Maps */
         if (shouldZoom) {
             const targetZoom = accuracy < 30 ? 18 : accuracy < 100 ? 17 : 16;
             carte.flyTo([lat, lng], targetZoom, {
@@ -2623,7 +2617,6 @@ document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
         }
     }
 
-    /* ✅ Localiser (avec watchPosition pour suivi continu) */
     window.locateMe = function () {
         if (!navigator.geolocation) {
             showUserLocationBanner('❌ Géolocalisation non supportée par ce navigateur.', true);
@@ -2634,7 +2627,6 @@ document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
             return;
         }
 
-        /* État de chargement */
         if (btnLocateMe) {
             btnLocateMe.classList.add('loading');
             const icon = btnLocateMe.querySelector('i');
@@ -2642,13 +2634,11 @@ document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
         }
         showUserLocationBanner('📍 Recherche de votre position...', false);
 
-        /* Arrêter l'ancien watch */
         if (userWatchId !== null) {
             navigator.geolocation.clearWatch(userWatchId);
             userWatchId = null;
         }
 
-        /* Afficher le bouton flottant */
         const btnRecenter = document.getElementById('btnRecenter');
         if (btnRecenter) btnRecenter.style.display = 'flex';
 
@@ -2713,7 +2703,6 @@ document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
         );
     };
 
-    /* ✅ Recentrer sur la position (bouton flottant) */
     window.centerOnMyPosition = function () {
         if (!userLastPosition) {
             locateMe();
@@ -2735,7 +2724,6 @@ document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
         }
     };
 
-    /* Arrêter le suivi */
     window.stopLocateMe = function () {
         if (userWatchId !== null) {
             navigator.geolocation.clearWatch(userWatchId);
@@ -2743,13 +2731,11 @@ document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
         }
     };
 
-    /* Créer un panneau à ma position */
     window.startNewPanneauAtMyPosition = function (lat, lng) {
         if (userLocationMarker) userLocationMarker.closePopup();
         openCreatePanneau(lat, lng);
     };
 
-    /* Nettoyer à la fermeture */
     window.addEventListener('beforeunload', stopLocateMe);
 
     /* =========================================================
@@ -2884,7 +2870,7 @@ document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
     };
 
     /* =========================================================
-       SUBMIT FORM PANNEAU
+       ✅ SUBMIT FORM PANNEAU (avec parseJsonResponse)
     ========================================================= */
     const formPanneau = document.getElementById('formPanneau');
     let isSubmittingPanneau = false;
@@ -2908,17 +2894,7 @@ document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
             headers: { 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
             body: new FormData(formPanneau)
         })
-        .then(async function (response) {
-            const data = await response.json();
-            if (!response.ok) {
-                let messages = [];
-                if (data.errors) Object.values(data.errors).forEach(function (arr) { arr.forEach(function (m) { messages.push(m); }); });
-                else if (data.message) messages.push(data.message);
-                else messages.push('Une erreur est survenue.');
-                throw new Error(messages.join('<br>'));
-            }
-            return data;
-        })
+        .then(parseJsonResponse)
         .then(function (data) {
             successBox.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + (data.message || 'Enregistré !');
             successBox.classList.remove('d-none');
@@ -2954,16 +2930,14 @@ document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
             headers: { 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
             body: formData
         })
-        .then(function (r) { return r.json(); })
+        .then(parseJsonResponse)
         .then(function (data) {
-            if (data.success) {
-                alert('✅ Position mise à jour avec succès.');
-                window.rechargerPageEnConservantEtat(300);
-            } else {
-                alert('❌ Erreur : ' + (data.message || 'inconnue'));
-            }
+            alert('✅ Position mise à jour avec succès.');
+            window.rechargerPageEnConservantEtat(300);
         })
-        .catch(function () { alert('❌ Erreur réseau.'); });
+        .catch(function (err) {
+            alert('❌ Erreur : ' + err.message);
+        });
     };
 
     window.openNewObservation = function (id) {
@@ -2977,29 +2951,52 @@ document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
         new bootstrap.Modal(document.getElementById('modalNewObservation')).show();
     };
 
-    window.previewPhotos = function (input, containerId) {
-        const container = document.getElementById(containerId);
+    /* =========================================================
+       ✅ PREVIEW PHOTOS (2 inputs : caméra + galerie)
+    ========================================================= */
+    window.previewPhotosNewObs = function() {
+        const container = document.getElementById('photoPreviewNew');
         if (!container) return;
+
+        const cameraInput  = document.getElementById('newObsPhotosCamera');
+        const galleryInput = document.getElementById('newObsPhotosGallery');
+
+        let allFiles = [];
+        if (cameraInput && cameraInput.files)  Array.from(cameraInput.files).forEach(f => allFiles.push(f));
+        if (galleryInput && galleryInput.files) Array.from(galleryInput.files).forEach(f => allFiles.push(f));
+
+        const seen = new Set();
+        const uniqueFiles = [];
+        allFiles.forEach(function (f) {
+            const key = f.name + '|' + f.size + '|' + f.lastModified;
+            if (!seen.has(key)) {
+                seen.add(key);
+                uniqueFiles.push(f);
+            }
+        });
+
         container.innerHTML = '';
-        if (input.files && input.files.length > 0) {
-            Array.from(input.files).forEach(function (file) {
-                if (!file.type.startsWith('image/')) return;
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const div = document.createElement('div');
-                    div.className = 'photo-preview-item';
-                    div.innerHTML = '<img src="' + e.target.result + '" alt="preview">';
-                    container.appendChild(div);
-                };
-                reader.readAsDataURL(file);
-            });
-        }
+
+        uniqueFiles.forEach(function(file) {
+            if (!file.type.startsWith('image/')) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const div = document.createElement('div');
+                div.className = 'photo-preview-item';
+                div.innerHTML = '<img src="' + e.target.result + '" alt="preview">';
+                container.appendChild(div);
+            };
+            reader.readAsDataURL(file);
+        });
     };
 
+    /* =========================================================
+       ✅ SUBMIT NOUVELLE OBSERVATION — COMPRESSION + parseJsonResponse
+    ========================================================= */
     const formNewObs = document.getElementById('formNewObservation');
     if (formNewObs) {
         let isSubmitting = false;
-        formNewObs.addEventListener('submit', function (e) {
+        formNewObs.addEventListener('submit', async function (e) {
             e.preventDefault();
             if (isSubmitting) return;
             isSubmitting = true;
@@ -3011,36 +3008,63 @@ document.querySelectorAll('.nomen-custom-option').forEach(function (o) {
             errorBox.classList.add('d-none');
             successBox.classList.add('d-none');
             btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enregistrement...';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Compression & envoi...';
 
-            fetch(formNewObs.action, {
-                method: 'POST',
-                headers: { 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
-                body: new FormData(formNewObs)
-            })
-            .then(async function (response) {
-                const data = await response.json();
-                if (!response.ok) {
-                    let messages = [];
-                    if (data.errors) Object.values(data.errors).forEach(function (arr) { arr.forEach(function (m) { messages.push(m); }); });
-                    else if (data.message) messages.push(data.message);
-                    else messages.push('Une erreur est survenue.');
-                    throw new Error(messages.join('<br>'));
+            try {
+                // ✅ Construire un nouveau FormData avec compression
+                const formData = new FormData();
+
+                for (const [key, value] of new FormData(formNewObs).entries()) {
+                    if (key !== 'photos[]') {
+                        formData.append(key, value);
+                    }
                 }
-                return data;
-            })
-            .then(function (data) {
+
+                const cameraInput  = document.getElementById('newObsPhotosCamera');
+                const galleryInput = document.getElementById('newObsPhotosGallery');
+
+                let allFiles = [];
+                if (cameraInput && cameraInput.files)  Array.from(cameraInput.files).forEach(f => allFiles.push(f));
+                if (galleryInput && galleryInput.files) Array.from(galleryInput.files).forEach(f => allFiles.push(f));
+
+                const seen = new Set();
+                const uniqueFiles = allFiles.filter(f => {
+                    const k = f.name + '|' + f.size + '|' + f.lastModified;
+                    if (seen.has(k)) return false;
+                    seen.add(k);
+                    return true;
+                });
+
+                // Compression
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Compression photos...';
+                for (const file of uniqueFiles) {
+                    if (!file.type.startsWith('image/')) continue;
+                    const compressed = await window.compresserImage(file);
+                    formData.append('photos[]', compressed);
+                }
+
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enregistrement...';
+
+                const response = await fetch(formNewObs.action, {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
+                    body: formData
+                });
+
+                const data = await parseJsonResponse(response);
+
                 successBox.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + (data.message || 'Enregistré !');
                 successBox.classList.remove('d-none');
                 window.rechargerPageEnConservantEtat(900);
-            })
-            .catch(function (err) {
+
+            } catch (err) {
+                console.error('❌ Erreur soumission observation:', err);
                 errorBox.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> ' + err.message;
                 errorBox.classList.remove('d-none');
                 isSubmitting = false;
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fa-solid fa-check"></i> Enregistrer l\'observation';
-            });
+            }
         });
     }
 
