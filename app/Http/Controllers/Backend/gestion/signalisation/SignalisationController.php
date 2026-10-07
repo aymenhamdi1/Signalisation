@@ -156,7 +156,7 @@ class SignalisationController extends Controller
     }
 
     /* =========================================================
-       SHOW — ✅ CORRIGÉ avec normalisation String des clés id_obs
+       SHOW — ✅ CORRIGÉ : construit $photosByObsJs côté contrôleur
     ========================================================= */
     public function show($id)
     {
@@ -227,7 +227,7 @@ class SignalisationController extends Controller
             ->orderByDesc('o.date_obs')
             ->get();
 
-        /* ✅✅✅ CORRECTION CRITIQUE : Normalisation des clés en STRING */
+        /* ✅ CONSTRUCTION DE $photosParObs — clés en STRING */
         $photosParObs = [];
         if ($observations->isNotEmpty()) {
             $obsIds = $observations->pluck('id_obs')->toArray();
@@ -238,7 +238,6 @@ class SignalisationController extends Controller
                 ->get();
 
             foreach ($photos as $p) {
-                // ✅ FORCER la clé en STRING pour éviter tout décalage de type
                 $key = (string) $p->id_obs;
                 if (!isset($photosParObs[$key])) {
                     $photosParObs[$key] = [];
@@ -247,16 +246,27 @@ class SignalisationController extends Controller
             }
         }
 
+        /* ✅✅✅ CONSTRUCTION DE $photosByObsJs POUR LE JAVASCRIPT ✅✅✅ */
+        $photosByObsJs = [];
+        foreach ($photosParObs as $idObs => $list) {
+            $items = is_array($list) ? $list : $list->all();
+
+            $photosByObsJs[(string) $idObs] = array_map(function ($p) {
+                return [
+                    'id'  => $p->id_photo,
+                    'url' => asset('Backend/assets/photos/' . $p->chemin),
+                    'nom' => $p->nom_fichier ?? ('photo-' . $p->id_photo),
+                ];
+            }, $items);
+        }
+
         $nbObservations = $observations->count();
         $derniereObs    = $observations->first();
         $nbPhotos       = array_sum(array_map('count', $photosParObs));
 
-        /* ✅ DEBUG — log pour vérifier côté Laravel */
+        /* ✅ LOGS DEBUG */
         Log::info('🔍 [show] panneau_id=' . $id . ' | obs=' . $nbObservations . ' | photos=' . $nbPhotos);
-        Log::info('📸 [show] Clés photosParObs: ' . json_encode(array_keys($photosParObs)));
-        foreach ($photosParObs as $k => $list) {
-            Log::info('   → id_obs (key)=' . $k . ' (' . gettype($k) . ') : ' . count($list) . ' photo(s)');
-        }
+        Log::info('📸 [show] photosByObsJs: ' . json_encode($photosByObsJs));
 
         $voisins = DB::table($this->table)
             ->select("{$pk} as id", 'code_nomen', 'point_kilo')
@@ -297,6 +307,7 @@ class SignalisationController extends Controller
             'panneau',
             'observations',
             'photosParObs',
+            'photosByObsJs',   // ✅ NOUVELLE VARIABLE
             'nbObservations',
             'nbPhotos',
             'derniereObs',
@@ -624,7 +635,7 @@ class SignalisationController extends Controller
     }
 
     /* =========================================================
-       UPDATE OBSERVATION — avec support photos
+       UPDATE OBSERVATION
     ========================================================= */
     public function updateObservation(Request $request, $idObs)
     {
@@ -816,12 +827,11 @@ class SignalisationController extends Controller
     }
 
     /* =========================================================
-       ✅ DESTROY PHOTO — avec PK 'id_photo' (confirmé par votre table)
+       DESTROY PHOTO
     ========================================================= */
     public function destroyPhoto($idPhoto)
     {
         try {
-            // ✅ Votre table utilise bien 'id_photo' — pas besoin de détection dynamique
             $photo = DB::table($this->tablePho)->where('id_photo', $idPhoto)->first();
 
             if (!$photo) {
