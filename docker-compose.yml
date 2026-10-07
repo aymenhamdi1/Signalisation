@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: signalisation_app
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      # Vos variables .env ici
+      - DB_CONNECTION=pgsql
+      - DB_HOST=host.docker.internal
+      - DB_PORT=5432
+      - DB_DATABASE=votre_db
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=votre_mdp
+    volumes:
+      # ✅ Photos persistantes
+      - photos_data:/var/www/public/Backend/assets/photos
+      # ✅ Logs persistants (optionnel mais utile)
+      - logs_data:/var/www/storage/logs
+
+volumes:
+  photos_data:
+  logs_data:
