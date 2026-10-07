@@ -21,9 +21,6 @@ class SignalisationController extends Controller
     protected string $tablePho = 'photo';
     protected string $pk       = 'id_0';
 
-    /**
-     * Chemin physique du dossier des photos
-     */
     protected function photosDir(): string
     {
         return public_path('Backend/assets/photos');
@@ -159,7 +156,7 @@ class SignalisationController extends Controller
     }
 
     /* =========================================================
-       SHOW
+       SHOW — ✅ CORRIGÉ avec normalisation String des clés id_obs
     ========================================================= */
     public function show($id)
     {
@@ -230,21 +227,36 @@ class SignalisationController extends Controller
             ->orderByDesc('o.date_obs')
             ->get();
 
+        /* ✅✅✅ CORRECTION CRITIQUE : Normalisation des clés en STRING */
         $photosParObs = [];
         if ($observations->isNotEmpty()) {
             $obsIds = $observations->pluck('id_obs')->toArray();
+
             $photos = DB::table($this->tablePho)
                 ->whereIn('id_obs', $obsIds)
                 ->orderByDesc('prise_le')
                 ->get();
+
             foreach ($photos as $p) {
-                $photosParObs[$p->id_obs][] = $p;
+                // ✅ FORCER la clé en STRING pour éviter tout décalage de type
+                $key = (string) $p->id_obs;
+                if (!isset($photosParObs[$key])) {
+                    $photosParObs[$key] = [];
+                }
+                $photosParObs[$key][] = $p;
             }
         }
 
         $nbObservations = $observations->count();
         $derniereObs    = $observations->first();
         $nbPhotos       = array_sum(array_map('count', $photosParObs));
+
+        /* ✅ DEBUG — log pour vérifier côté Laravel */
+        Log::info('🔍 [show] panneau_id=' . $id . ' | obs=' . $nbObservations . ' | photos=' . $nbPhotos);
+        Log::info('📸 [show] Clés photosParObs: ' . json_encode(array_keys($photosParObs)));
+        foreach ($photosParObs as $k => $list) {
+            Log::info('   → id_obs (key)=' . $k . ' (' . gettype($k) . ') : ' . count($list) . ' photo(s)');
+        }
 
         $voisins = DB::table($this->table)
             ->select("{$pk} as id", 'code_nomen', 'point_kilo')
@@ -452,7 +464,7 @@ class SignalisationController extends Controller
     }
 
     /* =========================================================
-       ✅ STORE OBSERVATION — AVEC GESTION D'ERREUR ROBUSTE
+       STORE OBSERVATION
     ========================================================= */
     public function storeObservation(Request $request, $id)
     {
@@ -612,115 +624,110 @@ class SignalisationController extends Controller
     }
 
     /* =========================================================
-       UPDATE OBSERVATION
+       UPDATE OBSERVATION — avec support photos
     ========================================================= */
-    /* =========================================================
-   ✅ UPDATE OBSERVATION — avec support photos (ajout)
-========================================================= */
-public function updateObservation(Request $request, $idObs)
-{
-    try {
-        $validated = $request->validate([
-            'date_obs'              => 'nullable|date',
-            'date_fabrication'      => 'nullable|date',
-            'date_pose'             => 'nullable|date',
-            'garantie_expiration'   => 'nullable|date',
-            'num_agrem'             => 'nullable|string|max:50',
-            'classe_retro'          => 'nullable|string|max:20',
-            'etat_actuel'           => 'required|string|max:30',
-            'remarque'              => 'nullable|string|max:2000',
-            'photos'                => 'nullable|array|max:10',
-            'photos.*'              => 'image|mimes:jpeg,jpg,png,webp|max:10240',
-        ]);
+    public function updateObservation(Request $request, $idObs)
+    {
+        try {
+            $validated = $request->validate([
+                'date_obs'              => 'nullable|date',
+                'date_fabrication'      => 'nullable|date',
+                'date_pose'             => 'nullable|date',
+                'garantie_expiration'   => 'nullable|date',
+                'num_agrem'             => 'nullable|string|max:50',
+                'classe_retro'          => 'nullable|string|max:20',
+                'etat_actuel'           => 'required|string|max:30',
+                'remarque'              => 'nullable|string|max:2000',
+                'photos'                => 'nullable|array|max:10',
+                'photos.*'              => 'image|mimes:jpeg,jpg,png,webp|max:10240',
+            ]);
 
-        $photos = $request->file('photos');
-        unset($validated['photos']);
+            $photos = $request->file('photos');
+            unset($validated['photos']);
 
-        // Mise à jour de l'observation
-        DB::table($this->tableObs)
-            ->where('id_obs', $idObs)
-            ->update(array_merge($validated, [
-                'updated_at' => now(),
-            ]));
+            DB::table($this->tableObs)
+                ->where('id_obs', $idObs)
+                ->update(array_merge($validated, [
+                    'updated_at' => now(),
+                ]));
 
-        // ✅ Ajout des nouvelles photos
-        $savedCount = 0;
-        if (!empty($photos)) {
-            $destination = $this->photosDir();
-            if (!is_dir($destination)) {
-                @mkdir($destination, 0755, true);
-            }
-
-            foreach ($photos as $file) {
-                if (!$file->isValid()) continue;
-
-                $originalName = $file->getClientOriginalName();
-                $mimeType     = $file->getClientMimeType();
-                $extension    = strtolower($file->getClientOriginalExtension());
-                $sizeKb       = (int) round($file->getSize() / 1024);
-
-                if (!in_array($extension, ['jpg', 'jpeg', 'png', 'webp'], true)) continue;
-
-                $filename = Str::uuid() . '.' . $extension;
-
-                try {
-                    $file->move($destination, $filename);
-                } catch (Throwable $e) {
-                    Log::error('Erreur move() updateObservation : ' . $e->getMessage());
-                    continue;
+            $savedCount = 0;
+            if (!empty($photos)) {
+                $destination = $this->photosDir();
+                if (!is_dir($destination)) {
+                    @mkdir($destination, 0755, true);
                 }
 
-                DB::table($this->tablePho)->insert([
-                    'id_obs'      => $idObs,
-                    'nom_fichier' => $originalName,
-                    'chemin'      => $filename,
-                    'type_photo'  => $request->input('type_photo', 'Face'),
-                    'legende'     => $request->input('legende'),
-                    'mime_type'   => $mimeType,
-                    'taille_ko'   => $sizeKb,
-                    'prise_le'    => now(),
-                    'uploaded_by' => Auth::id(),
-                    'created_at'  => now(),
-                ]);
-                $savedCount++;
+                foreach ($photos as $file) {
+                    if (!$file->isValid()) continue;
+
+                    $originalName = $file->getClientOriginalName();
+                    $mimeType     = $file->getClientMimeType();
+                    $extension    = strtolower($file->getClientOriginalExtension());
+                    $sizeKb       = (int) round($file->getSize() / 1024);
+
+                    if (!in_array($extension, ['jpg', 'jpeg', 'png', 'webp'], true)) continue;
+
+                    $filename = Str::uuid() . '.' . $extension;
+
+                    try {
+                        $file->move($destination, $filename);
+                    } catch (Throwable $e) {
+                        Log::error('Erreur move() updateObservation : ' . $e->getMessage());
+                        continue;
+                    }
+
+                    DB::table($this->tablePho)->insert([
+                        'id_obs'      => $idObs,
+                        'nom_fichier' => $originalName,
+                        'chemin'      => $filename,
+                        'type_photo'  => $request->input('type_photo', 'Face'),
+                        'legende'     => $request->input('legende'),
+                        'mime_type'   => $mimeType,
+                        'taille_ko'   => $sizeKb,
+                        'prise_le'    => now(),
+                        'uploaded_by' => Auth::id(),
+                        'created_at'  => now(),
+                    ]);
+                    $savedCount++;
+                }
             }
-        }
 
-        $message = 'Observation modifiée avec succès.';
-        if ($savedCount > 0) {
-            $message .= ' (' . $savedCount . ' photo(s) ajoutée(s))';
-        }
+            $message = 'Observation modifiée avec succès.';
+            if ($savedCount > 0) {
+                $message .= ' (' . $savedCount . ' photo(s) ajoutée(s))';
+            }
 
-        if ($request->expectsJson() || $request->ajax()) {
-            return response()->json([
-                'success'      => true,
-                'message'      => $message,
-                'photos_saved' => $savedCount,
-            ]);
-        }
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success'      => true,
+                    'message'      => $message,
+                    'photos_saved' => $savedCount,
+                ]);
+            }
 
-        return redirect()->back()->with('success', $message);
+            return redirect()->back()->with('success', $message);
 
-    } catch (ValidationException $e) {
-        if ($request->expectsJson() || $request->ajax()) {
-            return response()->json([
-                'success' => false,
-                'errors'  => $e->errors(),
-                'message' => 'Certains champs sont invalides.',
-            ], 422);
+        } catch (ValidationException $e) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'errors'  => $e->errors(),
+                    'message' => 'Certains champs sont invalides.',
+                ], 422);
+            }
+            throw $e;
+        } catch (Throwable $e) {
+            Log::error('Erreur updateObservation #' . $idObs . ' : ' . $e->getMessage());
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erreur serveur : ' . $e->getMessage(),
+                ], 500);
+            }
+            return redirect()->back()->with('error', 'Erreur lors de la modification.');
         }
-        throw $e;
-    } catch (Throwable $e) {
-        Log::error('Erreur updateObservation #' . $idObs . ' : ' . $e->getMessage());
-        if ($request->expectsJson() || $request->ajax()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erreur serveur : ' . $e->getMessage(),
-            ], 500);
-        }
-        return redirect()->back()->with('error', 'Erreur lors de la modification.');
     }
-}
 
     /* =========================================================
        DESTROY OBSERVATION
@@ -755,20 +762,16 @@ public function updateObservation(Request $request, $idObs)
     }
 
     /* =========================================================
-       ✅ DESTROY PANNEAU
-       - Supprime l'observation liée + toutes ses photos (fichiers + BD)
-       - Supprime le panneau lui-même
+       DESTROY PANNEAU
     ========================================================= */
     public function destroy($id)
     {
         try {
-            // 1) Récupérer toutes les observations du panneau
             $observations = DB::table($this->tableObs)
                 ->where('id_traffic', $id)
                 ->pluck('id_obs')
                 ->toArray();
 
-            // 2) Supprimer les photos physiques + lignes en BD
             if (!empty($observations)) {
                 $photos = DB::table($this->tablePho)
                     ->whereIn('id_obs', $observations)
@@ -785,7 +788,6 @@ public function updateObservation(Request $request, $idObs)
                 DB::table($this->tableObs)->where('id_traffic', $id)->delete();
             }
 
-            // 3) Supprimer le panneau
             $deleted = DB::table($this->table)->where($this->pk, $id)->delete();
 
             if (!$deleted) {
@@ -814,16 +816,13 @@ public function updateObservation(Request $request, $idObs)
     }
 
     /* =========================================================
-       ✅ DESTROY PHOTO (suppression individuelle)
-       ⚠️ Utilise une détection dynamique de la clé primaire de la table photo
+       ✅ DESTROY PHOTO — avec PK 'id_photo' (confirmé par votre table)
     ========================================================= */
     public function destroyPhoto($idPhoto)
     {
         try {
-            // ✅ Détection automatique du nom de la clé primaire de la table photo
-            $photoPk = $this->getPhotoPrimaryKey();
-
-            $photo = DB::table($this->tablePho)->where($photoPk, $idPhoto)->first();
+            // ✅ Votre table utilise bien 'id_photo' — pas besoin de détection dynamique
+            $photo = DB::table($this->tablePho)->where('id_photo', $idPhoto)->first();
 
             if (!$photo) {
                 return response()->json([
@@ -832,7 +831,6 @@ public function updateObservation(Request $request, $idObs)
                 ], 404);
             }
 
-            // Supprimer le fichier physique
             if (!empty($photo->chemin)) {
                 $fullPath = $this->photosDir() . DIRECTORY_SEPARATOR . $photo->chemin;
                 if (is_file($fullPath)) {
@@ -840,8 +838,7 @@ public function updateObservation(Request $request, $idObs)
                 }
             }
 
-            // Supprimer la ligne en BD
-            DB::table($this->tablePho)->where($photoPk, $idPhoto)->delete();
+            DB::table($this->tablePho)->where('id_photo', $idPhoto)->delete();
 
             return response()->json([
                 'success'  => true,
@@ -862,48 +859,7 @@ public function updateObservation(Request $request, $idObs)
     }
 
     /* =========================================================
-       ✅ DÉTECTION DYNAMIQUE DE LA CLÉ PRIMAIRE DE LA TABLE photo
-       Évite les erreurs si la colonne n'est pas 'id_photo'
-    ========================================================= */
-    protected function getPhotoPrimaryKey(): string
-    {
-        // Candidats possibles, par ordre de préférence
-        $candidats = ['id_photo', 'id', 'id_0', 'photo_id'];
-
-        try {
-            $columns = DB::select("
-                SELECT column_name
-                FROM information_schema.columns
-                WHERE table_schema = 'public'
-                  AND table_name = ?
-            ", [$this->tablePho]);
-
-            $colNames = array_map(function ($c) {
-                return $c->column_name;
-            }, $columns);
-
-            foreach ($candidats as $c) {
-                if (in_array($c, $colNames, true)) {
-                    return $c;
-                }
-            }
-
-            // Fallback : première colonne contenant 'id'
-            foreach ($colNames as $col) {
-                if (stripos($col, 'id') !== false) {
-                    return $col;
-                }
-            }
-        } catch (Throwable $e) {
-            Log::warning('Impossible de détecter la PK de la table photo : ' . $e->getMessage());
-        }
-
-        // Valeur par défaut
-        return 'id_photo';
-    }
-
-    /* =========================================================
-       ✅ DÉTECTION post_max_size DÉPASSÉ
+       DÉTECTION post_max_size DÉPASSÉ
     ========================================================= */
     protected function isPostMaxSizeExceeded(): bool
     {
@@ -928,9 +884,6 @@ public function updateObservation(Request $request, $idObs)
         return false;
     }
 
-    /**
-     * Convertit '8M', '2G', '512K' en octets
-     */
     protected function parseSize(string $size): int
     {
         $size = trim($size);
