@@ -159,6 +159,7 @@ Route::middleware(['auth'])->prefix('signalisation')->name('signalisation.')->gr
     Route::post('/',      [SignalisationController::class, 'store'])->name('store');
     Route::get('/{id}',   [SignalisationController::class, 'show'])->name('show');
     Route::put('/{id}',   [SignalisationController::class, 'update'])->name('update');
+    Route::delete('/{id}',[SignalisationController::class, 'destroy'])->name('destroy'); // ✅ NOUVEAU
 
     // ═══════ OBSERVATIONS ═══════
     Route::post('/{id}/observation',                [SignalisationController::class, 'storeObservation'])->name('observation.store');
