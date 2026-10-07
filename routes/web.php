@@ -155,16 +155,21 @@ Route::get('all/dashboard', [DashboardController::class, 'index'])
     ->middleware('auth');
 
 Route::middleware(['auth'])->prefix('signalisation')->name('signalisation.')->group(function () {
-    Route::get('/',       [SignalisationController::class, 'index'])->name('index');
-    Route::post('/',      [SignalisationController::class, 'store'])->name('store');
-    Route::get('/{id}',   [SignalisationController::class, 'show'])->name('show');
-    Route::put('/{id}',   [SignalisationController::class, 'update'])->name('update');
-    Route::delete('/{id}',[SignalisationController::class, 'destroy'])->name('destroy'); // ✅ NOUVEAU
+
+    // ═══════ PANNEAUX ═══════
+    Route::get('/',        [SignalisationController::class, 'index'])->name('index');
+    Route::post('/',       [SignalisationController::class, 'store'])->name('store');
+    Route::get('/{id}',    [SignalisationController::class, 'show'])->name('show');
+    Route::put('/{id}',    [SignalisationController::class, 'update'])->name('update');
+    Route::delete('/{id}', [SignalisationController::class, 'destroy'])->name('destroy');
 
     // ═══════ OBSERVATIONS ═══════
-    Route::post('/{id}/observation',                [SignalisationController::class, 'storeObservation'])->name('observation.store');
-    Route::put('/observation/{idObs}',              [SignalisationController::class, 'updateObservation'])->name('observation.update');
-    Route::delete('/observation/{idObs}',           [SignalisationController::class, 'destroyObservation'])->name('observation.destroy');
+    Route::post('/{id}/observation',      [SignalisationController::class, 'storeObservation'])->name('observation.store');
+    Route::put('/observation/{idObs}',    [SignalisationController::class, 'updateObservation'])->name('observation.update');
+    Route::delete('/observation/{idObs}', [SignalisationController::class, 'destroyObservation'])->name('observation.destroy');
+
+    // ═══════ PHOTOS ═══════
+    Route::delete('/photos/{idPhoto}', [SignalisationController::class, 'destroyPhoto'])->name('photo.destroy');
 });
 
 
