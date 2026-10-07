@@ -3091,5 +3091,65 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 </script>
+{{-- ✅ DEBUG TEMPORAIRE --}}
+<div style="position:fixed; bottom:10px; right:10px; background:#000; color:#0f0; padding:14px; z-index:99999; font-family:monospace; font-size:11px; max-width:500px; max-height:400px; overflow:auto; border:2px solid #0f0; border-radius:8px;">
+    <strong style="color:#ff0;">🔍 DEBUG photosParObs</strong><br><br>
+    
+    @if (empty($photosParObs))
+        <span style="color:#f00;">❌ $photosParObs est VIDE !</span>
+    @else
+        <span style="color:#0f0;">✅ $photosParObs contient {{ count($photosParObs) }} clé(s)</span><br><br>
+        @foreach ($photosParObs as $key => $list)
+            @php
+                $listCount = is_array($list) ? count($list) : $list->count();
+            @endphp
+            <div style="color:#0ff;">
+                • id_obs = <strong>{{ $key }}</strong> 
+                (type: {{ gettype($key) }}) 
+                → <strong>{{ $listCount }}</strong> photo(s)
+            </div>
+        @endforeach
+    @endif
+    
+    <hr style="border-color:#0f0;">
+    
+    <strong style="color:#ff0;">🔍 DEBUG observations</strong><br>
+    @foreach ($observations as $obs)
+        <div style="color:#0ff;">
+            • id_obs = <strong>{{ $obs->id_obs }}</strong> 
+            (type: {{ gettype($obs->id_obs) }})
+            | date: {{ $obs->date_obs }}
+        </div>
+    @endforeach
+    
+    <hr style="border-color:#0f0;">
+    
+    <strong style="color:#ff0;">🔍 DEBUG HTML data-id-obs</strong><br>
+    @foreach ($observations as $obs)
+        <div style="color:#0ff;">
+            • Bouton ✏️ → data-id-obs="<strong>{{ $obs->id_obs }}</strong>"
+        </div>
+    @endforeach
+    
+    <hr style="border-color:#0f0;">
+    
+    <strong style="color:#ff0;">🔍 DEBUG JS (window.__allPhotosByObs)</strong><br>
+    <div id="debug-js-output" style="color:#0ff;">Chargement...</div>
+</div>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const box = document.getElementById('debug-js-output');
+    if (!box) return;
+    
+    const all = window.__allPhotosByObs || {};
+    const keys = Object.keys(all);
+    
+    let html = '✅ ' + keys.length + ' clé(s) côté JS<br>';
+    keys.forEach(k => {
+        html += '• "' + k + '" (type: ' + typeof k + ') → ' + (all[k]?.length || 0) + ' photo(s)<br>';
+    });
+    box.innerHTML = html;
+});
+</script>
 @endsection
