@@ -458,6 +458,50 @@
     @keyframes lbImageIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
     .lb-img.animate { animation: lbImageIn 0.3s ease; }
 
+    /* =========================================================
+       PHOTOS DANS MODALE ÉDITION OBSERVATION
+    ========================================================= */
+    .edit-photo-item {
+        position: relative;
+        aspect-ratio: 1;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1.5px solid #E2E8F0;
+        background: #fff;
+        transition: all 0.2s ease;
+    }
+    .edit-photo-item:hover {
+        border-color: #2563EB;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+    }
+    .edit-photo-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        cursor: zoom-in;
+    }
+    .edit-photo-delete {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: rgba(220, 38, 38, 0.95);
+        color: #fff;
+        border: 1.5px solid #fff;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        box-shadow: 0 2px 6px rgba(220, 38, 38, 0.4);
+        transition: transform 0.15s ease;
+    }
+    .edit-photo-delete:hover { transform: scale(1.15); background: #DC2626; }
+    .edit-photo-delete:disabled { opacity: 0.6; cursor: not-allowed; }
+
     /* RESPONSIVE */
     @media (max-width: 1024px) {
         .show-page { padding: 18px; }
@@ -659,7 +703,6 @@ console.log('📁 Base SVG:', window.__baseSvg);
                     data-bs-target="#modalNewObservation">
                 <i class="fa-solid fa-plus"></i> Nouvelle observation
             </button>
-            {{-- ✅ SUPPRESSION PANNEAU --}}
             <button type="button"
                     class="btn-hero btn-hero-danger"
                     id="btnDeletePanneauFromShow"
@@ -1008,7 +1051,6 @@ console.log('📁 Base SVG:', window.__baseSvg);
                                 $photos = $photosParObs[$obs->id_obs] ?? [];
                                 $photosArr = is_array($photos) ? $photos : $photos->all();
 
-                                // Construire les données JSON pour le JS
                                 $obsPhotosData = array_map(function($p) {
                                     return [
                                         'id'  => $p->id_photo ?? ($p->id ?? ($p->id_0 ?? null)),
@@ -1064,7 +1106,6 @@ console.log('📁 Base SVG:', window.__baseSvg);
                                     {{ $obs->garantie_expiration ? \Carbon\Carbon::parse($obs->garantie_expiration)->format('d/m/Y') : '—' }}
                                 </td>
 
-                                {{-- PHOTOS --}}
                                 <td>
                                     @if (!empty($photosArr))
                                         <div class="obs-photos">
@@ -1574,7 +1615,7 @@ console.log('📁 Base SVG:', window.__baseSvg);
 </div>
 
 {{-- =========================================================
-     MODALE 3 : MODIFIER OBSERVATION
+     MODALE 3 : MODIFIER OBSERVATION — AVEC GESTION PHOTOS
 ========================================================= --}}
 <div class="modal fade" id="modalEditObservation" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width: 900px;">
@@ -1591,7 +1632,9 @@ console.log('📁 Base SVG:', window.__baseSvg);
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
 
-            <form id="formEditObservation" method="POST" style="display: flex; flex-direction: column; flex: 1; min-height: 0;">
+            <form id="formEditObservation" method="POST"
+                  enctype="multipart/form-data"
+                  style="display: flex; flex-direction: column; flex: 1; min-height: 0;">
                 @csrf
                 @method('PUT')
 
@@ -1610,9 +1653,19 @@ console.log('📁 Base SVG:', window.__baseSvg);
                                 <i class="fa-solid fa-calendar"></i> Dates techniques
                             </button>
                         </li>
+                        {{-- ✅ NOUVEL ONGLET PHOTOS --}}
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#edit-tab-photos" type="button">
+                                <i class="fa-solid fa-camera"></i> Photos
+                                <span id="editPhotosCountBadge"
+                                      style="display:none; margin-left:6px; padding:1px 8px; background:#2563EB; color:#fff; border-radius:100px; font-size:0.68rem; font-weight:700;">0</span>
+                            </button>
+                        </li>
                     </ul>
 
                     <div class="tab-content">
+
+                        {{-- ===== ONGLET 1 : INSPECTION ===== --}}
                         <div class="tab-pane fade show active" id="edit-tab-insp">
                             <div class="row g-3">
                                 <div class="col-md-6">
@@ -1649,6 +1702,7 @@ console.log('📁 Base SVG:', window.__baseSvg);
                             </div>
                         </div>
 
+                        {{-- ===== ONGLET 2 : DATES ===== --}}
                         <div class="tab-pane fade" id="edit-tab-dates">
                             <div class="row g-3">
                                 <div class="col-md-4">
@@ -1665,6 +1719,71 @@ console.log('📁 Base SVG:', window.__baseSvg);
                                 </div>
                             </div>
                         </div>
+
+                        {{-- ===== ONGLET 3 : PHOTOS ===== --}}
+                        <div class="tab-pane fade" id="edit-tab-photos">
+
+                            {{-- Section 1 : Photos existantes --}}
+                            <div style="margin-bottom: 22px;">
+                                <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                                    <i class="fa-solid fa-images" style="color:#2563EB;"></i>
+                                    <strong style="color:#1E40AF; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                        Photos existantes
+                                    </strong>
+                                    <span id="editExistingPhotosCount"
+                                          style="padding:2px 10px; background:#EFF6FF; color:#2563EB; border-radius:100px; font-size:0.72rem; font-weight:700;">0</span>
+                                </div>
+
+                                <div id="editExistingPhotosGrid"
+                                     style="display:grid; grid-template-columns:repeat(auto-fill, minmax(90px, 1fr)); gap:10px; padding:14px; background:#F8FAFC; border:1.5px dashed #E2E8F0; border-radius:10px; min-height:80px;">
+                                </div>
+
+                                <div id="editNoPhotosMsg"
+                                     style="display:none; text-align:center; padding:20px 14px; color:#94A3B8; font-size:0.82rem; font-style:italic;">
+                                    <i class="fa-regular fa-image" style="font-size:1.5rem; opacity:0.5; display:block; margin-bottom:6px;"></i>
+                                    Aucune photo pour cette observation
+                                </div>
+                            </div>
+
+                            {{-- Section 2 : Ajouter de nouvelles photos --}}
+                            <div>
+                                <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                                    <i class="fa-solid fa-plus-circle" style="color:#10B981;"></i>
+                                    <strong style="color:#059669; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                        Ajouter de nouvelles photos
+                                    </strong>
+                                </div>
+
+                                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:14px;">
+                                    <label for="editObsPhotosCamera" class="photo-upload-zone" style="margin:0; cursor:pointer;">
+                                        <i class="fa-solid fa-camera" style="font-size: 1.6rem; color: #10B981; margin-bottom: 6px; display: block;"></i>
+                                        <div style="font-weight: 700; color: #0F172A; font-size: 0.82rem;">Prendre une photo</div>
+                                        <div style="font-size: 0.7rem; color: #64748B;">Appareil photo</div>
+                                        <input type="file" id="editObsPhotosCamera" name="photos[]" accept="image/*" capture="environment" multiple
+                                               onchange="previewEditPhotos(this)">
+                                    </label>
+
+                                    <label for="editObsPhotosGallery" class="photo-upload-zone" style="margin:0; cursor:pointer;">
+                                        <i class="fa-solid fa-images" style="font-size: 1.6rem; color: #2563EB; margin-bottom: 6px; display: block;"></i>
+                                        <div style="font-weight: 700; color: #0F172A; font-size: 0.82rem;">Choisir une photo</div>
+                                        <div style="font-size: 0.7rem; color: #64748B;">Galerie / Fichiers</div>
+                                        <input type="file" id="editObsPhotosGallery" name="photos[]" accept="image/*" multiple
+                                               onchange="previewEditPhotos(this)">
+                                    </label>
+                                </div>
+
+                                <div style="font-size: 0.7rem; color: #94A3B8; text-align: center; margin-bottom: 10px;">
+                                    <i class="fa-solid fa-circle-info"></i>
+                                    JPG, PNG, WEBP — max 10 Mo (10 photos max) — Compression automatique
+                                </div>
+
+                                <div id="editNewPhotosPreviewGrid"
+                                     style="display:grid; grid-template-columns:repeat(auto-fill, minmax(90px, 1fr)); gap:8px;">
+                                </div>
+                            </div>
+
+                        </div>
+
                     </div>
                 </div>
 
@@ -1756,7 +1875,6 @@ console.log('📁 Base SVG:', window.__baseSvg);
                 <i class="fa-solid fa-download"></i>
             </button>
 
-            {{-- ✅ BOUTON SUPPRIMER PHOTO --}}
             <button type="button" class="lb-btn lb-delete" id="lbDeleteBtn" title="Supprimer cette photo (Suppr)">
                 <i class="fa-solid fa-trash"></i>
             </button>
@@ -2121,7 +2239,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /* =========================================================
-       PREVIEW DES PHOTOS
+       PREVIEW DES PHOTOS (nouvelle observation)
     ========================================================= */
     window.previewPhotos = function(input, containerId) {
         const container = document.getElementById(containerId);
@@ -2166,11 +2284,10 @@ document.addEventListener('DOMContentLoaded', function () {
     /* =========================================================
        LIGHTBOX PHOTOS — avec suppression
     ========================================================= */
-    let lbPhotos  = [];   // [{id, url, nom}, ...]
+    let lbPhotos  = [];
     let lbCurrent = 0;
 
     window.ouvrirPhotos = function(photos, startIndex = 0) {
-        // Normalisation : accepte string[] ou object[]
         const normalized = (photos || []).map(function(p) {
             if (typeof p === 'string') return { id: null, url: p, nom: '' };
             return { id: p.id, url: p.url, nom: p.nom || '' };
@@ -2193,7 +2310,6 @@ document.addEventListener('DOMContentLoaded', function () {
         renderLightbox();
     };
 
-    // Alias pour compatibilité (appel par id_obs)
     window.openLightbox = function(idObs, startIndex = 0) {
         const photos = (window.__allPhotosByObs || {})[idObs] || [];
         window.ouvrirPhotos(photos, startIndex);
@@ -2226,7 +2342,6 @@ document.addEventListener('DOMContentLoaded', function () {
             nextBtn.classList.remove('hidden');
         }
 
-        // Bouton supprimer : masqué si pas d'id
         if (delBtn) {
             if (photo.id) {
                 delBtn.style.display = '';
@@ -2271,7 +2386,6 @@ document.addEventListener('DOMContentLoaded', function () {
         lbCurrent = 0;
     };
 
-    /* ✅ SUPPRESSION DE LA PHOTO COURANTE */
     window.supprimerPhotoCourante = function() {
         const photo = lbPhotos[lbCurrent];
         if (!photo || !photo.id) {
@@ -2305,10 +2419,8 @@ document.addEventListener('DOMContentLoaded', function () {
             return data;
         })
         .then(() => {
-            // Retirer la photo de la liste locale
             lbPhotos.splice(lbCurrent, 1);
 
-            // Mettre à jour les données globales
             if (window.__allPhotosByObs) {
                 Object.keys(window.__allPhotosByObs).forEach(function(k) {
                     const arr = window.__allPhotosByObs[k];
@@ -2329,7 +2441,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 renderLightbox();
             }
 
-            // Recharger après un court délai
             setTimeout(function() {
                 window.location.reload();
             }, 400);
@@ -2547,9 +2658,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /* =========================================================
-       MODALE ÉDITION OBSERVATION
+       MODALE ÉDITION OBSERVATION — avec photos
     ========================================================= */
     const modalEditObs = document.getElementById('modalEditObservation');
+    let currentEditObsId = null;
+    let currentEditPhotos = [];
+
     if (modalEditObs) {
         modalEditObs.addEventListener('show.bs.modal', function (event) {
             const btn = event.relatedTarget;
@@ -2564,6 +2678,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const classe   = btn.getAttribute('data-classe-retro');
             const etat     = btn.getAttribute('data-etat');
             const remarque = btn.getAttribute('data-remarque');
+
+            currentEditObsId = idObs;
 
             document.getElementById('edit_etat').value      = etat || '';
             document.getElementById('edit_classe').value    = classe || '';
@@ -2585,16 +2701,213 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const form = document.getElementById('formEditObservation');
             form.action = '/signalisation/observation/' + idObs;
+
+            // ✅ Charger les photos existantes
+            currentEditPhotos = (window.__allPhotosByObs || {})[idObs] || [];
+            renderEditExistingPhotos();
+            clearEditNewPhotos();
+        });
+
+        modalEditObs.addEventListener('hidden.bs.modal', function() {
+            currentEditObsId = null;
+            currentEditPhotos = [];
+            clearEditNewPhotos();
         });
     }
 
+    /* ✅ Affichage des photos existantes avec bouton supprimer */
+    function renderEditExistingPhotos() {
+        const grid = document.getElementById('editExistingPhotosGrid');
+        const noMsg = document.getElementById('editNoPhotosMsg');
+        const countBadge = document.getElementById('editExistingPhotosCount');
+        const tabBadge = document.getElementById('editPhotosCountBadge');
+
+        if (!grid) return;
+
+        const count = currentEditPhotos.length;
+        if (countBadge) countBadge.textContent = count;
+
+        if (tabBadge) {
+            if (count > 0) {
+                tabBadge.style.display = 'inline-block';
+                tabBadge.textContent = count;
+            } else {
+                tabBadge.style.display = 'none';
+            }
+        }
+
+        if (count === 0) {
+            grid.innerHTML = '';
+            grid.style.display = 'none';
+            if (noMsg) noMsg.style.display = 'block';
+            return;
+        }
+
+        grid.style.display = 'grid';
+        if (noMsg) noMsg.style.display = 'none';
+
+        grid.innerHTML = '';
+
+        currentEditPhotos.forEach(function(photo) {
+            const item = document.createElement('div');
+            item.className = 'edit-photo-item';
+            item.setAttribute('data-photo-id', photo.id);
+
+            const img = document.createElement('img');
+            img.src = photo.url;
+            img.alt = photo.nom || 'photo';
+            img.loading = 'lazy';
+            img.onclick = function(e) {
+                e.stopPropagation();
+                const idx = currentEditPhotos.findIndex(p => p.id === photo.id);
+                window.ouvrirPhotos(currentEditPhotos, idx);
+            };
+            img.onerror = function() {
+                this.parentElement.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#FEE2E2;color:#DC2626;"><i class="fa-solid fa-image-slash"></i></div>';
+            };
+            item.appendChild(img);
+
+            const delBtn = document.createElement('button');
+            delBtn.type = 'button';
+            delBtn.className = 'edit-photo-delete';
+            delBtn.title = 'Supprimer cette photo';
+            delBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+            delBtn.onclick = function(e) {
+                e.stopPropagation();
+                supprimerPhotoExistante(photo.id, item);
+            };
+            item.appendChild(delBtn);
+
+            grid.appendChild(item);
+        });
+    }
+
+    /* ✅ Supprimer une photo existante via AJAX */
+    function supprimerPhotoExistante(photoId, element) {
+        if (!confirm('Supprimer cette photo ?\nCette action est irréversible.')) return;
+
+        const baseUrl = window.__urlDeletePhoto || '/signalisation/photos';
+
+        const delBtn = element.querySelector('.edit-photo-delete');
+        if (delBtn) {
+            delBtn.disabled = true;
+            delBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+        }
+
+        fetch(baseUrl + '/' + photoId, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': CSRF,
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        })
+        .then(async (response) => {
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || 'Erreur lors de la suppression.');
+            }
+            return data;
+        })
+        .then(() => {
+            element.style.transition = 'all 0.3s ease';
+            element.style.opacity = '0';
+            element.style.transform = 'scale(0.7)';
+            setTimeout(() => {
+                element.remove();
+
+                currentEditPhotos = currentEditPhotos.filter(p => p.id !== photoId);
+
+                if (window.__allPhotosByObs) {
+                    Object.keys(window.__allPhotosByObs).forEach(function(k) {
+                        const arr = window.__allPhotosByObs[k];
+                        if (Array.isArray(arr)) {
+                            window.__allPhotosByObs[k] = arr.filter(p => p.id !== photoId);
+                        }
+                    });
+                }
+
+                renderEditExistingPhotos();
+                showEditObsToast('Photo supprimée.', 'success');
+            }, 300);
+        })
+        .catch((err) => {
+            console.error('❌ Erreur suppression photo:', err);
+            alert('Erreur : ' + err.message);
+            if (delBtn) {
+                delBtn.disabled = false;
+                delBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+            }
+        });
+    }
+
+    /* ✅ Preview des nouvelles photos à ajouter */
+    window.previewEditPhotos = function(input) {
+        const container = document.getElementById('editNewPhotosPreviewGrid');
+        if (!container) return;
+
+        const cameraInput  = document.getElementById('editObsPhotosCamera');
+        const galleryInput = document.getElementById('editObsPhotosGallery');
+
+        let allFiles = [];
+        if (cameraInput && cameraInput.files)  Array.from(cameraInput.files).forEach(f => allFiles.push(f));
+        if (galleryInput && galleryInput.files) Array.from(galleryInput.files).forEach(f => allFiles.push(f));
+
+        const seen = new Set();
+        const uniqueFiles = allFiles.filter(f => {
+            const k = f.name + '|' + f.size + '|' + f.lastModified;
+            if (seen.has(k)) return false;
+            seen.add(k);
+            return true;
+        });
+
+        container.innerHTML = '';
+        if (uniqueFiles.length === 0) return;
+
+        uniqueFiles.forEach(function(file) {
+            if (!file.type.startsWith('image/')) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const div = document.createElement('div');
+                div.style.cssText = 'position:relative; aspect-ratio:1; border-radius:8px; overflow:hidden; border:1.5px solid #10B981; background:#fff;';
+                div.innerHTML =
+                    '<img src="' + e.target.result + '" style="width:100%; height:100%; object-fit:cover; display:block;">' +
+                    '<div style="position:absolute; bottom:4px; right:4px; padding:2px 6px; background:rgba(16,185,129,0.95); color:#fff; border-radius:4px; font-size:0.6rem; font-weight:700;">NOUVEAU</div>';
+                container.appendChild(div);
+            };
+            reader.readAsDataURL(file);
+        });
+    };
+
+    /* ✅ Vider le preview des nouvelles photos */
+    function clearEditNewPhotos() {
+        const cameraInput  = document.getElementById('editObsPhotosCamera');
+        const galleryInput = document.getElementById('editObsPhotosGallery');
+        const container    = document.getElementById('editNewPhotosPreviewGrid');
+
+        if (cameraInput)  cameraInput.value = '';
+        if (galleryInput) galleryInput.value = '';
+        if (container)    container.innerHTML = '';
+    }
+
+    /* ✅ Toast discret dans la modale */
+    function showEditObsToast(msg, type) {
+        const box = document.getElementById('editObsSuccess');
+        if (!box) return;
+        const color = type === 'success' ? 'fa-circle-check' : 'fa-triangle-exclamation';
+        box.innerHTML = '<i class="fa-solid ' + color + '"></i> ' + msg;
+        box.classList.remove('d-none');
+        setTimeout(() => box.classList.add('d-none'), 2500);
+    }
+
     /* =========================================================
-       MODIFIER OBSERVATION : SOUMISSION
+       MODIFIER OBSERVATION : SOUMISSION (avec photos)
     ========================================================= */
     const formEditObs = document.getElementById('formEditObservation');
     if (formEditObs) {
         let isSubmittingEditObs = false;
-        formEditObs.addEventListener('submit', function (e) {
+        formEditObs.addEventListener('submit', async function (e) {
             e.preventDefault();
             if (isSubmittingEditObs) return;
             isSubmittingEditObs = true;
@@ -2608,24 +2921,59 @@ document.addEventListener('DOMContentLoaded', function () {
             btn.disabled = true;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enregistrement...';
 
-            fetch(formEditObs.action, {
-                method: 'POST',
-                headers: { 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
-                body: new FormData(formEditObs),
-            })
-            .then(parseJsonResponse)
-            .then((data) => {
+            try {
+                const formData = new FormData();
+
+                for (const [key, value] of new FormData(formEditObs).entries()) {
+                    if (key !== 'photos[]') formData.append(key, value);
+                }
+
+                const cameraInput  = document.getElementById('editObsPhotosCamera');
+                const galleryInput = document.getElementById('editObsPhotosGallery');
+
+                let allFiles = [];
+                if (cameraInput && cameraInput.files)  Array.from(cameraInput.files).forEach(f => allFiles.push(f));
+                if (galleryInput && galleryInput.files) Array.from(galleryInput.files).forEach(f => allFiles.push(f));
+
+                const seen = new Set();
+                const uniqueFiles = allFiles.filter(f => {
+                    const k = f.name + '|' + f.size + '|' + f.lastModified;
+                    if (seen.has(k)) return false;
+                    seen.add(k);
+                    return true;
+                });
+
+                if (uniqueFiles.length > 0) {
+                    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Compression photos...';
+                    for (const file of uniqueFiles) {
+                        if (!file.type.startsWith('image/')) continue;
+                        const compressed = await window.compresserImage(file);
+                        formData.append('photos[]', compressed);
+                    }
+                }
+
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enregistrement...';
+
+                const response = await fetch(formEditObs.action, {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
+                    body: formData,
+                });
+
+                const data = await parseJsonResponse(response);
+
                 successBox.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + (data.message || 'Enregistré !');
                 successBox.classList.remove('d-none');
                 setTimeout(() => window.location.reload(), 900);
-            })
-            .catch((err) => {
+
+            } catch (err) {
+                console.error('❌ Erreur édition observation:', err);
                 errorBox.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> ' + err.message;
                 errorBox.classList.remove('d-none');
                 isSubmittingEditObs = false;
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fa-solid fa-check"></i> Enregistrer';
-            });
+            }
         });
     }
 
@@ -2651,7 +2999,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     /* =========================================================
-       SUPPRESSION D'UN PANNEAU (depuis la page show)
+       SUPPRESSION D'UN PANNEAU
     ========================================================= */
     const btnDeletePanneauFromShow = document.getElementById('btnDeletePanneauFromShow');
     const modalDeletePanneauEl     = document.getElementById('modalDeletePanneau');
