@@ -614,54 +614,113 @@ class SignalisationController extends Controller
     /* =========================================================
        UPDATE OBSERVATION
     ========================================================= */
-    public function updateObservation(Request $request, $idObs)
-    {
-        try {
-            $validated = $request->validate([
-                'date_obs'              => 'nullable|date',
-                'date_fabrication'      => 'nullable|date',
-                'date_pose'             => 'nullable|date',
-                'garantie_expiration'   => 'nullable|date',
-                'num_agrem'             => 'nullable|string|max:50',
-                'classe_retro'          => 'nullable|string|max:20',
-                'etat_actuel'           => 'required|string|max:30',
-                'remarque'              => 'nullable|string|max:2000',
-            ]);
+    /* =========================================================
+   ✅ UPDATE OBSERVATION — avec support photos (ajout)
+========================================================= */
+public function updateObservation(Request $request, $idObs)
+{
+    try {
+        $validated = $request->validate([
+            'date_obs'              => 'nullable|date',
+            'date_fabrication'      => 'nullable|date',
+            'date_pose'             => 'nullable|date',
+            'garantie_expiration'   => 'nullable|date',
+            'num_agrem'             => 'nullable|string|max:50',
+            'classe_retro'          => 'nullable|string|max:20',
+            'etat_actuel'           => 'required|string|max:30',
+            'remarque'              => 'nullable|string|max:2000',
+            'photos'                => 'nullable|array|max:10',
+            'photos.*'              => 'image|mimes:jpeg,jpg,png,webp|max:10240',
+        ]);
 
-            DB::table($this->tableObs)
-                ->where('id_obs', $idObs)
-                ->update(array_merge($validated, [
-                    'updated_at' => now(),
-                ]));
+        $photos = $request->file('photos');
+        unset($validated['photos']);
 
-            if ($request->expectsJson() || $request->ajax()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Observation modifiée avec succès.',
+        // Mise à jour de l'observation
+        DB::table($this->tableObs)
+            ->where('id_obs', $idObs)
+            ->update(array_merge($validated, [
+                'updated_at' => now(),
+            ]));
+
+        // ✅ Ajout des nouvelles photos
+        $savedCount = 0;
+        if (!empty($photos)) {
+            $destination = $this->photosDir();
+            if (!is_dir($destination)) {
+                @mkdir($destination, 0755, true);
+            }
+
+            foreach ($photos as $file) {
+                if (!$file->isValid()) continue;
+
+                $originalName = $file->getClientOriginalName();
+                $mimeType     = $file->getClientMimeType();
+                $extension    = strtolower($file->getClientOriginalExtension());
+                $sizeKb       = (int) round($file->getSize() / 1024);
+
+                if (!in_array($extension, ['jpg', 'jpeg', 'png', 'webp'], true)) continue;
+
+                $filename = Str::uuid() . '.' . $extension;
+
+                try {
+                    $file->move($destination, $filename);
+                } catch (Throwable $e) {
+                    Log::error('Erreur move() updateObservation : ' . $e->getMessage());
+                    continue;
+                }
+
+                DB::table($this->tablePho)->insert([
+                    'id_obs'      => $idObs,
+                    'nom_fichier' => $originalName,
+                    'chemin'      => $filename,
+                    'type_photo'  => $request->input('type_photo', 'Face'),
+                    'legende'     => $request->input('legende'),
+                    'mime_type'   => $mimeType,
+                    'taille_ko'   => $sizeKb,
+                    'prise_le'    => now(),
+                    'uploaded_by' => Auth::id(),
+                    'created_at'  => now(),
                 ]);
+                $savedCount++;
             }
-
-            return redirect()->back()->with('success', 'Observation modifiée.');
-
-        } catch (ValidationException $e) {
-            if ($request->expectsJson() || $request->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'errors'  => $e->errors(),
-                ], 422);
-            }
-            throw $e;
-        } catch (Throwable $e) {
-            Log::error('Erreur updateObservation #' . $idObs . ' : ' . $e->getMessage());
-            if ($request->expectsJson() || $request->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Erreur serveur : ' . $e->getMessage(),
-                ], 500);
-            }
-            return redirect()->back()->with('error', 'Erreur lors de la modification.');
         }
+
+        $message = 'Observation modifiée avec succès.';
+        if ($savedCount > 0) {
+            $message .= ' (' . $savedCount . ' photo(s) ajoutée(s))';
+        }
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success'      => true,
+                'message'      => $message,
+                'photos_saved' => $savedCount,
+            ]);
+        }
+
+        return redirect()->back()->with('success', $message);
+
+    } catch (ValidationException $e) {
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => false,
+                'errors'  => $e->errors(),
+                'message' => 'Certains champs sont invalides.',
+            ], 422);
+        }
+        throw $e;
+    } catch (Throwable $e) {
+        Log::error('Erreur updateObservation #' . $idObs . ' : ' . $e->getMessage());
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur serveur : ' . $e->getMessage(),
+            ], 500);
+        }
+        return redirect()->back()->with('error', 'Erreur lors de la modification.');
     }
+}
 
     /* =========================================================
        DESTROY OBSERVATION
