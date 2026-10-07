@@ -706,6 +706,103 @@ class SignalisationController extends Controller
         }
     }
 
+
+/* =========================================================
+   ✅ DESTROY PANNEAU
+   - Supprime l'observation liée + toutes ses photos (fichiers + BD)
+   - Supprime le panneau lui-même
+========================================================= */
+public function destroy($id)
+{
+    try {
+        // 1) Récupérer toutes les observations du panneau
+        $observations = DB::table($this->tableObs)
+            ->where('id_traffic', $id)
+            ->pluck('id_obs')
+            ->toArray();
+
+        // 2) Supprimer les photos physiques + lignes en BD
+        if (!empty($observations)) {
+            $photos = DB::table($this->tablePho)
+                ->whereIn('id_obs', $observations)
+                ->get();
+
+            foreach ($photos as $photo) {
+                $fullPath = $this->photosDir() . DIRECTORY_SEPARATOR . $photo->chemin;
+                if (is_file($fullPath)) {
+                    @unlink($fullPath);
+                }
+            }
+
+            DB::table($this->tablePho)->whereIn('id_obs', $observations)->delete();
+            DB::table($this->tableObs)->where('id_traffic', $id)->delete();
+        }
+
+        // 3) Supprimer le panneau
+        $deleted = DB::table($this->table)->where($this->pk, $id)->delete();
+
+        if (!$deleted) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Panneau introuvable.',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Panneau supprimé avec succès (avec ses ' 
+                         . count($observations) . ' observation(s)).',
+        ]);
+
+    } catch (Throwable $e) {
+        Log::error('Erreur destroy panneau #' . $id . ' : ' . $e->getMessage(), [
+            'trace' => $e->getTraceAsString(),
+        ]);
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur serveur : ' . $e->getMessage(),
+        ], 500);
+    }
+}
+
+/* =========================================================
+   ✅ DESTROY PHOTO (suppression individuelle)
+========================================================= */
+public function destroyPhoto($idPhoto)
+{
+    try {
+        $photo = DB::table($this->tablePho)->where('id_photo', $idPhoto)->first();
+
+        if (!$photo) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Photo introuvable.',
+            ], 404);
+        }
+
+        $fullPath = $this->photosDir() . DIRECTORY_SEPARATOR . $photo->chemin;
+        if (is_file($fullPath)) {
+            @unlink($fullPath);
+        }
+
+        DB::table($this->tablePho)->where('id_photo', $idPhoto)->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Photo supprimée.',
+        ]);
+
+    } catch (Throwable $e) {
+        Log::error('Erreur destroyPhoto #' . $idPhoto . ' : ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur serveur : ' . $e->getMessage(),
+        ], 500);
+    }
+}
+
+
     /* =========================================================
        ✅ DÉTECTION post_max_size DÉPASSÉ
        Si le POST dépasse post_max_size, PHP vide $_POST et $_FILES
