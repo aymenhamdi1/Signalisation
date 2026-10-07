@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Backend\gestion\Carte;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class CarteController extends Controller
 {
@@ -136,7 +139,7 @@ class CarteController extends Controller
         ];
 
         /* =========================================================
-           ✅ ZONES D'ÉTUDE — GeoJSON (contours uniquement côté JS)
+           ✅ ZONES D'ÉTUDE — GeoJSON
         ========================================================= */
         $zones = DB::select("
             SELECT
@@ -152,7 +155,7 @@ class CarteController extends Controller
         ");
 
         /* =========================================================
-           ✅ BOUNDS GLOBAUX DES ZONES (pour le zoom par défaut)
+           ✅ BOUNDS GLOBAUX DES ZONES
         ========================================================= */
         $zonesBounds = null;
         $boundsRow = DB::selectOne("
@@ -179,138 +182,246 @@ class CarteController extends Controller
     }
 
     /* =========================================================
-       STORE PANNEAU — Création depuis la carte
-       ⚠️ Conversion 4326 (GPS) → 22332 (UTM 32N)
+       ✅ STORE PANNEAU — Création depuis la carte
+       Conversion 4326 (GPS) → 22332 (UTM 32N)
     ========================================================= */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'code_nomen'         => 'nullable|string|max:50',
-            'fclass'             => 'nullable|string|max:100',
-            'name'               => 'nullable|string|max:255',
-            'code_panneau_cctp'  => 'nullable|string|max:20',
-            'hc_caractere'       => 'nullable|integer',
-            'dim_cctp'           => 'nullable|string|max:30',
-            'num_agrement'       => 'nullable|string|max:50',
-            'lat'                => 'required|numeric|between:-90,90',
-            'lng'                => 'required|numeric|between:-180,180',
-            'route_nom'          => 'nullable|string|max:100',
-            'point_kilo'         => 'nullable|string|max:50',
-            'route'              => 'nullable|string|max:50',
-            'acier_nuance'       => 'nullable|string|max:50',
-            'nature_mat'         => 'nullable|string|max:100',
-            'type_subje'         => 'nullable|string|max:100',
-            'galva_depot'        => 'nullable|numeric',
-            'largeur_latte'      => 'nullable|integer',
-            'anodise'            => 'nullable|boolean',
-            'type_film_retro'    => 'nullable|string|max:50',
-            'garantie_film_ans'  => 'nullable|integer',
-            'dimensions'         => 'nullable|string|max:50',
-            'couleur_fo'         => 'nullable|string|max:50',
-            'protection'         => 'nullable|string|max:100',
-            'type_suppo'         => 'nullable|string|max:100',
-            'matiere_support'    => 'nullable|string|max:50',
-            'nb_raidisseurs'     => 'nullable|integer',
-            'resistance'         => 'nullable|integer',
-            'hauteur_so'         => 'nullable|numeric',
-            'hauteur_libre_m'    => 'nullable|numeric',
-            'implantation_m'     => 'nullable|numeric',
-            'fiche_ancrage_m'    => 'nullable|numeric',
-            'date_pose'          => 'nullable|date',
-            'duree_vie_ans'      => 'nullable|integer',
-        ]);
-
-        $lat = $validated['lat'];
-        $lng = $validated['lng'];
-        unset($validated['lat'], $validated['lng']);
-
-        $id = DB::table($this->table)->insertGetId(
-            array_merge($validated, [
-                'geom' => DB::raw(
-                    "ST_Transform(ST_SetSRID(ST_MakePoint($lng, $lat), 4326), 22332)"
-                ),
-            ]),
-            $this->pk
-        );
-
-        if ($request->expectsJson() || $request->ajax()) {
+        // ✅ Vérification post_max_size (sécurité même si pas de photos ici)
+        if ($this->isPostMaxSizeExceeded()) {
+            Log::warning('POST max size exceeded lors de CarteController@store');
             return response()->json([
-                'success' => true,
-                'message' => 'Panneau créé avec succès.',
-                'id'      => $id,
-            ]);
+                'success' => false,
+                'message' => 'Requête trop volumineuse (limite serveur dépassée).',
+            ], 413);
         }
 
-        return redirect()->route('carte.index')->with('success', 'Panneau créé.');
-    }
-
-    /* =========================================================
-       UPDATE PANNEAU
-    ========================================================= */
-    public function update(Request $request, $id)
-    {
-        $validated = $request->validate([
-            'code_nomen'         => 'nullable|string|max:50',
-            'fclass'             => 'nullable|string|max:100',
-            'name'               => 'nullable|string|max:255',
-            'code_panneau_cctp'  => 'nullable|string|max:20',
-            'hc_caractere'       => 'nullable|integer',
-            'dim_cctp'           => 'nullable|string|max:30',
-            'num_agrement'       => 'nullable|string|max:50',
-            'lat'                => 'nullable|numeric|between:-90,90',
-            'lng'                => 'nullable|numeric|between:-180,180',
-            'route_nom'          => 'nullable|string|max:100',
-            'point_kilo'         => 'nullable|string|max:50',
-            'route'              => 'nullable|string|max:50',
-            'acier_nuance'       => 'nullable|string|max:50',
-            'nature_mat'         => 'nullable|string|max:100',
-            'type_subje'         => 'nullable|string|max:100',
-            'galva_depot'        => 'nullable|numeric',
-            'largeur_latte'      => 'nullable|integer',
-            'anodise'            => 'nullable|boolean',
-            'type_film_retro'    => 'nullable|string|max:50',
-            'garantie_film_ans'  => 'nullable|integer',
-            'dimensions'         => 'nullable|string|max:50',
-            'couleur_fo'         => 'nullable|string|max:50',
-            'protection'         => 'nullable|string|max:100',
-            'type_suppo'         => 'nullable|string|max:100',
-            'matiere_support'    => 'nullable|string|max:50',
-            'nb_raidisseurs'     => 'nullable|integer',
-            'resistance'         => 'nullable|integer',
-            'hauteur_so'         => 'nullable|numeric',
-            'hauteur_libre_m'    => 'nullable|numeric',
-            'implantation_m'     => 'nullable|numeric',
-            'fiche_ancrage_m'    => 'nullable|numeric',
-            'date_pose'          => 'nullable|date',
-            'duree_vie_ans'      => 'nullable|integer',
-        ]);
-
-        if (isset($validated['lat']) && isset($validated['lng'])
-            && $validated['lat'] !== null && $validated['lng'] !== null) {
+        try {
+            $validated = $request->validate([
+                'code_nomen'         => 'nullable|string|max:50',
+                'fclass'             => 'nullable|string|max:100',
+                'name'               => 'nullable|string|max:255',
+                'code_panneau_cctp'  => 'nullable|string|max:20',
+                'hc_caractere'       => 'nullable|integer',
+                'dim_cctp'           => 'nullable|string|max:30',
+                'num_agrement'       => 'nullable|string|max:50',
+                'lat'                => 'required|numeric|between:-90,90',
+                'lng'                => 'required|numeric|between:-180,180',
+                'route_nom'          => 'nullable|string|max:100',
+                'point_kilo'         => 'nullable|string|max:50',
+                'route'              => 'nullable|string|max:50',
+                'acier_nuance'       => 'nullable|string|max:50',
+                'nature_mat'         => 'nullable|string|max:100',
+                'type_subje'         => 'nullable|string|max:100',
+                'galva_depot'        => 'nullable|numeric',
+                'largeur_latte'      => 'nullable|integer',
+                'anodise'            => 'nullable|boolean',
+                'type_film_retro'    => 'nullable|string|max:50',
+                'garantie_film_ans'  => 'nullable|integer',
+                'dimensions'         => 'nullable|string|max:50',
+                'couleur_fo'         => 'nullable|string|max:50',
+                'protection'         => 'nullable|string|max:100',
+                'type_suppo'         => 'nullable|string|max:100',
+                'matiere_support'    => 'nullable|string|max:50',
+                'nb_raidisseurs'     => 'nullable|integer',
+                'resistance'         => 'nullable|integer',
+                'hauteur_so'         => 'nullable|numeric',
+                'hauteur_libre_m'    => 'nullable|numeric',
+                'implantation_m'     => 'nullable|numeric',
+                'fiche_ancrage_m'    => 'nullable|numeric',
+                'date_pose'          => 'nullable|date',
+                'duree_vie_ans'      => 'nullable|integer',
+            ]);
 
             $lat = $validated['lat'];
             $lng = $validated['lng'];
             unset($validated['lat'], $validated['lng']);
 
-            DB::table($this->table)->where($this->pk, $id)->update(
+            $id = DB::table($this->table)->insertGetId(
                 array_merge($validated, [
                     'geom' => DB::raw(
                         "ST_Transform(ST_SetSRID(ST_MakePoint($lng, $lat), 4326), 22332)"
                     ),
-                ])
+                ]),
+                $this->pk
             );
-        } else {
-            unset($validated['lat'], $validated['lng']);
-            DB::table($this->table)->where($this->pk, $id)->update($validated);
-        }
 
-        if ($request->expectsJson() || $request->ajax()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Panneau mis à jour avec succès.',
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Panneau créé avec succès.',
+                    'id'      => $id,
+                ]);
+            }
+
+            return redirect()->route('carte.index')->with('success', 'Panneau créé.');
+
+        } catch (ValidationException $e) {
+            Log::info('Validation échouée store panneau (carte)', $e->errors());
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'errors'  => $e->errors(),
+                    'message' => 'Certains champs sont invalides.',
+                ], 422);
+            }
+            throw $e;
+
+        } catch (Throwable $e) {
+            Log::error('Erreur store panneau (carte) : ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
             ]);
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erreur serveur : ' . $e->getMessage(),
+                ], 500);
+            }
+            return redirect()->back()->with('error', 'Erreur lors de la création.');
+        }
+    }
+
+    /* =========================================================
+       ✅ UPDATE PANNEAU
+    ========================================================= */
+    public function update(Request $request, $id)
+    {
+        try {
+            $validated = $request->validate([
+                'code_nomen'         => 'nullable|string|max:50',
+                'fclass'             => 'nullable|string|max:100',
+                'name'               => 'nullable|string|max:255',
+                'code_panneau_cctp'  => 'nullable|string|max:20',
+                'hc_caractere'       => 'nullable|integer',
+                'dim_cctp'           => 'nullable|string|max:30',
+                'num_agrement'       => 'nullable|string|max:50',
+                'lat'                => 'nullable|numeric|between:-90,90',
+                'lng'                => 'nullable|numeric|between:-180,180',
+                'route_nom'          => 'nullable|string|max:100',
+                'point_kilo'         => 'nullable|string|max:50',
+                'route'              => 'nullable|string|max:50',
+                'acier_nuance'       => 'nullable|string|max:50',
+                'nature_mat'         => 'nullable|string|max:100',
+                'type_subje'         => 'nullable|string|max:100',
+                'galva_depot'        => 'nullable|numeric',
+                'largeur_latte'      => 'nullable|integer',
+                'anodise'            => 'nullable|boolean',
+                'type_film_retro'    => 'nullable|string|max:50',
+                'garantie_film_ans'  => 'nullable|integer',
+                'dimensions'         => 'nullable|string|max:50',
+                'couleur_fo'         => 'nullable|string|max:50',
+                'protection'         => 'nullable|string|max:100',
+                'type_suppo'         => 'nullable|string|max:100',
+                'matiere_support'    => 'nullable|string|max:50',
+                'nb_raidisseurs'     => 'nullable|integer',
+                'resistance'         => 'nullable|integer',
+                'hauteur_so'         => 'nullable|numeric',
+                'hauteur_libre_m'    => 'nullable|numeric',
+                'implantation_m'     => 'nullable|numeric',
+                'fiche_ancrage_m'    => 'nullable|numeric',
+                'date_pose'          => 'nullable|date',
+                'duree_vie_ans'      => 'nullable|integer',
+            ]);
+
+            if (isset($validated['lat']) && isset($validated['lng'])
+                && $validated['lat'] !== null && $validated['lng'] !== null) {
+
+                $lat = $validated['lat'];
+                $lng = $validated['lng'];
+                unset($validated['lat'], $validated['lng']);
+
+                DB::table($this->table)->where($this->pk, $id)->update(
+                    array_merge($validated, [
+                        'geom' => DB::raw(
+                            "ST_Transform(ST_SetSRID(ST_MakePoint($lng, $lat), 4326), 22332)"
+                        ),
+                    ])
+                );
+            } else {
+                unset($validated['lat'], $validated['lng']);
+                DB::table($this->table)->where($this->pk, $id)->update($validated);
+            }
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Panneau mis à jour avec succès.',
+                ]);
+            }
+
+            return redirect()->route('carte.index')->with('success', 'Panneau mis à jour.');
+
+        } catch (ValidationException $e) {
+            Log::info('Validation échouée update panneau (carte)', $e->errors());
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'errors'  => $e->errors(),
+                    'message' => 'Certains champs sont invalides.',
+                ], 422);
+            }
+            throw $e;
+
+        } catch (Throwable $e) {
+            Log::error('Erreur update panneau (carte) #' . $id . ' : ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erreur serveur : ' . $e->getMessage(),
+                ], 500);
+            }
+            return redirect()->back()->with('error', 'Erreur lors de la mise à jour.');
+        }
+    }
+
+    /* =========================================================
+       ✅ DÉTECTION post_max_size DÉPASSÉ
+    ========================================================= */
+    protected function isPostMaxSizeExceeded(): bool
+    {
+        if (
+            $_SERVER['REQUEST_METHOD'] === 'POST'
+            && empty($_POST)
+            && empty($_FILES)
+            && !empty($_SERVER['CONTENT_LENGTH'])
+        ) {
+            $postMax = $this->parseSize(ini_get('post_max_size'));
+            $contentLength = (int) $_SERVER['CONTENT_LENGTH'];
+
+            if ($postMax > 0 && $contentLength > $postMax) {
+                return true;
+            }
+            if ($contentLength > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Convertit '8M', '2G', '512K' en octets
+     */
+    protected function parseSize(string $size): int
+    {
+        $size = trim($size);
+        if ($size === '' || $size === '-1') {
+            return 0;
         }
 
-        return redirect()->route('carte.index')->with('success', 'Panneau mis à jour.');
+        $unit = strtolower(substr($size, -1));
+        $value = (int) $size;
+
+        return match ($unit) {
+            'g' => $value * 1024 * 1024 * 1024,
+            'm' => $value * 1024 * 1024,
+            'k' => $value * 1024,
+            default => $value,
+        };
     }
 }
