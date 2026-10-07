@@ -453,14 +453,9 @@ class SignalisationController extends Controller
 
     /* =========================================================
        ✅ STORE OBSERVATION — AVEC GESTION D'ERREUR ROBUSTE
-       - Détection des erreurs PHP (post_max_size, upload_max_filesize)
-       - Toujours retourner du JSON pour les requêtes AJAX
-       - Validation photos robuste
     ========================================================= */
     public function storeObservation(Request $request, $id)
     {
-        // ✅ Vérification CRITIQUE : PHP a-t-il rejeté la requête ?
-        // Si post_max_size est dépassé, $_POST et $_FILES sont VIDES.
         if ($this->isPostMaxSizeExceeded()) {
             Log::warning('POST max size exceeded lors de storeObservation');
             return response()->json([
@@ -492,7 +487,6 @@ class SignalisationController extends Controller
                 $validated['date_obs'] = now();
             }
 
-            // 1) Déplacer les photos — lire les métadonnées AVANT move()
             $destination = $this->photosDir();
             if (!is_dir($destination)) {
                 if (!mkdir($destination, 0755, true) && !is_dir($destination)) {
@@ -512,13 +506,11 @@ class SignalisationController extends Controller
                         continue;
                     }
 
-                    // ⚠️ Lire AVANT move() — sinon "file does not exist"
                     $originalName = $file->getClientOriginalName();
                     $mimeType     = $file->getClientMimeType();
                     $extension    = strtolower($file->getClientOriginalExtension());
                     $sizeKb       = (int) round($file->getSize() / 1024);
 
-                    // Sécurité : whitelist extensions
                     if (!in_array($extension, ['jpg', 'jpeg', 'png', 'webp'], true)) {
                         $photoErrors[] = "Extension non autorisée : {$extension}";
                         continue;
@@ -550,7 +542,6 @@ class SignalisationController extends Controller
                 }
             }
 
-            // 2) Insérer l'observation
             $idObs = DB::table($this->tableObs)->insertGetId(
                 array_merge($validated, [
                     'id_traffic' => $id,
@@ -559,7 +550,6 @@ class SignalisationController extends Controller
                 'id_obs'
             );
 
-            // 3) Insérer les photos en base
             foreach ($savedPhotos as $p) {
                 DB::table($this->tablePho)->insert([
                     'id_obs'      => $idObs,
@@ -575,7 +565,6 @@ class SignalisationController extends Controller
                 ]);
             }
 
-            // ✅ Message avec info sur les photos éventuellement ratées
             $message = 'Observation enregistrée avec succès.';
             if (!empty($photoErrors)) {
                 $message .= ' (' . count($photoErrors) . ' photo(s) ignorée(s))';
@@ -706,111 +695,159 @@ class SignalisationController extends Controller
         }
     }
 
+    /* =========================================================
+       ✅ DESTROY PANNEAU
+       - Supprime l'observation liée + toutes ses photos (fichiers + BD)
+       - Supprime le panneau lui-même
+    ========================================================= */
+    public function destroy($id)
+    {
+        try {
+            // 1) Récupérer toutes les observations du panneau
+            $observations = DB::table($this->tableObs)
+                ->where('id_traffic', $id)
+                ->pluck('id_obs')
+                ->toArray();
 
-/* =========================================================
-   ✅ DESTROY PANNEAU
-   - Supprime l'observation liée + toutes ses photos (fichiers + BD)
-   - Supprime le panneau lui-même
-========================================================= */
-public function destroy($id)
-{
-    try {
-        // 1) Récupérer toutes les observations du panneau
-        $observations = DB::table($this->tableObs)
-            ->where('id_traffic', $id)
-            ->pluck('id_obs')
-            ->toArray();
+            // 2) Supprimer les photos physiques + lignes en BD
+            if (!empty($observations)) {
+                $photos = DB::table($this->tablePho)
+                    ->whereIn('id_obs', $observations)
+                    ->get();
 
-        // 2) Supprimer les photos physiques + lignes en BD
-        if (!empty($observations)) {
-            $photos = DB::table($this->tablePho)
-                ->whereIn('id_obs', $observations)
-                ->get();
+                foreach ($photos as $photo) {
+                    $fullPath = $this->photosDir() . DIRECTORY_SEPARATOR . $photo->chemin;
+                    if (is_file($fullPath)) {
+                        @unlink($fullPath);
+                    }
+                }
 
-            foreach ($photos as $photo) {
+                DB::table($this->tablePho)->whereIn('id_obs', $observations)->delete();
+                DB::table($this->tableObs)->where('id_traffic', $id)->delete();
+            }
+
+            // 3) Supprimer le panneau
+            $deleted = DB::table($this->table)->where($this->pk, $id)->delete();
+
+            if (!$deleted) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Panneau introuvable.',
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Panneau supprimé avec succès (avec ses '
+                             . count($observations) . ' observation(s)).',
+            ]);
+
+        } catch (Throwable $e) {
+            Log::error('Erreur destroy panneau #' . $id . ' : ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur serveur : ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /* =========================================================
+       ✅ DESTROY PHOTO (suppression individuelle)
+       ⚠️ Utilise une détection dynamique de la clé primaire de la table photo
+    ========================================================= */
+    public function destroyPhoto($idPhoto)
+    {
+        try {
+            // ✅ Détection automatique du nom de la clé primaire de la table photo
+            $photoPk = $this->getPhotoPrimaryKey();
+
+            $photo = DB::table($this->tablePho)->where($photoPk, $idPhoto)->first();
+
+            if (!$photo) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Photo introuvable.',
+                ], 404);
+            }
+
+            // Supprimer le fichier physique
+            if (!empty($photo->chemin)) {
                 $fullPath = $this->photosDir() . DIRECTORY_SEPARATOR . $photo->chemin;
                 if (is_file($fullPath)) {
                     @unlink($fullPath);
                 }
             }
 
-            DB::table($this->tablePho)->whereIn('id_obs', $observations)->delete();
-            DB::table($this->tableObs)->where('id_traffic', $id)->delete();
-        }
+            // Supprimer la ligne en BD
+            DB::table($this->tablePho)->where($photoPk, $idPhoto)->delete();
 
-        // 3) Supprimer le panneau
-        $deleted = DB::table($this->table)->where($this->pk, $id)->delete();
+            return response()->json([
+                'success'  => true,
+                'message'  => 'Photo supprimée avec succès.',
+                'id_photo' => $idPhoto,
+            ]);
 
-        if (!$deleted) {
+        } catch (Throwable $e) {
+            Log::error('Erreur destroyPhoto #' . $idPhoto . ' : ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+            ]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Panneau introuvable.',
-            ], 404);
+                'message' => 'Erreur serveur : ' . $e->getMessage(),
+            ], 500);
         }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Panneau supprimé avec succès (avec ses ' 
-                         . count($observations) . ' observation(s)).',
-        ]);
-
-    } catch (Throwable $e) {
-        Log::error('Erreur destroy panneau #' . $id . ' : ' . $e->getMessage(), [
-            'trace' => $e->getTraceAsString(),
-        ]);
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Erreur serveur : ' . $e->getMessage(),
-        ], 500);
     }
-}
 
-/* =========================================================
-   ✅ DESTROY PHOTO (suppression individuelle)
-========================================================= */
-public function destroyPhoto($idPhoto)
-{
-    try {
-        $photo = DB::table($this->tablePho)->where('id_photo', $idPhoto)->first();
+    /* =========================================================
+       ✅ DÉTECTION DYNAMIQUE DE LA CLÉ PRIMAIRE DE LA TABLE photo
+       Évite les erreurs si la colonne n'est pas 'id_photo'
+    ========================================================= */
+    protected function getPhotoPrimaryKey(): string
+    {
+        // Candidats possibles, par ordre de préférence
+        $candidats = ['id_photo', 'id', 'id_0', 'photo_id'];
 
-        if (!$photo) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Photo introuvable.',
-            ], 404);
+        try {
+            $columns = DB::select("
+                SELECT column_name
+                FROM information_schema.columns
+                WHERE table_schema = 'public'
+                  AND table_name = ?
+            ", [$this->tablePho]);
+
+            $colNames = array_map(function ($c) {
+                return $c->column_name;
+            }, $columns);
+
+            foreach ($candidats as $c) {
+                if (in_array($c, $colNames, true)) {
+                    return $c;
+                }
+            }
+
+            // Fallback : première colonne contenant 'id'
+            foreach ($colNames as $col) {
+                if (stripos($col, 'id') !== false) {
+                    return $col;
+                }
+            }
+        } catch (Throwable $e) {
+            Log::warning('Impossible de détecter la PK de la table photo : ' . $e->getMessage());
         }
 
-        $fullPath = $this->photosDir() . DIRECTORY_SEPARATOR . $photo->chemin;
-        if (is_file($fullPath)) {
-            @unlink($fullPath);
-        }
-
-        DB::table($this->tablePho)->where('id_photo', $idPhoto)->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Photo supprimée.',
-        ]);
-
-    } catch (Throwable $e) {
-        Log::error('Erreur destroyPhoto #' . $idPhoto . ' : ' . $e->getMessage());
-        return response()->json([
-            'success' => false,
-            'message' => 'Erreur serveur : ' . $e->getMessage(),
-        ], 500);
+        // Valeur par défaut
+        return 'id_photo';
     }
-}
-
 
     /* =========================================================
        ✅ DÉTECTION post_max_size DÉPASSÉ
-       Si le POST dépasse post_max_size, PHP vide $_POST et $_FILES
-       silencieusement, et Content-Length est présent mais $_POST vide.
     ========================================================= */
     protected function isPostMaxSizeExceeded(): bool
     {
-        // Cas 1 : Content-Length présent mais $_POST et $_FILES vides
         if (
             $_SERVER['REQUEST_METHOD'] === 'POST'
             && empty($_POST)
@@ -824,7 +861,6 @@ public function destroyPhoto($idPhoto)
                 return true;
             }
 
-            // Si $_POST est vide alors qu'on attend un CSRF token, c'est suspect
             if ($contentLength > 0) {
                 return true;
             }
@@ -840,7 +876,7 @@ public function destroyPhoto($idPhoto)
     {
         $size = trim($size);
         if ($size === '' || $size === '-1') {
-            return 0; // 0 = illimité
+            return 0;
         }
 
         $unit = strtolower(substr($size, -1));
