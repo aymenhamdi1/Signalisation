@@ -1683,7 +1683,7 @@ console.log('📁 Base SVG:', window.__baseSvg);
 
                             <div style="font-size: 0.72rem; color: #94A3B8; text-align: center; margin-bottom: 10px;">
                                 <i class="fa-solid fa-circle-info"></i>
-                                JPG, PNG, WEBP — max 10 Mo (10 photos max)
+                                JPG, PNG, WEBP — max 10 Mo (10 photos max) — Compression automatique activée
                             </div>
 
                             <div class="photo-preview-grid" id="photoPreviewNew"></div>
@@ -1959,6 +1959,97 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener('DOMContentLoaded', function () {
 
     /* =========================================================
+       ✅ UTILITAIRE : PARSE SÉCURISÉ DE LA RÉPONSE
+       Détecte le HTML (erreur serveur) avant de parser le JSON
+       ========================================================= */
+    async function parseJsonResponse(response) {
+        const contentType = response.headers.get('content-type') || '';
+
+        // ✅ Si ce n'est pas du JSON, c'est une erreur serveur (HTML)
+        if (!contentType.includes('application/json')) {
+            const text = await response.text();
+            console.error('❌ Réponse non-JSON reçue (status ' + response.status + ') :', text.substring(0, 500));
+
+            if (response.status === 413 ||
+                text.includes('POST Content-Length') ||
+                text.includes('exceeds the limit') ||
+                text.includes('post_max_size')) {
+                throw new Error('Les photos sont trop volumineuses. Réduisez la taille ou le nombre de photos (max 10 Mo au total).');
+            }
+            if (response.status === 419) {
+                throw new Error('Session expirée. Rechargez la page et réessayez.');
+            }
+            if (response.status === 500) {
+                throw new Error('Erreur serveur (500). Vérifiez les logs Laravel.');
+            }
+            if (response.status === 404) {
+                throw new Error('Route introuvable (404).');
+            }
+            throw new Error('Erreur serveur (' + response.status + '). Réponse invalide.');
+        }
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            let messages = [];
+            if (data.errors) Object.values(data.errors).forEach(arr => arr.forEach(m => messages.push(m)));
+            else if (data.message) messages.push(data.message);
+            else messages.push('Une erreur est survenue.');
+            throw new Error(messages.join('<br>'));
+        }
+
+        return data;
+    }
+
+    /* =========================================================
+       ✅ COMPRESSION DES IMAGES CÔTÉ CLIENT
+       Réduit la taille avant upload pour éviter post_max_size
+       ========================================================= */
+    window.compresserImage = function(file, maxWidth = 1600, quality = 0.8) {
+        return new Promise((resolve) => {
+            // Si le fichier est petit (< 500 Ko), on ne compresse pas
+            if (file.size < 500 * 1024) {
+                return resolve(file);
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let { width, height } = img;
+
+                    if (width > maxWidth) {
+                        height = Math.round((height * maxWidth) / width);
+                        width = maxWidth;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    canvas.toBlob((blob) => {
+                        if (!blob) return resolve(file);
+                        const newFile = new File(
+                            [blob],
+                            file.name.replace(/\.[^.]+$/, '.jpg'),
+                            { type: 'image/jpeg', lastModified: Date.now() }
+                        );
+                        console.log('🗜️ Compression: ' + Math.round(file.size/1024) + ' Ko → ' + Math.round(newFile.size/1024) + ' Ko');
+                        resolve(newFile);
+                    }, 'image/jpeg', quality);
+                };
+                img.onerror = () => resolve(file);
+                img.src = e.target.result;
+            };
+            reader.onerror = () => resolve(file);
+            reader.readAsDataURL(file);
+        });
+    };
+
+    /* =========================================================
        ✅ CUSTOM SELECT AVEC SVG — CODE NOMENCLATURE (MODALE ÉDITION)
        ========================================================= */
     const nomenTypes = window.__typesPanneaux || [];
@@ -2113,7 +2204,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const container = document.getElementById(containerId);
         if (!container) return;
 
-        /* ✅ Accumuler les photos des 2 inputs (caméra + galerie) */
         const cameraInput  = document.getElementById('newObsPhotosCamera');
         const galleryInput = document.getElementById('newObsPhotosGallery');
 
@@ -2126,7 +2216,7 @@ document.addEventListener('DOMContentLoaded', function () {
             Array.from(galleryInput.files).forEach(function (f) { allFiles.push(f); });
         }
 
-        /* Éviter les doublons (nom + taille) */
+        /* Éviter les doublons */
         const seen = new Set();
         const uniqueFiles = [];
         allFiles.forEach(function (f) {
@@ -2153,13 +2243,6 @@ document.addEventListener('DOMContentLoaded', function () {
             };
             reader.readAsDataURL(file);
         });
-
-        /* Compteur */
-        const counter = document.getElementById('photoPreviewCounter');
-        if (counter) {
-            counter.textContent = uniqueFiles.length + ' photo(s) sélectionnée(s)';
-            counter.style.display = uniqueFiles.length > 0 ? 'block' : 'none';
-        }
     };
 
     /* =========================================================
@@ -2350,17 +2433,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 body: new FormData(formEditPanneau),
             })
-            .then(async (response) => {
-                const data = await response.json();
-                if (!response.ok) {
-                    let messages = [];
-                    if (data.errors) Object.values(data.errors).forEach(arr => arr.forEach(m => messages.push(m)));
-                    else if (data.message) messages.push(data.message);
-                    else messages.push('Une erreur est survenue.');
-                    throw new Error(messages.join('<br>'));
-                }
-                return data;
-            })
+            .then(parseJsonResponse)
             .then((data) => {
                 successBox.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + (data.message || 'Enregistré !');
                 successBox.classList.remove('d-none');
@@ -2370,8 +2443,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 errorBox.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> ' + err.message;
                 errorBox.classList.remove('d-none');
                 isSubmittingEdit = false;
-            })
-            .finally(() => {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fa-solid fa-check"></i> Enregistrer';
             });
@@ -2379,13 +2450,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /* =========================================================
-       NOUVELLE OBSERVATION : SOUMISSION
+       ✅ NOUVELLE OBSERVATION : SOUMISSION AVEC COMPRESSION PHOTOS
     ========================================================= */
     const formNewObs = document.getElementById('formNewObservation');
     let isSubmittingNewObs = false;
 
     if (formNewObs) {
-        formNewObs.addEventListener('submit', function (e) {
+        formNewObs.addEventListener('submit', async function (e) {
             e.preventDefault();
 
             if (isSubmittingNewObs) return;
@@ -2398,39 +2469,70 @@ document.addEventListener('DOMContentLoaded', function () {
             errorBox.classList.add('d-none');
             successBox.classList.add('d-none');
             btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enregistrement...';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Compression & envoi...';
 
-            fetch(formNewObs.action, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
-                    'Accept': 'application/json',
-                },
-                body: new FormData(formNewObs),
-            })
-            .then(async (response) => {
-                const data = await response.json();
-                if (!response.ok) {
-                    let messages = [];
-                    if (data.errors) Object.values(data.errors).forEach(arr => arr.forEach(m => messages.push(m)));
-                    else if (data.message) messages.push(data.message);
-                    else messages.push('Une erreur est survenue.');
-                    throw new Error(messages.join('<br>'));
+            try {
+                // ✅ Construire un nouveau FormData avec compression
+                const formData = new FormData();
+
+                // Copier tous les champs SAUF les fichiers photos
+                for (const [key, value] of new FormData(formNewObs).entries()) {
+                    if (key !== 'photos[]') {
+                        formData.append(key, value);
+                    }
                 }
-                return data;
-            })
-            .then((data) => {
+
+                // Récupérer les fichiers des 2 inputs
+                const cameraInput  = document.getElementById('newObsPhotosCamera');
+                const galleryInput = document.getElementById('newObsPhotosGallery');
+
+                let allFiles = [];
+                if (cameraInput && cameraInput.files)  Array.from(cameraInput.files).forEach(f => allFiles.push(f));
+                if (galleryInput && galleryInput.files) Array.from(galleryInput.files).forEach(f => allFiles.push(f));
+
+                // Dédupliquer
+                const seen = new Set();
+                const uniqueFiles = allFiles.filter(f => {
+                    const k = f.name + '|' + f.size + '|' + f.lastModified;
+                    if (seen.has(k)) return false;
+                    seen.add(k);
+                    return true;
+                });
+
+                // Compresser chaque photo (max 1600px, qualité 0.8)
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Compression photos...';
+                for (const file of uniqueFiles) {
+                    if (!file.type.startsWith('image/')) continue;
+                    const compressed = await window.compresserImage(file);
+                    formData.append('photos[]', compressed);
+                }
+
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enregistrement...';
+
+                // ✅ Envoi
+                const response = await fetch(formNewObs.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                    },
+                    body: formData,
+                });
+
+                const data = await parseJsonResponse(response);
+
                 successBox.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + (data.message || 'Enregistré !');
                 successBox.classList.remove('d-none');
                 setTimeout(() => window.location.reload(), 900);
-            })
-            .catch((err) => {
+
+            } catch (err) {
+                console.error('❌ Erreur soumission observation:', err);
                 errorBox.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> ' + err.message;
                 errorBox.classList.remove('d-none');
                 isSubmittingNewObs = false;
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fa-solid fa-check"></i> Enregistrer l\'observation';
-            });
+            }
         });
     }
 
@@ -2504,17 +2606,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 body: new FormData(formEditObs),
             })
-            .then(async (response) => {
-                const data = await response.json();
-                if (!response.ok) {
-                    let messages = [];
-                    if (data.errors) Object.values(data.errors).forEach(arr => arr.forEach(m => messages.push(m)));
-                    else if (data.message) messages.push(data.message);
-                    else messages.push('Une erreur est survenue.');
-                    throw new Error(messages.join('<br>'));
-                }
-                return data;
-            })
+            .then(parseJsonResponse)
             .then((data) => {
                 successBox.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + (data.message || 'Enregistré !');
                 successBox.classList.remove('d-none');
@@ -2524,8 +2616,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 errorBox.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> ' + err.message;
                 errorBox.classList.remove('d-none');
                 isSubmittingEditObs = false;
-            })
-            .finally(() => {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fa-solid fa-check"></i> Enregistrer';
             });
@@ -2548,7 +2638,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     'Accept': 'application/json',
                 },
             })
-            .then(response => response.json())
+            .then(parseJsonResponse)
             .then((data) => {
                 if (data.success) {
                     window.location.reload();
@@ -2556,7 +2646,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     alert('Erreur lors de la suppression.');
                 }
             })
-            .catch(() => alert('Erreur réseau.'));
+            .catch((err) => alert('Erreur : ' + err.message));
         });
     });
 
