@@ -7,8 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class SignalisationController extends Controller
 {
@@ -27,7 +30,7 @@ class SignalisationController extends Controller
     }
 
     /* =========================================================
-       INDEX — inchangé
+       INDEX
     ========================================================= */
     public function index(Request $request)
     {
@@ -156,7 +159,7 @@ class SignalisationController extends Controller
     }
 
     /* =========================================================
-       SHOW — inchangé
+       SHOW
     ========================================================= */
     public function show($id)
     {
@@ -227,17 +230,17 @@ class SignalisationController extends Controller
             ->orderByDesc('o.date_obs')
             ->get();
 
-    $photosParObs = [];
-if ($observations->isNotEmpty()) {
-    $obsIds = $observations->pluck('id_obs')->toArray();
-    $photos = DB::table($this->tablePho)
-        ->whereIn('id_obs', $obsIds)
-        ->orderByDesc('prise_le')
-        ->get();
-    foreach ($photos as $p) {
-        $photosParObs[$p->id_obs][] = $p;   // ← créé un ARRAY PHP
-    }
-}
+        $photosParObs = [];
+        if ($observations->isNotEmpty()) {
+            $obsIds = $observations->pluck('id_obs')->toArray();
+            $photos = DB::table($this->tablePho)
+                ->whereIn('id_obs', $obsIds)
+                ->orderByDesc('prise_le')
+                ->get();
+            foreach ($photos as $p) {
+                $photosParObs[$p->id_obs][] = $p;
+            }
+        }
 
         $nbObservations = $observations->count();
         $derniereObs    = $observations->first();
@@ -291,278 +294,466 @@ if ($observations->isNotEmpty()) {
     }
 
     /* =========================================================
-       UPDATE PANNEAU — inchangé
+       UPDATE PANNEAU
     ========================================================= */
     public function update(Request $request, $id)
     {
         $pk = $this->pk;
 
-        $validated = $request->validate([
-            'code_nomen'              => 'nullable|string|max:50',
-            'fclass'                  => 'nullable|string|max:100',
-            'name'                    => 'nullable|string|max:255',
-            'code_panneau_cctp'       => 'nullable|in:EB10,E36,D20,D43',
-            'hc_caractere'            => 'nullable|in:100,125,160,200',
-            'route_nom'               => 'nullable|string|max:100',
-            'point_kilo'              => 'nullable|string|max:50',
-            'route'                   => 'nullable|string|max:50',
-            'acier_nuance'            => 'nullable|in:Acier E 24-1,Acier A 33',
-            'galva_depot'             => 'nullable|numeric|min:5.7|max:10',
-            'largeur_latte'           => 'nullable|integer|min:15|max:30',
-            'anodise'                 => 'nullable|boolean',
-            'num_agrement'            => 'nullable|string|max:50',
-            'nature_mat'              => 'nullable|string|max:100',
-            'type_subje'              => 'nullable|string|max:100',
-            'dimensions'              => 'nullable|string|max:50',
-            'dim_cctp'                => 'nullable|string|max:30',
-            'couleur_fo'              => 'nullable|string|max:50',
-            'protection'              => 'nullable|string|max:100',
-            'type_film_retro'         => 'nullable|in:Classe 1 (EG),Classe 2 (HI),Classe 3 (DG)',
-            'garantie_film_ans'       => 'nullable|integer|min:7|max:15',
-            'nb_raidisseurs'          => 'nullable|integer|min:2|max:3',
-            'type_suppo'              => 'nullable|string|max:100',
-            'matiere_support'         => 'nullable|string|max:50',
-            'hauteur_so'              => 'nullable|numeric|min:2.30|max:10',
-            'hauteur_libre_m'         => 'nullable|numeric|min:2.30|max:10',
-            'implantation_m'          => 'nullable|numeric|min:1|max:3',
-            'fiche_ancrage_m'         => 'nullable|numeric|min:0.4|max:2',
-            'resistance'              => 'nullable|integer|min:130|max:250',
-            'date_pose'               => 'nullable|date',
-            'duree_vie_ans'           => 'nullable|integer|min:7|max:20',
-        ]);
-
-        DB::table($this->table)->where($pk, $id)->update($validated);
-
-        if ($request->expectsJson() || $request->ajax()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Informations mises à jour avec succès.',
-                'data'    => $validated,
+        try {
+            $validated = $request->validate([
+                'code_nomen'              => 'nullable|string|max:50',
+                'fclass'                  => 'nullable|string|max:100',
+                'name'                    => 'nullable|string|max:255',
+                'code_panneau_cctp'       => 'nullable|in:EB10,E36,D20,D43',
+                'hc_caractere'            => 'nullable|in:100,125,160,200',
+                'route_nom'               => 'nullable|string|max:100',
+                'point_kilo'              => 'nullable|string|max:50',
+                'route'                   => 'nullable|string|max:50',
+                'acier_nuance'            => 'nullable|in:Acier E 24-1,Acier A 33',
+                'galva_depot'             => 'nullable|numeric|min:5.7|max:10',
+                'largeur_latte'           => 'nullable|integer|min:15|max:30',
+                'anodise'                 => 'nullable|boolean',
+                'num_agrement'            => 'nullable|string|max:50',
+                'nature_mat'              => 'nullable|string|max:100',
+                'type_subje'              => 'nullable|string|max:100',
+                'dimensions'              => 'nullable|string|max:50',
+                'dim_cctp'                => 'nullable|string|max:30',
+                'couleur_fo'              => 'nullable|string|max:50',
+                'protection'              => 'nullable|string|max:100',
+                'type_film_retro'         => 'nullable|in:Classe 1 (EG),Classe 2 (HI),Classe 3 (DG)',
+                'garantie_film_ans'       => 'nullable|integer|min:7|max:15',
+                'nb_raidisseurs'          => 'nullable|integer|min:2|max:3',
+                'type_suppo'              => 'nullable|string|max:100',
+                'matiere_support'         => 'nullable|string|max:50',
+                'hauteur_so'              => 'nullable|numeric|min:2.30|max:10',
+                'hauteur_libre_m'         => 'nullable|numeric|min:2.30|max:10',
+                'implantation_m'          => 'nullable|numeric|min:1|max:3',
+                'fiche_ancrage_m'         => 'nullable|numeric|min:0.4|max:2',
+                'resistance'              => 'nullable|integer|min:130|max:250',
+                'date_pose'               => 'nullable|date',
+                'duree_vie_ans'           => 'nullable|integer|min:7|max:20',
             ]);
-        }
 
-        return redirect()->route('signalisation.show', $id)
-            ->with('success', 'Informations mises à jour avec succès.');
+            DB::table($this->table)->where($pk, $id)->update($validated);
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Informations mises à jour avec succès.',
+                    'data'    => $validated,
+                ]);
+            }
+
+            return redirect()->route('signalisation.show', $id)
+                ->with('success', 'Informations mises à jour avec succès.');
+
+        } catch (ValidationException $e) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'errors'  => $e->errors(),
+                ], 422);
+            }
+            throw $e;
+        } catch (Throwable $e) {
+            Log::error('Erreur update panneau #' . $id . ' : ' . $e->getMessage());
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erreur serveur : ' . $e->getMessage(),
+                ], 500);
+            }
+            return redirect()->back()->with('error', 'Erreur lors de la mise à jour.');
+        }
     }
 
     /* =========================================================
-       STORE PANNEAU — inchangé
+       STORE PANNEAU
     ========================================================= */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'code_nomen'              => 'nullable|string|max:50',
-            'fclass'                  => 'nullable|string|max:100',
-            'name'                    => 'nullable|string|max:255',
-            'code_panneau_cctp'       => 'nullable|string|max:20',
-            'hc_caractere'            => 'nullable|in:100,125,160,200',
-            'route_nom'               => 'nullable|string|max:100',
-            'point_kilo'              => 'nullable|string|max:50',
-            'route'                   => 'nullable|string|max:50',
-            'lat'                     => 'required|numeric|between:-90,90',
-            'lng'                     => 'required|numeric|between:-180,180',
-            'acier_nuance'            => 'nullable|string|max:50',
-            'galva_depot'             => 'nullable|numeric|min:0|max:20',
-            'largeur_latte'           => 'nullable|integer|min:0|max:100',
-            'anodise'                 => 'nullable|boolean',
-            'num_agrement'            => 'nullable|string|max:50',
-            'nature_mat'              => 'nullable|string|max:100',
-            'type_subje'              => 'nullable|string|max:100',
-            'dimensions'              => 'nullable|string|max:50',
-            'dim_cctp'                => 'nullable|string|max:30',
-            'couleur_fo'              => 'nullable|string|max:50',
-            'protection'              => 'nullable|string|max:100',
-            'type_film_retro'         => 'nullable|string|max:50',
-            'garantie_film_ans'       => 'nullable|integer|min:0|max:20',
-            'nb_raidisseurs'          => 'nullable|integer|min:0|max:5',
-            'type_suppo'              => 'nullable|string|max:100',
-            'matiere_support'         => 'nullable|string|max:50',
-            'hauteur_so'              => 'nullable|numeric|min:0|max:20',
-            'hauteur_libre_m'         => 'nullable|numeric|min:0|max:20',
-            'implantation_m'          => 'nullable|numeric|min:0|max:10',
-            'fiche_ancrage_m'         => 'nullable|numeric|min:0|max:5',
-            'resistance'              => 'nullable|integer|min:0|max:500',
-            'date_pose'               => 'nullable|date',
-            'duree_vie_ans'           => 'nullable|integer|min:0|max:50',
-        ]);
-
-        $lat = $validated['lat'];
-        $lng = $validated['lng'];
-        unset($validated['lat'], $validated['lng']);
-
-        $id = DB::table($this->table)->insertGetId(
-            array_merge($validated, [
-                'geom' => DB::raw("ST_SetSRID(ST_MakePoint($lng, $lat), 4326)"),
-            ])
-        );
-
-        if ($request->expectsJson() || $request->ajax()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Panneau créé avec succès.',
-                'id'      => $id,
+        try {
+            $validated = $request->validate([
+                'code_nomen'              => 'nullable|string|max:50',
+                'fclass'                  => 'nullable|string|max:100',
+                'name'                    => 'nullable|string|max:255',
+                'code_panneau_cctp'       => 'nullable|string|max:20',
+                'hc_caractere'            => 'nullable|in:100,125,160,200',
+                'route_nom'               => 'nullable|string|max:100',
+                'point_kilo'              => 'nullable|string|max:50',
+                'route'                   => 'nullable|string|max:50',
+                'lat'                     => 'required|numeric|between:-90,90',
+                'lng'                     => 'required|numeric|between:-180,180',
+                'acier_nuance'            => 'nullable|string|max:50',
+                'galva_depot'             => 'nullable|numeric|min:0|max:20',
+                'largeur_latte'           => 'nullable|integer|min:0|max:100',
+                'anodise'                 => 'nullable|boolean',
+                'num_agrement'            => 'nullable|string|max:50',
+                'nature_mat'              => 'nullable|string|max:100',
+                'type_subje'              => 'nullable|string|max:100',
+                'dimensions'              => 'nullable|string|max:50',
+                'dim_cctp'                => 'nullable|string|max:30',
+                'couleur_fo'              => 'nullable|string|max:50',
+                'protection'              => 'nullable|string|max:100',
+                'type_film_retro'         => 'nullable|string|max:50',
+                'garantie_film_ans'       => 'nullable|integer|min:0|max:20',
+                'nb_raidisseurs'          => 'nullable|integer|min:0|max:5',
+                'type_suppo'              => 'nullable|string|max:100',
+                'matiere_support'         => 'nullable|string|max:50',
+                'hauteur_so'              => 'nullable|numeric|min:0|max:20',
+                'hauteur_libre_m'         => 'nullable|numeric|min:0|max:20',
+                'implantation_m'          => 'nullable|numeric|min:0|max:10',
+                'fiche_ancrage_m'         => 'nullable|numeric|min:0|max:5',
+                'resistance'              => 'nullable|integer|min:0|max:500',
+                'date_pose'               => 'nullable|date',
+                'duree_vie_ans'           => 'nullable|integer|min:0|max:50',
             ]);
-        }
 
-        return redirect()->route('signalisation.show', $id)
-            ->with('success', 'Panneau créé avec succès.');
+            $lat = $validated['lat'];
+            $lng = $validated['lng'];
+            unset($validated['lat'], $validated['lng']);
+
+            $id = DB::table($this->table)->insertGetId(
+                array_merge($validated, [
+                    'geom' => DB::raw("ST_SetSRID(ST_MakePoint($lng, $lat), 4326)"),
+                ])
+            );
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Panneau créé avec succès.',
+                    'id'      => $id,
+                ]);
+            }
+
+            return redirect()->route('signalisation.show', $id)
+                ->with('success', 'Panneau créé avec succès.');
+
+        } catch (ValidationException $e) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'errors'  => $e->errors(),
+                ], 422);
+            }
+            throw $e;
+        } catch (Throwable $e) {
+            Log::error('Erreur store panneau : ' . $e->getMessage());
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erreur serveur : ' . $e->getMessage(),
+                ], 500);
+            }
+            return redirect()->back()->with('error', 'Erreur lors de la création.');
+        }
     }
 
     /* =========================================================
-       STORE OBSERVATION — ✅ CORRIGÉ
-       Les photos vont dans public/Backend/assets/photos/
+       ✅ STORE OBSERVATION — AVEC GESTION D'ERREUR ROBUSTE
+       - Détection des erreurs PHP (post_max_size, upload_max_filesize)
+       - Toujours retourner du JSON pour les requêtes AJAX
+       - Validation photos robuste
     ========================================================= */
-public function storeObservation(Request $request, $id)
-{
-    $validated = $request->validate([
-        'date_obs'            => 'nullable|date',
-        'date_fabrication'    => 'nullable|date',
-        'date_pose'           => 'nullable|date',
-        'garantie_expiration' => 'nullable|date',
-        'num_agrem'           => 'nullable|string|max:50',
-        'classe_retro'        => 'nullable|string|max:20',
-        'etat_actuel'         => 'required|string|max:30',
-        'remarque'            => 'nullable|string|max:2000',
-        'photos'              => 'nullable|array|max:10',
-        'photos.*'            => 'image|mimes:jpeg,jpg,png,webp|max:10240',
-    ]);
+    public function storeObservation(Request $request, $id)
+    {
+        // ✅ Vérification CRITIQUE : PHP a-t-il rejeté la requête ?
+        // Si post_max_size est dépassé, $_POST et $_FILES sont VIDES.
+        if ($this->isPostMaxSizeExceeded()) {
+            Log::warning('POST max size exceeded lors de storeObservation');
+            return response()->json([
+                'success' => false,
+                'message' => 'Les photos envoyées sont trop volumineuses (limite serveur dépassée). ' .
+                             'Réduisez la taille ou le nombre de photos. ' .
+                             'Taille max actuelle : ' . ini_get('post_max_size'),
+            ], 413);
+        }
 
-    $photos = $request->file('photos');
-    unset($validated['photos']);
+        try {
+            $validated = $request->validate([
+                'date_obs'            => 'nullable|date',
+                'date_fabrication'    => 'nullable|date',
+                'date_pose'           => 'nullable|date',
+                'garantie_expiration' => 'nullable|date',
+                'num_agrem'           => 'nullable|string|max:50',
+                'classe_retro'        => 'nullable|string|max:20',
+                'etat_actuel'         => 'required|string|max:30',
+                'remarque'            => 'nullable|string|max:2000',
+                'photos'              => 'nullable|array|max:10',
+                'photos.*'            => 'image|mimes:jpeg,jpg,png,webp|max:10240',
+            ]);
 
-    if (empty($validated['date_obs'])) {
-        $validated['date_obs'] = now();
-    }
+            $photos = $request->file('photos');
+            unset($validated['photos']);
 
-    // 1) Déplacer les photos — lire les métadonnées AVANT move()
-    $destination = $this->photosDir();
-    if (!is_dir($destination)) {
-        mkdir($destination, 0755, true);
-    }
-
-    $savedPhotos = [];
-    if (!empty($photos)) {
-        foreach ($photos as $file) {
-            if (!$file->isValid()) {
-                \Log::warning('Upload invalide : ' . $file->getErrorMessage());
-                continue;
+            if (empty($validated['date_obs'])) {
+                $validated['date_obs'] = now();
             }
 
-            // ⚠️ Lire AVANT move() — sinon "file does not exist"
-            $originalName = $file->getClientOriginalName();
-            $mimeType     = $file->getClientMimeType();
-            $extension    = strtolower($file->getClientOriginalExtension());
-            $sizeKb       = (int) round($file->getSize() / 1024);
-
-            $filename = Str::uuid() . '.' . $extension;
-
-            // Le tmp est consommé ici
-            $file->move($destination, $filename);
-
-            $fullPath = $destination . DIRECTORY_SEPARATOR . $filename;
-            if (!is_file($fullPath)) {
-                \Log::error("Fichier non déplacé : {$fullPath}");
-                continue;
+            // 1) Déplacer les photos — lire les métadonnées AVANT move()
+            $destination = $this->photosDir();
+            if (!is_dir($destination)) {
+                if (!mkdir($destination, 0755, true) && !is_dir($destination)) {
+                    throw new \RuntimeException("Impossible de créer le dossier : {$destination}");
+                }
             }
 
-            $savedPhotos[] = [
-                'nom_fichier' => $originalName,
-                'chemin'      => $filename,
-                'mime_type'   => $mimeType,
-                'taille_ko'   => $sizeKb,
-            ];
+            $savedPhotos = [];
+            $photoErrors = [];
+
+            if (!empty($photos)) {
+                foreach ($photos as $file) {
+                    if (!$file->isValid()) {
+                        $errMsg = $file->getErrorMessage();
+                        Log::warning('Upload invalide : ' . $errMsg);
+                        $photoErrors[] = $errMsg;
+                        continue;
+                    }
+
+                    // ⚠️ Lire AVANT move() — sinon "file does not exist"
+                    $originalName = $file->getClientOriginalName();
+                    $mimeType     = $file->getClientMimeType();
+                    $extension    = strtolower($file->getClientOriginalExtension());
+                    $sizeKb       = (int) round($file->getSize() / 1024);
+
+                    // Sécurité : whitelist extensions
+                    if (!in_array($extension, ['jpg', 'jpeg', 'png', 'webp'], true)) {
+                        $photoErrors[] = "Extension non autorisée : {$extension}";
+                        continue;
+                    }
+
+                    $filename = Str::uuid() . '.' . $extension;
+
+                    try {
+                        $file->move($destination, $filename);
+                    } catch (Throwable $e) {
+                        Log::error('Erreur move() : ' . $e->getMessage());
+                        $photoErrors[] = "Impossible de sauvegarder : {$originalName}";
+                        continue;
+                    }
+
+                    $fullPath = $destination . DIRECTORY_SEPARATOR . $filename;
+                    if (!is_file($fullPath)) {
+                        Log::error("Fichier non déplacé : {$fullPath}");
+                        $photoErrors[] = "Fichier perdu : {$originalName}";
+                        continue;
+                    }
+
+                    $savedPhotos[] = [
+                        'nom_fichier' => $originalName,
+                        'chemin'      => $filename,
+                        'mime_type'   => $mimeType,
+                        'taille_ko'   => $sizeKb,
+                    ];
+                }
+            }
+
+            // 2) Insérer l'observation
+            $idObs = DB::table($this->tableObs)->insertGetId(
+                array_merge($validated, [
+                    'id_traffic' => $id,
+                    'created_at' => now(),
+                ]),
+                'id_obs'
+            );
+
+            // 3) Insérer les photos en base
+            foreach ($savedPhotos as $p) {
+                DB::table($this->tablePho)->insert([
+                    'id_obs'      => $idObs,
+                    'nom_fichier' => $p['nom_fichier'],
+                    'chemin'      => $p['chemin'],
+                    'type_photo'  => $request->input('type_photo', 'Face'),
+                    'legende'     => $request->input('legende'),
+                    'mime_type'   => $p['mime_type'],
+                    'taille_ko'   => $p['taille_ko'],
+                    'prise_le'    => now(),
+                    'uploaded_by' => Auth::id(),
+                    'created_at'  => now(),
+                ]);
+            }
+
+            // ✅ Message avec info sur les photos éventuellement ratées
+            $message = 'Observation enregistrée avec succès.';
+            if (!empty($photoErrors)) {
+                $message .= ' (' . count($photoErrors) . ' photo(s) ignorée(s))';
+            }
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success'       => true,
+                    'message'       => $message,
+                    'id_obs'        => $idObs,
+                    'photos_saved'  => count($savedPhotos),
+                    'photos_failed' => count($photoErrors),
+                ]);
+            }
+
+            return redirect()->route('signalisation.show', $id)
+                ->with('success', $message);
+
+        } catch (ValidationException $e) {
+            Log::info('Validation échouée storeObservation', $e->errors());
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'errors'  => $e->errors(),
+                    'message' => 'Certains champs sont invalides.',
+                ], 422);
+            }
+            throw $e;
+
+        } catch (Throwable $e) {
+            Log::error('Erreur storeObservation : ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'id_traffic' => $id,
+            ]);
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erreur serveur : ' . $e->getMessage(),
+                ], 500);
+            }
+            return redirect()->back()->with('error', 'Erreur lors de la création de l\'observation.');
         }
     }
 
-    // 2) Insérer l'observation
-    $idObs = DB::table($this->tableObs)->insertGetId(
-        array_merge($validated, [
-            'id_traffic' => $id,
-            'created_at' => now(),
-        ]),
-        'id_obs'
-    );
-
-    // 3) Insérer les photos en base
-    foreach ($savedPhotos as $p) {
-        DB::table($this->tablePho)->insert([
-            'id_obs'      => $idObs,
-            'nom_fichier' => $p['nom_fichier'],
-            'chemin'      => $p['chemin'],
-            'type_photo'  => $request->input('type_photo', 'Face'),
-            'legende'     => $request->input('legende'),
-            'mime_type'   => $p['mime_type'],
-            'taille_ko'   => $p['taille_ko'],
-            'prise_le'    => now(),
-            'uploaded_by' => Auth::id(),
-            'created_at'  => now(),
-        ]);
-    }
-
-    if ($request->expectsJson() || $request->ajax()) {
-        return response()->json([
-            'success' => true,
-            'message' => 'Observation enregistrée avec succès.',
-            'id_obs'  => $idObs,
-        ]);
-    }
-
-    return redirect()->route('signalisation.show', $id)
-        ->with('success', 'Observation créée avec succès.');
-}
-
     /* =========================================================
-       UPDATE OBSERVATION — inchangé
+       UPDATE OBSERVATION
     ========================================================= */
     public function updateObservation(Request $request, $idObs)
     {
-        $validated = $request->validate([
-            'date_obs'              => 'nullable|date',
-            'date_fabrication'      => 'nullable|date',
-            'date_pose'             => 'nullable|date',
-            'garantie_expiration'   => 'nullable|date',
-            'num_agrem'             => 'nullable|string|max:50',
-            'classe_retro'          => 'nullable|string|max:20',
-            'etat_actuel'           => 'required|string|max:30',
-            'remarque'              => 'nullable|string|max:2000',
-        ]);
-
-        DB::table($this->tableObs)
-            ->where('id_obs', $idObs)
-            ->update(array_merge($validated, [
-                'updated_at' => now(),
-            ]));
-
-        if ($request->expectsJson() || $request->ajax()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Observation modifiée avec succès.',
+        try {
+            $validated = $request->validate([
+                'date_obs'              => 'nullable|date',
+                'date_fabrication'      => 'nullable|date',
+                'date_pose'             => 'nullable|date',
+                'garantie_expiration'   => 'nullable|date',
+                'num_agrem'             => 'nullable|string|max:50',
+                'classe_retro'          => 'nullable|string|max:20',
+                'etat_actuel'           => 'required|string|max:30',
+                'remarque'              => 'nullable|string|max:2000',
             ]);
-        }
 
-        return redirect()->back()->with('success', 'Observation modifiée.');
+            DB::table($this->tableObs)
+                ->where('id_obs', $idObs)
+                ->update(array_merge($validated, [
+                    'updated_at' => now(),
+                ]));
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Observation modifiée avec succès.',
+                ]);
+            }
+
+            return redirect()->back()->with('success', 'Observation modifiée.');
+
+        } catch (ValidationException $e) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'errors'  => $e->errors(),
+                ], 422);
+            }
+            throw $e;
+        } catch (Throwable $e) {
+            Log::error('Erreur updateObservation #' . $idObs . ' : ' . $e->getMessage());
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erreur serveur : ' . $e->getMessage(),
+                ], 500);
+            }
+            return redirect()->back()->with('error', 'Erreur lors de la modification.');
+        }
     }
 
     /* =========================================================
-       DESTROY OBSERVATION — ✅ CORRIGÉ
+       DESTROY OBSERVATION
     ========================================================= */
     public function destroyObservation($idObs)
     {
-        $photos = DB::table($this->tablePho)->where('id_obs', $idObs)->get();
+        try {
+            $photos = DB::table($this->tablePho)->where('id_obs', $idObs)->get();
 
-        foreach ($photos as $photo) {
-            $fullPath = $this->photosDir() . DIRECTORY_SEPARATOR . $photo->chemin;
-            if (is_file($fullPath)) {
-                @unlink($fullPath);
+            foreach ($photos as $photo) {
+                $fullPath = $this->photosDir() . DIRECTORY_SEPARATOR . $photo->chemin;
+                if (is_file($fullPath)) {
+                    @unlink($fullPath);
+                }
+            }
+
+            DB::table($this->tablePho)->where('id_obs', $idObs)->delete();
+            DB::table($this->tableObs)->where('id_obs', $idObs)->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Observation supprimée.',
+            ]);
+
+        } catch (Throwable $e) {
+            Log::error('Erreur destroyObservation #' . $idObs . ' : ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur serveur : ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /* =========================================================
+       ✅ DÉTECTION post_max_size DÉPASSÉ
+       Si le POST dépasse post_max_size, PHP vide $_POST et $_FILES
+       silencieusement, et Content-Length est présent mais $_POST vide.
+    ========================================================= */
+    protected function isPostMaxSizeExceeded(): bool
+    {
+        // Cas 1 : Content-Length présent mais $_POST et $_FILES vides
+        if (
+            $_SERVER['REQUEST_METHOD'] === 'POST'
+            && empty($_POST)
+            && empty($_FILES)
+            && !empty($_SERVER['CONTENT_LENGTH'])
+        ) {
+            $postMax = $this->parseSize(ini_get('post_max_size'));
+            $contentLength = (int) $_SERVER['CONTENT_LENGTH'];
+
+            if ($postMax > 0 && $contentLength > $postMax) {
+                return true;
+            }
+
+            // Si $_POST est vide alors qu'on attend un CSRF token, c'est suspect
+            if ($contentLength > 0) {
+                return true;
             }
         }
 
-        DB::table($this->tablePho)->where('id_obs', $idObs)->delete();
-        DB::table($this->tableObs)->where('id_obs', $idObs)->delete();
+        return false;
+    }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Observation supprimée.',
-        ]);
+    /**
+     * Convertit '8M', '2G', '512K' en octets
+     */
+    protected function parseSize(string $size): int
+    {
+        $size = trim($size);
+        if ($size === '' || $size === '-1') {
+            return 0; // 0 = illimité
+        }
+
+        $unit = strtolower(substr($size, -1));
+        $value = (int) $size;
+
+        return match ($unit) {
+            'g' => $value * 1024 * 1024 * 1024,
+            'm' => $value * 1024 * 1024,
+            'k' => $value * 1024,
+            default => $value,
+        };
     }
 }
