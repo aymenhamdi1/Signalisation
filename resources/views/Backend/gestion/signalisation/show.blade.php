@@ -68,6 +68,12 @@
     .btn-hero-light:hover { background: #fff; transform: translateY(-2px); color: #1E40AF !important; }
     .btn-hero-outline { background: rgba(255, 255, 255, 0.12); color: #fff !important; border: 1.5px solid rgba(255, 255, 255, 0.3); }
     .btn-hero-outline:hover { background: rgba(255, 255, 255, 0.2); color: #fff !important; }
+    .btn-hero-danger {
+        background: rgba(220, 38, 38, 0.95);
+        color: #fff !important;
+        border: 1.5px solid rgba(255,255,255,0.25);
+    }
+    .btn-hero-danger:hover { background: #DC2626; transform: translateY(-2px); }
 
     /* KPI */
     .kpi-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
@@ -280,151 +286,57 @@
     .form-group-block { margin-bottom: 24px; }
     .form-group-block:last-child { margin-bottom: 0; }
 
-    /* =========================================================
-       ✅ CUSTOM SELECT AVEC SVG — CODE NOMENCLATURE
-       ========================================================= */
-    .nomen-custom-select {
-        position: relative;
-        width: 100%;
-        font-family: 'Inter', sans-serif;
-    }
+    /* CUSTOM SELECT AVEC SVG */
+    .nomen-custom-select { position: relative; width: 100%; font-family: 'Inter', sans-serif; }
     .nomen-custom-select__trigger {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 6px 12px;
-        border: 1.5px solid #E2E8F0;
-        border-radius: 8px;
-        background: #fff;
-        cursor: pointer;
-        transition: all 0.15s ease;
-        min-height: 38px;
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 6px 12px; border: 1.5px solid #E2E8F0; border-radius: 8px;
+        background: #fff; cursor: pointer; transition: all 0.15s ease; min-height: 38px;
     }
     .nomen-custom-select__trigger:hover { border-color: #CBD5E1; }
     .nomen-custom-select.open .nomen-custom-select__trigger {
-        border-color: #2563EB;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        border-color: #2563EB; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
-    .nomen-custom-select__arrow {
-        color: #64748B;
-        font-size: 0.75rem;
-        transition: transform 0.2s ease;
-        flex-shrink: 0;
-        margin-left: 8px;
-    }
+    .nomen-custom-select__arrow { color: #64748B; font-size: 0.75rem; transition: transform 0.2s ease; flex-shrink: 0; margin-left: 8px; }
     .nomen-custom-select.open .nomen-custom-select__arrow { transform: rotate(180deg); }
     .nomen-custom-select__value { flex: 1; min-width: 0; }
-
     .nomen-custom-select__dropdown {
-        position: absolute;
-        top: calc(100% + 6px);
-        left: 0;
-        right: 0;
-        background: #fff;
-        border: 1.5px solid #E2E8F0;
-        border-radius: 10px;
-        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
-        z-index: 3000;
-        max-height: 340px;
-        display: none;
-        flex-direction: column;
-        overflow: hidden;
+        position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+        background: #fff; border: 1.5px solid #E2E8F0; border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15); z-index: 3000;
+        max-height: 340px; display: none; flex-direction: column; overflow: hidden;
     }
     .nomen-custom-select.open .nomen-custom-select__dropdown { display: flex; }
-    .nomen-custom-select__search {
-        position: relative;
-        padding: 8px;
-        border-bottom: 1px solid #F1F5F9;
-        flex-shrink: 0;
-    }
-    .nomen-custom-select__search i {
-        position: absolute;
-        left: 18px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #94A3B8;
-        font-size: 0.8rem;
-    }
+    .nomen-custom-select__search { position: relative; padding: 8px; border-bottom: 1px solid #F1F5F9; flex-shrink: 0; }
+    .nomen-custom-select__search i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #94A3B8; font-size: 0.8rem; }
     .nomen-custom-select__search input {
-        width: 100%;
-        padding: 8px 12px 8px 32px;
-        border: 1.5px solid #E2E8F0;
-        border-radius: 8px;
-        font-size: 0.82rem;
-        outline: none;
-        font-family: 'Inter', sans-serif;
-        box-sizing: border-box;
+        width: 100%; padding: 8px 12px 8px 32px; border: 1.5px solid #E2E8F0;
+        border-radius: 8px; font-size: 0.82rem; outline: none;
+        font-family: 'Inter', sans-serif; box-sizing: border-box;
     }
-    .nomen-custom-select__search input:focus {
-        border-color: #2563EB;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-    }
-    .nomen-custom-select__options {
-        overflow-y: auto;
-        max-height: 280px;
-        padding: 4px 0;
-    }
+    .nomen-custom-select__search input:focus { border-color: #2563EB; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+    .nomen-custom-select__options { overflow-y: auto; max-height: 280px; padding: 4px 0; }
     .nomen-custom-select__options::-webkit-scrollbar { width: 5px; }
     .nomen-custom-select__options::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
-
-    .nomen-custom-option {
-        cursor: pointer;
-        transition: background 0.15s ease;
-        padding: 0;
-    }
+    .nomen-custom-option { cursor: pointer; transition: background 0.15s ease; padding: 0; }
     .nomen-custom-option:hover { background: #EFF6FF; }
     .nomen-custom-option.active { background: #EFF6FF; }
-
-    .nomen-option {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 8px 12px;
-    }
+    .nomen-option { display: flex; align-items: center; gap: 10px; padding: 8px 12px; }
     .nomen-option__svg {
-        width: 36px;
-        height: 36px;
-        flex-shrink: 0;
-        background: #F8FAFC;
-        border: 1px solid #E2E8F0;
-        border-radius: 6px;
-        padding: 3px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
+        width: 36px; height: 36px; flex-shrink: 0; background: #F8FAFC;
+        border: 1px solid #E2E8F0; border-radius: 6px; padding: 3px;
+        display: flex; align-items: center; justify-content: center; overflow: hidden;
     }
-    .nomen-option__svg img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-        display: block;
-    }
-    .nomen-option__svg i {
-        color: #CBD5E1;
-        font-size: 16px;
-    }
+    .nomen-option__svg img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+    .nomen-option__svg i { color: #CBD5E1; font-size: 16px; }
     .nomen-option__text { flex: 1; min-width: 0; }
-    .nomen-option__code {
-        font-weight: 800;
-        color: #1E40AF;
-        font-size: 0.85rem;
-        line-height: 1.2;
-    }
+    .nomen-option__code { font-weight: 800; color: #1E40AF; font-size: 0.85rem; line-height: 1.2; }
     .nomen-option__name {
-        font-size: 0.72rem;
-        color: #64748B;
-        line-height: 1.3;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        font-size: 0.72rem; color: #64748B; line-height: 1.3;
+        overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
     .nomen-option__name.obsolete { color: #EA580C; font-style: italic; }
-    .nomen-custom-option.active .nomen-option__svg {
-        border-color: #2563EB;
-        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
-    }
-
+    .nomen-custom-option.active .nomen-option__svg { border-color: #2563EB; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2); }
     .nomen-custom-select__trigger .nomen-option { padding: 0; gap: 8px; }
     .nomen-custom-select__trigger .nomen-option__svg { width: 26px; height: 26px; padding: 2px; }
     .nomen-custom-select__trigger .nomen-option__name { display: none; }
@@ -446,50 +358,29 @@
        LIGHTBOX PHOTOS PREMIUM
     ========================================================= */
     .photo-lightbox {
-        position: fixed;
-        inset: 0;
+        position: fixed; inset: 0;
         background: rgba(10, 15, 30, 0.96);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        z-index: 99999;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        animation: lbFadeIn 0.25s ease;
-        user-select: none;
+        backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+        z-index: 99999; display: none; align-items: center; justify-content: center;
+        animation: lbFadeIn 0.25s ease; user-select: none;
     }
     .photo-lightbox.active { display: flex; }
 
-    @keyframes lbFadeIn {
-        from { opacity: 0; }
-        to   { opacity: 1; }
-    }
+    @keyframes lbFadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     .lb-stage {
-        position: relative;
-        max-width: 92vw;
-        max-height: 88vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        position: relative; max-width: 92vw; max-height: 88vh;
+        display: flex; align-items: center; justify-content: center;
     }
     .lb-img-wrapper {
-        position: relative;
-        max-width: 92vw;
-        max-height: 88vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        position: relative; max-width: 92vw; max-height: 88vh;
+        display: flex; align-items: center; justify-content: center;
     }
     .lb-img {
-        max-width: 92vw;
-        max-height: 88vh;
-        object-fit: contain;
-        border-radius: 12px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+        max-width: 92vw; max-height: 88vh; object-fit: contain;
+        border-radius: 12px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
         transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.2);
-        cursor: zoom-in;
-        display: block;
+        cursor: zoom-in; display: block;
     }
     .lb-img.zoomed { transform: scale(1.8); cursor: zoom-out; }
 
@@ -523,6 +414,9 @@
     }
     .lb-btn:hover { background: rgba(255, 255, 255, 0.25); transform: scale(1.08); color: #fff; }
     .lb-btn.lb-close:hover { background: #DC2626; border-color: #DC2626; }
+    .lb-btn.lb-delete { background: rgba(220, 38, 38, 0.25); border-color: rgba(220, 38, 38, 0.4); }
+    .lb-btn.lb-delete:hover { background: #DC2626; border-color: #DC2626; transform: scale(1.08); }
+    .lb-btn.lb-delete:disabled { opacity: 0.6; cursor: not-allowed; }
 
     .lb-nav {
         position: fixed; top: 50%; transform: translateY(-50%);
@@ -561,15 +455,10 @@
     .lb-thumb.active { border-color: #2563EB; opacity: 1; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.4); }
     .lb-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-    @keyframes lbImageIn {
-        from { opacity: 0; transform: scale(0.95); }
-        to   { opacity: 1; transform: scale(1); }
-    }
+    @keyframes lbImageIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
     .lb-img.animate { animation: lbImageIn 0.3s ease; }
 
-    /* =========================================================
-       RESPONSIVE
-       ========================================================= */
+    /* RESPONSIVE */
     @media (max-width: 1024px) {
         .show-page { padding: 18px; }
         .show-hero { padding: 22px 24px; gap: 18px; border-radius: 16px; }
@@ -582,41 +471,22 @@
 
     @media (max-width: 768px) {
         .show-page { padding: 12px; }
-
         .show-hero {
-            flex-direction: column;
-            align-items: stretch;
-            padding: 18px 18px;
-            gap: 16px;
-            border-radius: 14px;
-            margin-bottom: 16px;
+            flex-direction: column; align-items: stretch;
+            padding: 18px 18px; gap: 16px;
+            border-radius: 14px; margin-bottom: 16px;
         }
         .hero-left { flex-direction: column; align-items: flex-start; gap: 12px; }
-        .hero-svg-box {
-            width: 64px; height: 64px;
-            border-radius: 14px;
-            padding: 8px;
-        }
+        .hero-svg-box { width: 64px; height: 64px; border-radius: 14px; padding: 8px; }
         .hero-info { width: 100%; }
         .hero-code { font-size: 1.5rem; }
         .hero-name { font-size: 0.85rem; line-height: 1.35; }
-        .hero-loc {
-            font-size: 0.72rem;
-            padding: 4px 10px;
-            margin-top: 8px;
-        }
+        .hero-loc { font-size: 0.72rem; padding: 4px 10px; margin-top: 8px; }
         .hero-right {
-            width: 100%;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            width: 100%; display: grid;
+            grid-template-columns: 1fr 1fr; gap: 8px;
         }
-        .btn-hero {
-            justify-content: center;
-            padding: 9px 12px;
-            font-size: 0.78rem;
-            gap: 6px;
-        }
+        .btn-hero { justify-content: center; padding: 9px 12px; font-size: 0.78rem; gap: 6px; }
 
         .kpi-strip { grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
         .kpi-box { padding: 14px 14px; gap: 10px; border-radius: 12px; }
@@ -648,14 +518,8 @@
         .map-coords { padding: 10px 16px; font-size: 0.72rem; }
 
         .modal-dialog { margin: 8px; max-width: calc(100vw - 16px) !important; }
-        .modal-dialog.modal-dialog-centered {
-            min-height: calc(100% - 16px);
-            align-items: flex-end;
-        }
-        .modal-content {
-            border-radius: 20px 20px 0 0 !important;
-            max-height: 94vh !important;
-        }
+        .modal-dialog.modal-dialog-centered { min-height: calc(100% - 16px); align-items: flex-end; }
+        .modal-content { border-radius: 20px 20px 0 0 !important; max-height: 94vh !important; }
         .modal-header { padding: 14px 16px !important; }
         .modal-header .modal-title { font-size: 0.95rem !important; }
         .modal-header small { font-size: 0.72rem !important; }
@@ -664,18 +528,12 @@
         .modal-footer button { padding: 8px 14px !important; font-size: 0.82rem !important; }
 
         .modal .nav-tabs {
-            padding: 0 10px;
-            overflow-x: auto;
-            flex-wrap: nowrap;
-            -webkit-overflow-scrolling: touch;
+            padding: 0 10px; overflow-x: auto;
+            flex-wrap: nowrap; -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
         }
         .modal .nav-tabs::-webkit-scrollbar { display: none; }
-        .modal .nav-tabs .nav-link {
-            padding: 10px 12px !important;
-            font-size: 0.74rem;
-            white-space: nowrap;
-        }
+        .modal .nav-tabs .nav-link { padding: 10px 12px !important; font-size: 0.74rem; white-space: nowrap; }
         .modal .nav-tabs .nav-link i { margin-right: 4px; }
         .modal .tab-content { padding: 16px 16px; }
 
@@ -716,24 +574,29 @@
 </style>
 
 {{-- =========================================================
-     DONNÉES PHOTOS
+     DONNÉES PHOTOS — enrichies avec id pour la suppression
 ========================================================= --}}
 <script>
 window.__allPhotosByObs = {
     @php
         $photosByObsJs = [];
         foreach ($photosParObs as $idObs => $photoList) {
+            $list = is_array($photoList) ? $photoList : $photoList->all();
             $photosByObsJs[$idObs] = array_map(function($p) {
-                return asset('Backend/assets/photos/' . $p->chemin);
-            }, $photoList);
+                return [
+                    'id'  => $p->id_photo ?? ($p->id ?? ($p->id_0 ?? null)),
+                    'url' => asset('Backend/assets/photos/' . $p->chemin),
+                    'nom' => $p->nom_fichier ?? ('photo-' . ($p->id_photo ?? '')),
+                ];
+            }, $list);
         }
     @endphp
     @json($photosByObsJs)
 };
 
-/* ✅ Types de panneaux pour le custom select */
 window.__typesPanneaux = @json($listes['types_panneaux'] ?? []);
 window.__baseSvg       = "{{ asset('Backend/assets/SVG') }}";
+window.__urlDeletePhoto = "{{ url('signalisation/photos') }}";
 
 console.log('📋 Types panneaux:', window.__typesPanneaux.length);
 console.log('📁 Base SVG:', window.__baseSvg);
@@ -795,6 +658,17 @@ console.log('📁 Base SVG:', window.__baseSvg);
                     data-bs-toggle="modal"
                     data-bs-target="#modalNewObservation">
                 <i class="fa-solid fa-plus"></i> Nouvelle observation
+            </button>
+            {{-- ✅ SUPPRESSION PANNEAU --}}
+            <button type="button"
+                    class="btn-hero btn-hero-danger"
+                    id="btnDeletePanneauFromShow"
+                    data-id="{{ $panneau->panneau_id }}"
+                    data-code="{{ $panneau->code_nomen ?? '' }}"
+                    data-route="{{ $panneau->route_nom ?? '' }}"
+                    data-pk="{{ $panneau->point_kilo ?? '' }}"
+                    data-obs="{{ $nbObservations }}">
+                <i class="fa-solid fa-trash"></i> Supprimer
             </button>
         </div>
     </div>
@@ -1132,6 +1006,17 @@ console.log('📁 Base SVG:', window.__baseSvg);
                                     default                        => 'aucun',
                                 };
                                 $photos = $photosParObs[$obs->id_obs] ?? [];
+                                $photosArr = is_array($photos) ? $photos : $photos->all();
+
+                                // Construire les données JSON pour le JS
+                                $obsPhotosData = array_map(function($p) {
+                                    return [
+                                        'id'  => $p->id_photo ?? ($p->id ?? ($p->id_0 ?? null)),
+                                        'url' => asset('Backend/assets/photos/' . $p->chemin),
+                                        'nom' => $p->nom_fichier ?? ('photo-' . ($p->id_photo ?? '')),
+                                    ];
+                                }, $photosArr);
+                                $obsPhotosJson = json_encode(array_values($obsPhotosData));
                             @endphp
 
                             <tr>
@@ -1181,15 +1066,11 @@ console.log('📁 Base SVG:', window.__baseSvg);
 
                                 {{-- PHOTOS --}}
                                 <td>
-                                    @if (!empty($photos))
+                                    @if (!empty($photosArr))
                                         <div class="obs-photos">
-                                            @foreach (array_slice($photos, 0, 3) as $idx => $photo)
+                                            @foreach (array_slice($photosArr, 0, 3) as $idx => $photo)
                                                 @php
                                                     $photoUrl = asset('Backend/assets/photos/' . $photo->chemin);
-                                                    $obsPhotosUrls = array_map(function($p) {
-                                                        return asset('Backend/assets/photos/' . $p->chemin);
-                                                    }, $photos);
-                                                    $obsPhotosJson = json_encode(array_values($obsPhotosUrls));
                                                 @endphp
                                                 <div class="obs-photo-thumb"
                                                      onclick='ouvrirPhotos({{ $obsPhotosJson }}, {{ $idx }})'
@@ -1201,17 +1082,11 @@ console.log('📁 Base SVG:', window.__baseSvg);
                                                 </div>
                                             @endforeach
 
-                                            @if (count($photos) > 3)
-                                                @php
-                                                    $obsPhotosUrls = array_map(function($p) {
-                                                        return asset('Backend/assets/photos/' . $p->chemin);
-                                                    }, $photos);
-                                                    $obsPhotosJson = json_encode(array_values($obsPhotosUrls));
-                                                @endphp
+                                            @if (count($photosArr) > 3)
                                                 <div class="obs-photo-thumb obs-photo-more"
                                                      onclick='ouvrirPhotos({{ $obsPhotosJson }}, 0)'
                                                      title="Voir toutes les photos">
-                                                    <span>+{{ count($photos) - 3 }}</span>
+                                                    <span>+{{ count($photosArr) - 3 }}</span>
                                                 </div>
                                             @endif
                                         </div>
@@ -1270,7 +1145,7 @@ console.log('📁 Base SVG:', window.__baseSvg);
 </div>
 
 {{-- =========================================================
-     MODALE 1 : ÉDITION DU PANNEAU — avec custom select
+     MODALE 1 : ÉDITION DU PANNEAU
 ========================================================= --}}
 <div class="modal fade" id="modalEditPanneau" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width: 1000px;">
@@ -1322,15 +1197,11 @@ console.log('📁 Base SVG:', window.__baseSvg);
                             <div class="row g-3 form-group-block">
                                 <div class="col-md-6">
                                     <label class="form-label">Code nomenclature</label>
-                                    {{-- ✅ Input hidden qui sera envoyé au serveur --}}
                                     <input type="hidden" name="code_nomen" id="edit_code_nomen_hidden" value="{{ $panneau->code_nomen ?? '' }}">
 
-                                    {{-- ✅ Custom select avec SVG --}}
                                     <div class="nomen-custom-select" id="editNomenCustomSelect">
                                         <div class="nomen-custom-select__trigger" onclick="toggleEditNomenDropdown()">
-                                            <div class="nomen-custom-select__value" id="editNomenSelectedDisplay">
-                                                {{-- Rempli dynamiquement --}}
-                                            </div>
+                                            <div class="nomen-custom-select__value" id="editNomenSelectedDisplay"></div>
                                             <i class="fa-solid fa-chevron-down nomen-custom-select__arrow"></i>
                                         </div>
                                         <div class="nomen-custom-select__dropdown" id="editNomenDropdown">
@@ -1561,7 +1432,7 @@ console.log('📁 Base SVG:', window.__baseSvg);
 </div>
 
 {{-- =========================================================
-     MODALE 2 : NOUVELLE OBSERVATION — import Android corrigé
+     MODALE 2 : NOUVELLE OBSERVATION
 ========================================================= --}}
 <div class="modal fade" id="modalNewObservation" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width: 900px;">
@@ -1661,10 +1532,8 @@ console.log('📁 Base SVG:', window.__baseSvg);
                             </div>
                         </div>
 
-                        {{-- ✅ PHOTOS — Import Android corrigé --}}
                         <div class="tab-pane fade" id="new-tab-photos">
                             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:14px;">
-                                {{-- Bouton 1 : Prendre une photo (appareil photo) --}}
                                 <label for="newObsPhotosCamera" class="photo-upload-zone" style="margin:0; cursor:pointer;">
                                     <i class="fa-solid fa-camera" style="font-size: 1.8rem; color: #10B981; margin-bottom: 8px; display: block;"></i>
                                     <div style="font-weight: 700; color: #0F172A; margin-bottom: 4px; font-size: 0.85rem;">Prendre une photo</div>
@@ -1672,7 +1541,6 @@ console.log('📁 Base SVG:', window.__baseSvg);
                                     <input type="file" id="newObsPhotosCamera" name="photos[]" accept="image/*" capture="environment" multiple onchange="previewPhotos(this, 'photoPreviewNew')">
                                 </label>
 
-                                {{-- Bouton 2 : Choisir depuis la galerie --}}
                                 <label for="newObsPhotosGallery" class="photo-upload-zone" style="margin:0; cursor:pointer;">
                                     <i class="fa-solid fa-images" style="font-size: 1.8rem; color: #2563EB; margin-bottom: 8px; display: block;"></i>
                                     <div style="font-weight: 700; color: #0F172A; margin-bottom: 4px; font-size: 0.85rem;">Choisir une photo</div>
@@ -1814,6 +1682,67 @@ console.log('📁 Base SVG:', window.__baseSvg);
 </div>
 
 {{-- =========================================================
+     MODALE 4 : CONFIRMATION SUPPRESSION PANNEAU
+========================================================= --}}
+<div class="modal fade" id="modalDeletePanneau" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 480px;">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #DC2626, #B91C1C); color: #fff;">
+                <div>
+                    <h5 class="modal-title" style="color:#fff !important; font-weight:700; font-size:1rem;">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Confirmer la suppression
+                    </h5>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body" style="padding: 22px 24px;">
+                <p style="margin: 0 0 14px; color:#0F172A; font-size:0.92rem;">
+                    Voulez-vous vraiment supprimer ce panneau ?
+                </p>
+
+                <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:10px; padding:12px 14px; font-size:0.85rem;">
+                    <div style="margin-bottom:6px;">
+                        <strong style="color:#1E40AF;">Code :</strong>
+                        <span id="delCode">—</span>
+                    </div>
+                    <div style="margin-bottom:6px;">
+                        <strong style="color:#1E40AF;">Route :</strong>
+                        <span id="delRoute">—</span>
+                    </div>
+                    <div style="margin-bottom:6px;">
+                        <strong style="color:#1E40AF;">PK :</strong>
+                        <span id="delPk">—</span>
+                    </div>
+                    <div>
+                        <strong style="color:#1E40AF;">Observations :</strong>
+                        <span id="delObs">0</span>
+                    </div>
+                </div>
+
+                <div id="delWarning" class="d-none"
+                     style="margin-top:12px; padding:10px 12px; background:#FEF2F2; border-left:3px solid #DC2626; border-radius:6px; font-size:0.82rem; color:#991B1B;">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <strong>Attention :</strong> toutes les observations et photos associées seront définitivement supprimées.
+                </div>
+
+                <div id="delError" class="alert alert-danger d-none" style="margin-top:12px; border-radius:8px; font-size:0.85rem;"></div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border-radius:8px; font-weight:600;">
+                    <i class="fa-solid fa-xmark"></i> Annuler
+                </button>
+                <button type="button" id="btnConfirmDeletePanneau" class="btn btn-danger"
+                        style="border-radius:8px; font-weight:600; background:linear-gradient(135deg,#DC2626,#B91C1C); border:none; padding:8px 20px;">
+                    <i class="fa-solid fa-trash"></i> Supprimer définitivement
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- =========================================================
      LIGHTBOX PHOTOS
 ========================================================= --}}
 <div class="photo-lightbox" id="photoLightbox" role="dialog" aria-modal="true" aria-label="Visionneuse de photos">
@@ -1826,6 +1755,12 @@ console.log('📁 Base SVG:', window.__baseSvg);
             <button type="button" class="lb-btn" id="lbDownloadBtn" title="Télécharger">
                 <i class="fa-solid fa-download"></i>
             </button>
+
+            {{-- ✅ BOUTON SUPPRIMER PHOTO --}}
+            <button type="button" class="lb-btn lb-delete" id="lbDeleteBtn" title="Supprimer cette photo (Suppr)">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+
             <button type="button" class="lb-btn lb-close" id="lbCloseBtn" title="Fermer (Échap)">
                 <i class="fa-solid fa-xmark"></i>
             </button>
@@ -1958,34 +1893,29 @@ document.addEventListener('DOMContentLoaded', function () {
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
+    const CSRF = document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}';
+
     /* =========================================================
-       ✅ UTILITAIRE : PARSE SÉCURISÉ DE LA RÉPONSE
-       Détecte le HTML (erreur serveur) avant de parser le JSON
-       ========================================================= */
+       PARSE SÉCURISÉ DE LA RÉPONSE
+    ========================================================= */
     async function parseJsonResponse(response) {
         const contentType = response.headers.get('content-type') || '';
 
-        // ✅ Si ce n'est pas du JSON, c'est une erreur serveur (HTML)
         if (!contentType.includes('application/json')) {
             const text = await response.text();
-            console.error('❌ Réponse non-JSON reçue (status ' + response.status + ') :', text.substring(0, 500));
+            console.error('❌ Réponse non-JSON (status ' + response.status + ') :', text.substring(0, 500));
 
             if (response.status === 413 ||
                 text.includes('POST Content-Length') ||
                 text.includes('exceeds the limit') ||
                 text.includes('post_max_size')) {
-                throw new Error('Les photos sont trop volumineuses. Réduisez la taille ou le nombre de photos (max 10 Mo au total).');
+                throw new Error('Les photos sont trop volumineuses. Réduisez la taille ou le nombre de photos.');
             }
-            if (response.status === 419) {
-                throw new Error('Session expirée. Rechargez la page et réessayez.');
-            }
-            if (response.status === 500) {
-                throw new Error('Erreur serveur (500). Vérifiez les logs Laravel.');
-            }
-            if (response.status === 404) {
-                throw new Error('Route introuvable (404).');
-            }
-            throw new Error('Erreur serveur (' + response.status + '). Réponse invalide.');
+            if (response.status === 419) throw new Error('Session expirée. Rechargez la page.');
+            if (response.status === 500) throw new Error('Erreur serveur (500).');
+            if (response.status === 404) throw new Error('Route introuvable (404).');
+
+            throw new Error('Erreur serveur (' + response.status + ').');
         }
 
         const data = await response.json();
@@ -2002,15 +1932,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /* =========================================================
-       ✅ COMPRESSION DES IMAGES CÔTÉ CLIENT
-       Réduit la taille avant upload pour éviter post_max_size
-       ========================================================= */
+       COMPRESSION DES IMAGES
+    ========================================================= */
     window.compresserImage = function(file, maxWidth = 1600, quality = 0.8) {
         return new Promise((resolve) => {
-            // Si le fichier est petit (< 500 Ko), on ne compresse pas
-            if (file.size < 500 * 1024) {
-                return resolve(file);
-            }
+            if (file.size < 500 * 1024) return resolve(file);
 
             const reader = new FileReader();
             reader.onload = (e) => {
@@ -2037,7 +1963,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             file.name.replace(/\.[^.]+$/, '.jpg'),
                             { type: 'image/jpeg', lastModified: Date.now() }
                         );
-                        console.log('🗜️ Compression: ' + Math.round(file.size/1024) + ' Ko → ' + Math.round(newFile.size/1024) + ' Ko');
+                        console.log('🗜️ ' + Math.round(file.size/1024) + ' Ko → ' + Math.round(newFile.size/1024) + ' Ko');
                         resolve(newFile);
                     }, 'image/jpeg', quality);
                 };
@@ -2050,8 +1976,8 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     /* =========================================================
-       ✅ CUSTOM SELECT AVEC SVG — CODE NOMENCLATURE (MODALE ÉDITION)
-       ========================================================= */
+       CUSTOM SELECT AVEC SVG — CODE NOMENCLATURE
+    ========================================================= */
     const nomenTypes = window.__typesPanneaux || [];
     const BASE_SVG   = window.__baseSvg || '';
 
@@ -2151,7 +2077,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        /* ✅ Auto-remplissage du champ Nom */
         const nomInput = document.getElementById('edit_name');
         if (nomInput) {
             if (!value) {
@@ -2184,11 +2109,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if (el && !el.contains(e.target)) el.classList.remove('open');
     });
 
-    /* Init au chargement */
     renderEditNomenOptions(nomenTypes);
     initEditNomenDisplay();
 
-    /* Reset à l'ouverture de la modale d'édition */
     const modalEditPanneauEl = document.getElementById('modalEditPanneau');
     if (modalEditPanneauEl) {
         modalEditPanneauEl.addEventListener('show.bs.modal', function () {
@@ -2198,7 +2121,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /* =========================================================
-       PREVIEW DES PHOTOS AVANT UPLOAD (Android + Desktop)
+       PREVIEW DES PHOTOS
     ========================================================= */
     window.previewPhotos = function(input, containerId) {
         const container = document.getElementById(containerId);
@@ -2216,19 +2139,14 @@ document.addEventListener('DOMContentLoaded', function () {
             Array.from(galleryInput.files).forEach(function (f) { allFiles.push(f); });
         }
 
-        /* Éviter les doublons */
         const seen = new Set();
         const uniqueFiles = [];
         allFiles.forEach(function (f) {
             const key = f.name + '|' + f.size + '|' + f.lastModified;
-            if (!seen.has(key)) {
-                seen.add(key);
-                uniqueFiles.push(f);
-            }
+            if (!seen.has(key)) { seen.add(key); uniqueFiles.push(f); }
         });
 
         container.innerHTML = '';
-
         if (uniqueFiles.length === 0) return;
 
         uniqueFiles.forEach(function(file) {
@@ -2246,21 +2164,25 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     /* =========================================================
-       LIGHTBOX PHOTOS
+       LIGHTBOX PHOTOS — avec suppression
     ========================================================= */
-    let lbPhotos  = [];
+    let lbPhotos  = [];   // [{id, url, nom}, ...]
     let lbCurrent = 0;
 
-    window.openLightbox = function(idObs, startIndex = 0) {
-        const photos = (window.__allPhotosByObs || {})[idObs] || [];
+    window.ouvrirPhotos = function(photos, startIndex = 0) {
+        // Normalisation : accepte string[] ou object[]
+        const normalized = (photos || []).map(function(p) {
+            if (typeof p === 'string') return { id: null, url: p, nom: '' };
+            return { id: p.id, url: p.url, nom: p.nom || '' };
+        });
 
-        if (photos.length === 0) {
-            console.warn('Aucune photo pour id_obs = ' + idObs);
+        if (normalized.length === 0) {
+            console.warn('Aucune photo à afficher');
             return;
         }
 
-        lbPhotos  = photos;
-        lbCurrent = Math.max(0, Math.min(startIndex, photos.length - 1));
+        lbPhotos  = normalized;
+        lbCurrent = Math.max(0, Math.min(startIndex, normalized.length - 1));
 
         const lightbox = document.getElementById('photoLightbox');
         if (!lightbox) return;
@@ -2271,20 +2193,28 @@ document.addEventListener('DOMContentLoaded', function () {
         renderLightbox();
     };
 
+    // Alias pour compatibilité (appel par id_obs)
+    window.openLightbox = function(idObs, startIndex = 0) {
+        const photos = (window.__allPhotosByObs || {})[idObs] || [];
+        window.ouvrirPhotos(photos, startIndex);
+    };
+
     function renderLightbox() {
         const img       = document.getElementById('lbImage');
         const counter   = document.getElementById('lbCounter');
         const thumbsBox = document.getElementById('lbThumbs');
         const prevBtn   = document.getElementById('lbPrevBtn');
         const nextBtn   = document.getElementById('lbNextBtn');
+        const delBtn    = document.getElementById('lbDeleteBtn');
 
         if (!img) return;
 
-        const url = lbPhotos[lbCurrent];
+        const photo = lbPhotos[lbCurrent];
+        if (!photo) return;
 
         img.classList.remove('zoomed');
-        img.src = url;
-        img.alt = 'Photo ' + (lbCurrent + 1);
+        img.src = photo.url;
+        img.alt = photo.nom || ('Photo ' + (lbCurrent + 1));
 
         counter.textContent = (lbCurrent + 1) + ' / ' + lbPhotos.length;
 
@@ -2296,11 +2226,22 @@ document.addEventListener('DOMContentLoaded', function () {
             nextBtn.classList.remove('hidden');
         }
 
+        // Bouton supprimer : masqué si pas d'id
+        if (delBtn) {
+            if (photo.id) {
+                delBtn.style.display = '';
+                delBtn.disabled = false;
+                delBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+            } else {
+                delBtn.style.display = 'none';
+            }
+        }
+
         thumbsBox.innerHTML = '';
-        lbPhotos.forEach(function(photoUrl, idx) {
+        lbPhotos.forEach(function(p, idx) {
             const thumb = document.createElement('div');
             thumb.className = 'lb-thumb' + (idx === lbCurrent ? ' active' : '');
-            thumb.innerHTML = '<img src="' + photoUrl + '" alt="Miniature ' + (idx + 1) + '" loading="lazy">';
+            thumb.innerHTML = '<img src="' + p.url + '" alt="Miniature ' + (idx + 1) + '" loading="lazy">';
             thumb.onclick = function(e) {
                 e.stopPropagation();
                 lbCurrent = idx;
@@ -2330,6 +2271,82 @@ document.addEventListener('DOMContentLoaded', function () {
         lbCurrent = 0;
     };
 
+    /* ✅ SUPPRESSION DE LA PHOTO COURANTE */
+    window.supprimerPhotoCourante = function() {
+        const photo = lbPhotos[lbCurrent];
+        if (!photo || !photo.id) {
+            alert('Impossible de supprimer cette photo.');
+            return;
+        }
+
+        if (!confirm('Supprimer cette photo ?\nCette action est irréversible.')) return;
+
+        const delBtn = document.getElementById('lbDeleteBtn');
+        if (delBtn) {
+            delBtn.disabled = true;
+            delBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+        }
+
+        const baseUrl = window.__urlDeletePhoto || '/signalisation/photos';
+
+        fetch(baseUrl + '/' + photo.id, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': CSRF,
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        })
+        .then(async (response) => {
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || 'Erreur lors de la suppression.');
+            }
+            return data;
+        })
+        .then(() => {
+            // Retirer la photo de la liste locale
+            lbPhotos.splice(lbCurrent, 1);
+
+            // Mettre à jour les données globales
+            if (window.__allPhotosByObs) {
+                Object.keys(window.__allPhotosByObs).forEach(function(k) {
+                    const arr = window.__allPhotosByObs[k];
+                    if (Array.isArray(arr)) {
+                        window.__allPhotosByObs[k] = arr.filter(function(p) {
+                            return p.id !== photo.id;
+                        });
+                    }
+                });
+            }
+
+            if (lbPhotos.length === 0) {
+                closeLightbox();
+            } else {
+                if (lbCurrent >= lbPhotos.length) {
+                    lbCurrent = lbPhotos.length - 1;
+                }
+                renderLightbox();
+            }
+
+            // Recharger après un court délai
+            setTimeout(function() {
+                window.location.reload();
+            }, 400);
+        })
+        .catch((err) => {
+            console.error('❌ Erreur suppression photo:', err);
+            alert('Erreur : ' + err.message);
+            if (delBtn) {
+                delBtn.disabled = false;
+                delBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+            }
+        });
+    };
+
+    /* =========================================================
+       BRANCHEMENTS DES BOUTONS LIGHTBOX
+    ========================================================= */
     document.getElementById('lbCloseBtn')?.addEventListener('click', function(e) {
         e.stopPropagation();
         closeLightbox();
@@ -2342,19 +2359,22 @@ document.addEventListener('DOMContentLoaded', function () {
         e.stopPropagation();
         lbNavigate(1);
     });
-
     document.getElementById('lbZoomBtn')?.addEventListener('click', function(e) {
         e.stopPropagation();
-        const img = document.getElementById('lbImage');
-        img.classList.toggle('zoomed');
+        document.getElementById('lbImage').classList.toggle('zoomed');
+    });
+    document.getElementById('lbDeleteBtn')?.addEventListener('click', function(e) {
+        e.stopPropagation();
+        window.supprimerPhotoCourante();
     });
 
     document.getElementById('lbDownloadBtn')?.addEventListener('click', function(e) {
         e.stopPropagation();
-        const url = lbPhotos[lbCurrent];
+        const photo = lbPhotos[lbCurrent];
+        if (!photo) return;
         const a = document.createElement('a');
-        a.href = url;
-        a.download = 'photo-' + (lbCurrent + 1) + '.jpg';
+        a.href = photo.url;
+        a.download = photo.nom || ('photo-' + (lbCurrent + 1) + '.jpg');
         a.target = '_blank';
         document.body.appendChild(a);
         a.click();
@@ -2383,6 +2403,11 @@ document.addEventListener('DOMContentLoaded', function () {
             case 'ArrowLeft': e.preventDefault(); lbNavigate(-1); break;
             case 'ArrowRight': e.preventDefault(); lbNavigate(1); break;
             case 'z': case 'Z': document.getElementById('lbZoomBtn')?.click(); break;
+            case 'Delete':
+            case 'Backspace':
+                e.preventDefault();
+                window.supprimerPhotoCourante();
+                break;
         }
     });
 
@@ -2406,7 +2431,7 @@ document.addEventListener('DOMContentLoaded', function () {
     })();
 
     /* =========================================================
-       ÉDITION DU PANNEAU : SOUMISSION
+       ÉDITION DU PANNEAU
     ========================================================= */
     const formEditPanneau = document.getElementById('formEditPanneau');
     if (formEditPanneau) {
@@ -2427,10 +2452,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             fetch(formEditPanneau.action, {
                 method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
-                    'Accept': 'application/json',
-                },
+                headers: { 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
                 body: new FormData(formEditPanneau),
             })
             .then(parseJsonResponse)
@@ -2450,7 +2472,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /* =========================================================
-       ✅ NOUVELLE OBSERVATION : SOUMISSION AVEC COMPRESSION PHOTOS
+       NOUVELLE OBSERVATION
     ========================================================= */
     const formNewObs = document.getElementById('formNewObservation');
     let isSubmittingNewObs = false;
@@ -2458,7 +2480,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if (formNewObs) {
         formNewObs.addEventListener('submit', async function (e) {
             e.preventDefault();
-
             if (isSubmittingNewObs) return;
             isSubmittingNewObs = true;
 
@@ -2472,17 +2493,12 @@ document.addEventListener('DOMContentLoaded', function () {
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Compression & envoi...';
 
             try {
-                // ✅ Construire un nouveau FormData avec compression
                 const formData = new FormData();
 
-                // Copier tous les champs SAUF les fichiers photos
                 for (const [key, value] of new FormData(formNewObs).entries()) {
-                    if (key !== 'photos[]') {
-                        formData.append(key, value);
-                    }
+                    if (key !== 'photos[]') formData.append(key, value);
                 }
 
-                // Récupérer les fichiers des 2 inputs
                 const cameraInput  = document.getElementById('newObsPhotosCamera');
                 const galleryInput = document.getElementById('newObsPhotosGallery');
 
@@ -2490,7 +2506,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (cameraInput && cameraInput.files)  Array.from(cameraInput.files).forEach(f => allFiles.push(f));
                 if (galleryInput && galleryInput.files) Array.from(galleryInput.files).forEach(f => allFiles.push(f));
 
-                // Dédupliquer
                 const seen = new Set();
                 const uniqueFiles = allFiles.filter(f => {
                     const k = f.name + '|' + f.size + '|' + f.lastModified;
@@ -2499,7 +2514,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     return true;
                 });
 
-                // Compresser chaque photo (max 1600px, qualité 0.8)
                 btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Compression photos...';
                 for (const file of uniqueFiles) {
                     if (!file.type.startsWith('image/')) continue;
@@ -2509,13 +2523,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enregistrement...';
 
-                // ✅ Envoi
                 const response = await fetch(formNewObs.action, {
                     method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
-                        'Accept': 'application/json',
-                    },
+                    headers: { 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
                     body: formData,
                 });
 
@@ -2526,7 +2536,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 setTimeout(() => window.location.reload(), 900);
 
             } catch (err) {
-                console.error('❌ Erreur soumission observation:', err);
+                console.error('❌ Erreur observation:', err);
                 errorBox.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> ' + err.message;
                 errorBox.classList.remove('d-none');
                 isSubmittingNewObs = false;
@@ -2600,10 +2610,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             fetch(formEditObs.action, {
                 method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
-                    'Accept': 'application/json',
-                },
+                headers: { 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
                 body: new FormData(formEditObs),
             })
             .then(parseJsonResponse)
@@ -2628,27 +2635,95 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.btn-obs-delete').forEach(function (btn) {
         btn.addEventListener('click', function () {
             const url = this.getAttribute('data-url');
-
             if (!confirm('Supprimer cette observation ?\nCette action est irréversible.')) return;
 
             fetch(url, {
                 method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
-                    'Accept': 'application/json',
-                },
+                headers: { 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
             })
             .then(parseJsonResponse)
             .then((data) => {
-                if (data.success) {
-                    window.location.reload();
-                } else {
-                    alert('Erreur lors de la suppression.');
-                }
+                if (data.success) window.location.reload();
+                else alert('Erreur lors de la suppression.');
             })
             .catch((err) => alert('Erreur : ' + err.message));
         });
     });
+
+    /* =========================================================
+       SUPPRESSION D'UN PANNEAU (depuis la page show)
+    ========================================================= */
+    const btnDeletePanneauFromShow = document.getElementById('btnDeletePanneauFromShow');
+    const modalDeletePanneauEl     = document.getElementById('modalDeletePanneau');
+    const btnConfirmDeletePanneau  = document.getElementById('btnConfirmDeletePanneau');
+    let panneauToDeleteFromShow    = null;
+
+    if (btnDeletePanneauFromShow && modalDeletePanneauEl) {
+        const bsDeleteModal = new bootstrap.Modal(modalDeletePanneauEl);
+
+        btnDeletePanneauFromShow.addEventListener('click', function() {
+            panneauToDeleteFromShow = this.dataset.id;
+
+            document.getElementById('delCode').textContent  = this.dataset.code  || '—';
+            document.getElementById('delRoute').textContent = this.dataset.route || '—';
+            document.getElementById('delPk').textContent    = this.dataset.pk    || '—';
+            document.getElementById('delObs').textContent   = this.dataset.obs   || '0';
+
+            const nbObs = parseInt(this.dataset.obs || '0', 10);
+            const warning = document.getElementById('delWarning');
+            if (nbObs > 0) warning.classList.remove('d-none');
+            else           warning.classList.add('d-none');
+
+            const delError = document.getElementById('delError');
+            delError.classList.add('d-none');
+            delError.innerHTML = '';
+
+            bsDeleteModal.show();
+        });
+
+        btnConfirmDeletePanneau.addEventListener('click', function() {
+            if (!panneauToDeleteFromShow) return;
+
+            const originalHtml = btnConfirmDeletePanneau.innerHTML;
+            btnConfirmDeletePanneau.disabled = true;
+            btnConfirmDeletePanneau.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Suppression...';
+
+            const delError = document.getElementById('delError');
+            delError.classList.add('d-none');
+
+            fetch('/signalisation/' + panneauToDeleteFromShow, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': CSRF,
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            })
+            .then(async (response) => {
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok || !data.success) {
+                    throw new Error(data.message || 'Erreur lors de la suppression.');
+                }
+                return data;
+            })
+            .then(() => {
+                bsDeleteModal.hide();
+                setTimeout(() => {
+                    window.location.href = "{{ route('signalisation.index') }}";
+                }, 400);
+            })
+            .catch((err) => {
+                delError.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> ' + err.message;
+                delError.classList.remove('d-none');
+                btnConfirmDeletePanneau.disabled = false;
+                btnConfirmDeletePanneau.innerHTML = originalHtml;
+            });
+        });
+
+        modalDeletePanneauEl.addEventListener('hidden.bs.modal', function() {
+            panneauToDeleteFromShow = null;
+        });
+    }
 
     /* =========================================================
        RESET DES ONGLETS À L'OUVERTURE
@@ -2663,150 +2738,4 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
-{{-- =========================================================
-     MODALE PHOTO UNIVERSELLE (legacy — peut être supprimée si non utilisée)
-========================================================= --}}
-<div class="modal fade" id="modalPhotoViewer" tabindex="-1" aria-hidden="true" data-bs-backdrop="true" data-bs-keyboard="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
-        <div class="modal-content" style="background: #0F172A; border: none;">
-            <div class="modal-header" style="background: rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.1); padding: 12px 20px;">
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <span style="color: #fff; font-weight: 700; font-size: 0.9rem;" id="photoCounter">1 / 1</span>
-                </div>
-                <div style="display: flex; gap: 8px; align-items: center;">
-                    <button type="button" class="btn btn-sm" onclick="telechargerPhoto()" title="Télécharger"
-                            style="background: rgba(255,255,255,0.15); color: #fff; border: none; border-radius: 8px; padding: 6px 12px;">
-                        <i class="fa-solid fa-download"></i>
-                    </button>
-                    <button type="button" class="btn btn-sm" onclick="zoomerPhoto()" title="Zoom"
-                            style="background: rgba(255,255,255,0.15); color: #fff; border: none; border-radius: 8px; padding: 6px 12px;">
-                        <i class="fa-solid fa-magnifying-glass-plus" id="zoomIcon"></i>
-                    </button>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
-                </div>
-            </div>
-            <div class="modal-body" style="padding: 0; position: relative; min-height: 500px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-                <button type="button" id="btnPrevPhoto" onclick="naviguerPhoto(-1)"
-                        style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); z-index: 10; width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #fff; font-size: 1.3rem; cursor: pointer;">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </button>
-                <img id="photoViewerImg" src="" alt="Photo"
-                     style="max-width: 100%; max-height: 75vh; object-fit: contain; border-radius: 8px; transition: transform 0.3s ease; cursor: pointer;"
-                     onclick="zoomerPhoto()">
-                <button type="button" id="btnNextPhoto" onclick="naviguerPhoto(1)"
-                        style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); z-index: 10; width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #fff; font-size: 1.3rem; cursor: pointer;">
-                    <i class="fa-solid fa-chevron-right"></i>
-                </button>
-            </div>
-            <div class="modal-footer" id="photoThumbsBar"
-                 style="background: rgba(255,255,255,0.05); border-top: 1px solid rgba(255,255,255,0.1); padding: 12px 20px; justify-content: center; gap: 8px; overflow-x: auto;">
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-// =========================================================
-// VISIONNEUSE DE PHOTOS — VERSION LEGACY
-// =========================================================
-var photosCourantes = [];
-var photoIndex = 0;
-var estZoomee = false;
-
-function ouvrirPhotos(photos, index) {
-    if (!photos || photos.length === 0) {
-        alert('Aucune photo à afficher');
-        return;
-    }
-
-    photosCourantes = photos;
-    photoIndex = Math.max(0, Math.min(index || 0, photos.length - 1));
-    estZoomee = false;
-
-    afficherPhotoCourante();
-
-    var modalEl = document.getElementById('modalPhotoViewer');
-    var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
-    modal.show();
-}
-
-function afficherPhotoCourante() {
-    var img = document.getElementById('photoViewerImg');
-    var counter = document.getElementById('photoCounter');
-    var prevBtn = document.getElementById('btnPrevPhoto');
-    var nextBtn = document.getElementById('btnNextPhoto');
-    var thumbsBar = document.getElementById('photoThumbsBar');
-
-    if (!img) return;
-
-    img.style.transform = 'scale(1)';
-    estZoomee = false;
-    document.getElementById('zoomIcon').className = 'fa-solid fa-magnifying-glass-plus';
-
-    img.src = photosCourantes[photoIndex];
-    img.alt = 'Photo ' + (photoIndex + 1);
-
-    counter.textContent = (photoIndex + 1) + ' / ' + photosCourantes.length;
-
-    if (photosCourantes.length <= 1) {
-        prevBtn.style.display = 'none';
-        nextBtn.style.display = 'none';
-    } else {
-        prevBtn.style.display = 'block';
-        nextBtn.style.display = 'block';
-    }
-
-    thumbsBar.innerHTML = '';
-    photosCourantes.forEach(function(url, idx) {
-        var thumb = document.createElement('div');
-        thumb.style.cssText = 'width: 60px; height: 60px; border-radius: 6px; overflow: hidden; cursor: pointer; border: 2px solid ' + (idx === photoIndex ? '#2563EB' : 'transparent') + '; opacity: ' + (idx === photoIndex ? '1' : '0.5') + '; transition: all 0.2s ease; flex-shrink: 0;';
-        thumb.innerHTML = '<img src="' + url + '" style="width: 100%; height: 100%; object-fit: cover;">';
-        thumb.onclick = function() {
-            photoIndex = idx;
-            afficherPhotoCourante();
-        };
-        thumb.onmouseover = function() { this.style.opacity = '0.9'; };
-        thumb.onmouseout = function() { this.style.opacity = (idx === photoIndex ? '1' : '0.5'); };
-        thumbsBar.appendChild(thumb);
-    });
-}
-
-function naviguerPhoto(direction) {
-    if (photosCourantes.length <= 1) return;
-    photoIndex = (photoIndex + direction + photosCourantes.length) % photosCourantes.length;
-    afficherPhotoCourante();
-}
-
-function zoomerPhoto() {
-    var img = document.getElementById('photoViewerImg');
-    var icon = document.getElementById('zoomIcon');
-
-    estZoomee = !estZoomee;
-
-    if (estZoomee) {
-        img.style.transform = 'scale(1.8)';
-        img.style.cursor = 'zoom-out';
-        icon.className = 'fa-solid fa-magnifying-glass-minus';
-    } else {
-        img.style.transform = 'scale(1)';
-        img.style.cursor = 'zoom-in';
-        icon.className = 'fa-solid fa-magnifying-glass-plus';
-    }
-}
-
-function telechargerPhoto() {
-    var url = photosCourantes[photoIndex];
-    if (!url) return;
-
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = 'photo-' + (photoIndex + 1) + '.jpg';
-    a.target = '_blank';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-}
-
-console.log('✅ Visionneuse de photos chargée');
-</script>
 @endsection
