@@ -326,50 +326,20 @@
             border-radius: 50%;
         }
 
-        .badge-etat.bon {
-            background: rgba(16, 185, 129, 0.12);
-            color: #059669 !important;
-        }
+        .badge-etat.bon { background: rgba(16, 185, 129, 0.12); color: #059669 !important; }
+        .badge-etat.bon::before { background: #059669; }
 
-        .badge-etat.bon::before {
-            background: #059669;
-        }
+        .badge-etat.degrade { background: rgba(250, 204, 21, 0.18); color: #B45309 !important; }
+        .badge-etat.degrade::before { background: #B45309; }
 
-        .badge-etat.degrade {
-            background: rgba(250, 204, 21, 0.18);
-            color: #B45309 !important;
-        }
+        .badge-etat.vandal { background: rgba(249, 115, 22, 0.15); color: #EA580C !important; }
+        .badge-etat.vandal::before { background: #EA580C; }
 
-        .badge-etat.degrade::before {
-            background: #B45309;
-        }
+        .badge-etat.masque { background: rgba(220, 38, 38, 0.10); color: #DC2626 !important; }
+        .badge-etat.masque::before { background: #DC2626; }
 
-        .badge-etat.vandal {
-            background: rgba(249, 115, 22, 0.15);
-            color: #EA580C !important;
-        }
-
-        .badge-etat.vandal::before {
-            background: #EA580C;
-        }
-
-        .badge-etat.masque {
-            background: rgba(220, 38, 38, 0.10);
-            color: #DC2626 !important;
-        }
-
-        .badge-etat.masque::before {
-            background: #DC2626;
-        }
-
-        .badge-etat.aucun {
-            background: rgba(148, 163, 184, 0.15);
-            color: #64748B !important;
-        }
-
-        .badge-etat.aucun::before {
-            background: #94A3B8;
-        }
+        .badge-etat.aucun { background: rgba(148, 163, 184, 0.15); color: #64748B !important; }
+        .badge-etat.aucun::before { background: #94A3B8; }
 
         .obs-count {
             display: inline-flex;
@@ -419,8 +389,31 @@
             color: #fff !important;
         }
 
-        .btn-detail i {
+        .btn-detail i { font-size: 0.85rem; }
+
+        /* BOUTON SUPPRIMER */
+        .btn-delete-panneau {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            border: 1.5px solid #FECACA;
+            background: #FEF2F2;
+            color: #DC2626 !important;
+            cursor: pointer;
             font-size: 0.85rem;
+            transition: all 0.2s ease;
+            padding: 0;
+        }
+
+        .btn-delete-panneau:hover {
+            background: #DC2626;
+            border-color: #DC2626;
+            color: #fff !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(220, 38, 38, 0.35);
         }
 
         /* PAGINATION */
@@ -483,9 +476,7 @@
             color: #fff !important;
         }
 
-        /* =========================================================
-           FORCER LA VISIBILITÉ DES <option> DES <select>
-        ========================================================= */
+        /* FORCER LA VISIBILITÉ DES <option> DES <select> */
         select,
         select option,
         select optgroup,
@@ -557,59 +548,23 @@
             color: #fff !important;
         }
 
-        /* =========================================================
-           RESPONSIVE — TABLETTE (≤ 1024px)
-           ========================================================= */
+        /* RESPONSIVE TABLETTE */
         @media (max-width: 1024px) {
-            .sig-page {
-                padding: 18px;
-            }
-
-            .sig-title {
-                font-size: 1.35rem;
-            }
-
-            .sig-subtitle {
-                font-size: 0.82rem;
-            }
-
-            .sig-filters {
-                padding: 16px 18px;
-                gap: 12px;
-            }
-
-            .sig-table th {
-                padding: 12px 14px;
-            }
-
-            .sig-table td {
-                padding: 14px 14px;
-            }
-
-            .type-svg {
-                width: 46px;
-                height: 46px;
-            }
-
-            .type-code {
-                font-size: 0.85rem;
-            }
-
-            .type-name {
-                font-size: 0.74rem;
-            }
+            .sig-page { padding: 18px; }
+            .sig-title { font-size: 1.35rem; }
+            .sig-subtitle { font-size: 0.82rem; }
+            .sig-filters { padding: 16px 18px; gap: 12px; }
+            .sig-table th { padding: 12px 14px; }
+            .sig-table td { padding: 14px 14px; }
+            .type-svg { width: 46px; height: 46px; }
+            .type-code { font-size: 0.85rem; }
+            .type-name { font-size: 0.74rem; }
         }
 
-        /* =========================================================
-           RESPONSIVE — SMARTPHONE (≤ 768px)
-           ========================================================= */
+        /* RESPONSIVE SMARTPHONE */
         @media (max-width: 768px) {
+            .sig-page { padding: 12px; }
 
-            .sig-page {
-                padding: 12px;
-            }
-
-            /* HEADER */
             .sig-header {
                 flex-direction: column;
                 align-items: stretch;
@@ -617,14 +572,8 @@
                 margin-bottom: 16px;
             }
 
-            .sig-title {
-                font-size: 1.2rem;
-            }
-
-            .sig-subtitle {
-                font-size: 0.78rem;
-                line-height: 1.4;
-            }
+            .sig-title { font-size: 1.2rem; }
+            .sig-subtitle { font-size: 0.78rem; line-height: 1.4; }
 
             .sig-header>div:last-child {
                 display: grid !important;
@@ -643,7 +592,6 @@
                 box-sizing: border-box;
             }
 
-            /* FILTRES */
             .sig-filters {
                 grid-template-columns: 1fr;
                 padding: 14px;
@@ -651,9 +599,7 @@
                 border-radius: 12px;
             }
 
-            .filter-group {
-                width: 100%;
-            }
+            .filter-group { width: 100%; }
 
             .filter-group input,
             .filter-group select {
@@ -676,9 +622,7 @@
                 font-size: 0.82rem;
             }
 
-            /* =========================================================
-               TABLEAU → CARTES EMPILÉES
-               ========================================================= */
+            /* TABLEAU → CARTES EMPILÉES */
             .sig-card {
                 border-radius: 12px;
                 background: transparent !important;
@@ -693,16 +637,9 @@
                 border-collapse: separate;
             }
 
-            .sig-table thead {
-                display: none !important;
-            }
+            .sig-table thead { display: none !important; }
+            .sig-table tbody { display: block; width: 100%; }
 
-            .sig-table tbody {
-                display: block;
-                width: 100%;
-            }
-
-            /* Chaque ligne = carte */
             .sig-table tbody tr {
                 display: block;
                 width: 100%;
@@ -723,22 +660,6 @@
                 border-color: #BFDBFE;
             }
 
-            /* Chevron indicateur cliquable */
-            .sig-table tbody tr[data-href]:not([data-href=""])::after {
-                content: '\f054';
-                font-family: 'Font Awesome 6 Free';
-                font-weight: 900;
-                position: absolute;
-                top: 50%;
-                right: 14px;
-                transform: translateY(-50%);
-                color: #CBD5E1;
-                font-size: 0.9rem;
-                transition: color 0.2s ease;
-                pointer-events: none;
-            }
-
-            /* Chaque cellule = bloc */
             .sig-table td {
                 display: block;
                 width: 100%;
@@ -752,10 +673,8 @@
             .sig-table td:last-child {
                 border-bottom: none;
                 padding-top: 12px;
-                padding-right: 24px;
             }
 
-            /* Label de chaque cellule */
             .sig-table td::before {
                 content: attr(data-label);
                 display: block;
@@ -767,10 +686,7 @@
                 margin-bottom: 4px;
             }
 
-            /* Cellule TYPE (1ère) : pas de label */
-            .sig-table td:nth-child(1)::before {
-                display: none;
-            }
+            .sig-table td:nth-child(1)::before { display: none; }
 
             .sig-table td:nth-child(1) {
                 padding-bottom: 12px;
@@ -778,59 +694,17 @@
                 margin-bottom: 6px;
             }
 
-            /* Type cell compact */
-            .type-cell {
-                gap: 12px;
-                display: flex;
-                align-items: center;
-            }
+            .type-cell { gap: 12px; display: flex; align-items: center; }
+            .type-svg { width: 56px; height: 56px; border-radius: 12px; flex-shrink: 0; }
+            .type-code { font-size: 1rem; }
+            .type-name { font-size: 0.82rem; }
+            .loc-route { font-size: 0.92rem; }
+            .loc-pk { font-size: 0.8rem; }
+            .obs-date { font-size: 0.85rem; }
+            .badge-etat { font-size: 0.75rem; padding: 5px 12px; }
+            .obs-count { min-width: 32px; height: 26px; font-size: 0.78rem; }
 
-            .type-svg {
-                width: 56px;
-                height: 56px;
-                border-radius: 12px;
-                flex-shrink: 0;
-            }
-
-            .type-code {
-                font-size: 1rem;
-            }
-
-            .type-name {
-                font-size: 0.82rem;
-            }
-
-            /* Localisation */
-            .loc-route {
-                font-size: 0.92rem;
-            }
-
-            .loc-pk {
-                font-size: 0.8rem;
-            }
-
-            /* Observations */
-            .obs-date {
-                font-size: 0.85rem;
-            }
-
-            .badge-etat {
-                font-size: 0.75rem;
-                padding: 5px 12px;
-            }
-
-            /* Compteur inspections */
-            .obs-count {
-                min-width: 32px;
-                height: 26px;
-                font-size: 0.78rem;
-            }
-
-            .sig-table td:nth-child(5) {
-                text-align: left !important;
-            }
-
-            /* Bouton détails */
+            .sig-table td:nth-child(5),
             .sig-table td:nth-child(6) {
                 text-align: left !important;
             }
@@ -843,6 +717,19 @@
                 border-radius: 10px;
                 display: inline-flex;
                 box-sizing: border-box;
+            }
+
+            .btn-delete-panneau {
+                width: 100%;
+                height: auto;
+                padding: 11px 16px;
+                font-size: 0.85rem;
+                border-radius: 10px;
+            }
+
+            .btn-delete-panneau::after {
+                content: ' Supprimer';
+                font-weight: 700;
             }
 
             /* PAGINATION */
@@ -869,9 +756,7 @@
                 padding-bottom: 4px;
             }
 
-            /* =========================================================
-               MODALE PLEIN ÉCRAN
-               ========================================================= */
+            /* MODALE PLEIN ÉCRAN */
             .modal-dialog {
                 margin: 0 !important;
                 max-width: 100% !important;
@@ -898,13 +783,8 @@
                 border-radius: 0 !important;
             }
 
-            .modal-header .modal-title {
-                font-size: 0.95rem !important;
-            }
-
-            .modal-header small {
-                font-size: 0.72rem !important;
-            }
+            .modal-header .modal-title { font-size: 0.95rem !important; }
+            .modal-header small { font-size: 0.72rem !important; }
 
             .modal-body {
                 flex: 1 1 auto !important;
@@ -927,7 +807,6 @@
                 font-size: 0.85rem !important;
             }
 
-            /* Onglets modale : scroll horizontal */
             .modal .nav-tabs {
                 padding: 0 12px !important;
                 overflow-x: auto;
@@ -937,9 +816,7 @@
                 margin: 0 !important;
             }
 
-            .modal .nav-tabs::-webkit-scrollbar {
-                display: none;
-            }
+            .modal .nav-tabs::-webkit-scrollbar { display: none; }
 
             .modal .nav-tabs .nav-link {
                 padding: 10px 12px !important;
@@ -947,24 +824,16 @@
                 white-space: nowrap;
             }
 
-            .modal .nav-tabs .nav-link i {
-                margin-right: 4px;
-            }
+            .modal .nav-tabs .nav-link i { margin-right: 4px; }
+            .modal .tab-content { padding: 16px !important; }
 
-            .modal .tab-content {
-                padding: 16px !important;
-            }
-
-            /* Sections de formulaire */
             .modal h6 {
                 font-size: 0.72rem !important;
                 padding: 8px 12px !important;
                 margin-bottom: 12px !important;
             }
 
-            .modal .form-label {
-                font-size: 0.68rem !important;
-            }
+            .modal .form-label { font-size: 0.68rem !important; }
 
             .modal .form-control,
             .modal .form-select {
@@ -974,7 +843,6 @@
                 box-sizing: border-box;
             }
 
-            /* Champs date/number sur iOS */
             .modal input[type="date"],
             .modal input[type="number"] {
                 -webkit-appearance: none;
@@ -982,65 +850,26 @@
                 min-height: 40px;
             }
 
-            /* Mini-carte */
             #miniMapPreview {
                 height: 320px !important;
                 width: 100% !important;
             }
         }
 
-        /* =========================================================
-           TRÈS PETIT ÉCRAN (≤ 420px)
-           ========================================================= */
+        /* TRÈS PETIT ÉCRAN */
         @media (max-width: 420px) {
-            .sig-page {
-                padding: 10px;
-            }
-
-            .sig-title {
-                font-size: 1.05rem;
-            }
-
-            .sig-subtitle {
-                font-size: 0.72rem;
-            }
-
-            .sig-table tbody tr {
-                padding: 12px;
-            }
-
-            .type-svg {
-                width: 48px;
-                height: 48px;
-            }
-
-            .type-code {
-                font-size: 0.92rem;
-            }
-
-            .type-name {
-                font-size: 0.76rem;
-            }
-
-            .modal-header {
-                padding: 12px 14px !important;
-            }
-
-            .modal .tab-content {
-                padding: 12px !important;
-            }
-
-            #miniMapPreview {
-                height: 260px !important;
-            }
-
-            .filter-actions {
-                grid-template-columns: 1fr;
-            }
-
-            .modal-footer button {
-                font-size: 0.8rem !important;
-            }
+            .sig-page { padding: 10px; }
+            .sig-title { font-size: 1.05rem; }
+            .sig-subtitle { font-size: 0.72rem; }
+            .sig-table tbody tr { padding: 12px; }
+            .type-svg { width: 48px; height: 48px; }
+            .type-code { font-size: 0.92rem; }
+            .type-name { font-size: 0.76rem; }
+            .modal-header { padding: 12px 14px !important; }
+            .modal .tab-content { padding: 12px !important; }
+            #miniMapPreview { height: 260px !important; }
+            .filter-actions { grid-template-columns: 1fr; }
+            .modal-footer button { font-size: 0.8rem !important; }
         }
     </style>
 
@@ -1050,14 +879,12 @@
         <div class="sig-header">
             <div>
                 <h1 class="sig-title">Signalisation verticale</h1>
-
             </div>
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                 <a href="{{ route('all.dashboard') }}" class="btn-back-dash">
                     <i class="fa-solid fa-arrow-left"></i> Retour au dashboard
                 </a>
 
-                {{-- ✅ Bouton Carte --}}
                 <a href="{{ route('carte.index') }}" class="btn-new-panneau"
                     style="background: linear-gradient(135deg, #1E40AF, #2563EB); color: #fff; text-decoration: none;">
                     <i class="fa-solid fa-map-location-dot"></i> Voir la carte
@@ -1135,7 +962,7 @@
                             <th>Dimensions / Support</th>
                             <th>Dernière observation</th>
                             <th style="text-align:center;">Inspections</th>
-                            <th style="text-align:center; width:140px;">Action</th>
+                            <th style="text-align:center; width:180px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1238,18 +1065,34 @@
                                     </span>
                                 </td>
 
-                                {{-- BOUTON DÉTAILS --}}
+                                {{-- ACTIONS : VOIR + SUPPRIMER --}}
                                 <td data-label="Action" style="text-align:center;">
-                                    @if ($urlDetail)
-                                        <a href="{{ $urlDetail }}" class="btn-detail"
-                                            onclick="event.stopPropagation();">
-                                            <i class="fa-solid fa-eye"></i> Voir détails
-                                        </a>
-                                    @else
-                                        <span style="color:#CBD5E1; font-size:0.75rem; font-style:italic;">
-                                            Indisponible
-                                        </span>
-                                    @endif
+                                    <div style="display:flex; gap:6px; justify-content:center; flex-wrap:wrap;">
+                                        @if ($urlDetail)
+                                            <a href="{{ $urlDetail }}" class="btn-detail"
+                                                onclick="event.stopPropagation();">
+                                                <i class="fa-solid fa-eye"></i> Voir
+                                            </a>
+                                        @else
+                                            <span style="color:#CBD5E1; font-size:0.75rem; font-style:italic;">
+                                                Indisponible
+                                            </span>
+                                        @endif
+
+                                        @if ($panneauId)
+                                            <button type="button"
+                                                class="btn-delete-panneau"
+                                                data-id="{{ $panneauId }}"
+                                                data-code="{{ $p->code_nomen ?? '' }}"
+                                                data-route="{{ $p->route_nom ?? '' }}"
+                                                data-pk="{{ $p->point_kilo ?? '' }}"
+                                                data-obs="{{ $nbObs }}"
+                                                onclick="event.stopPropagation();"
+                                                title="Supprimer ce panneau">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        @endif
+                                    </div>
                                 </td>
 
                             </tr>
@@ -1273,24 +1116,78 @@
 
     </div>
 
-    {{-- Script : ligne cliquable via data-href --}}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('tr[data-href]').forEach(function(row) {
-                const url = row.getAttribute('data-href');
-                if (!url) return;
+    {{-- =========================================================
+         MODALE DE CONFIRMATION — SUPPRESSION PANNEAU
+    ========================================================= --}}
+    <div class="modal fade" id="modalDeletePanneau" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 480px;">
+            <div class="modal-content"
+                style="border-radius: 16px; border: none; box-shadow: 0 24px 60px rgba(15, 23, 42, 0.35);">
 
-                row.addEventListener('click', function(e) {
-                    if (e.target.closest('a, button')) return;
-                    window.location.href = url;
-                });
-            });
-        });
-    </script>
+                <div class="modal-header"
+                    style="background: linear-gradient(135deg, #DC2626, #B91C1C); color: #fff; border-radius: 16px 16px 0 0; padding: 18px 24px;">
+                    <h5 class="modal-title" style="color:#fff !important; font-weight:700; font-size:1rem;">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Confirmer la suppression
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Fermer"></button>
+                </div>
+
+                <div class="modal-body" style="padding: 22px 24px;">
+                    <p style="margin: 0 0 14px; color:#0F172A; font-size:0.92rem;">
+                        Voulez-vous vraiment supprimer ce panneau ?
+                    </p>
+
+                    <div
+                        style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:10px; padding:12px 14px; font-size:0.85rem;">
+                        <div style="margin-bottom:6px;">
+                            <strong style="color:#1E40AF;">Code :</strong>
+                            <span id="delCode">—</span>
+                        </div>
+                        <div style="margin-bottom:6px;">
+                            <strong style="color:#1E40AF;">Route :</strong>
+                            <span id="delRoute">—</span>
+                        </div>
+                        <div style="margin-bottom:6px;">
+                            <strong style="color:#1E40AF;">PK :</strong>
+                            <span id="delPk">—</span>
+                        </div>
+                        <div>
+                            <strong style="color:#1E40AF;">Observations :</strong>
+                            <span id="delObs">0</span>
+                        </div>
+                    </div>
+
+                    <div id="delWarning" class="d-none"
+                        style="margin-top:12px; padding:10px 12px; background:#FEF2F2; border-left:3px solid #DC2626; border-radius:6px; font-size:0.82rem; color:#991B1B;">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <strong>Attention :</strong> toutes les observations et photos associées seront définitivement
+                        supprimées.
+                    </div>
+
+                    <div id="delError" class="alert alert-danger d-none"
+                        style="margin-top:12px; border-radius:8px; font-size:0.85rem;"></div>
+                </div>
+
+                <div class="modal-footer"
+                    style="background:#F8FAFC; border-top:1px solid #E2E8F0; padding:14px 24px; border-radius:0 0 16px 16px;">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal"
+                        style="border-radius:8px; font-weight:600;">
+                        <i class="fa-solid fa-xmark"></i> Annuler
+                    </button>
+                    <button type="button" id="btnConfirmDelete" class="btn btn-danger"
+                        style="border-radius:8px; font-weight:600; background:linear-gradient(135deg,#DC2626,#B91C1C); border:none; padding:8px 20px;">
+                        <i class="fa-solid fa-trash"></i> Supprimer
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
 
     {{-- =========================================================
-     MODALE DE CRÉATION — NOUVEAU PANNEAU
-========================================================= --}}
+         MODALE DE CRÉATION — NOUVEAU PANNEAU
+    ========================================================= --}}
     <div class="modal fade" id="modalNewPanneau" tabindex="-1" aria-labelledby="modalNewPanneauLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width: 1000px;">
             <div class="modal-content"
@@ -1322,7 +1219,6 @@
                         <div id="modalNewSuccess" class="alert alert-success d-none"
                             style="margin: 16px 26px 0; border-radius: 10px;"></div>
 
-                        {{-- ONGLETS --}}
                         <ul class="nav nav-tabs" id="newPanneauTabs" role="tablist"
                             style="padding: 0 26px; background: #F8FAFC; border-bottom: 2px solid #E2E8F0; gap: 4px;">
                             <li class="nav-item" role="presentation">
@@ -1431,31 +1327,26 @@
                                     </div>
                                 </div>
 
-                                {{-- COORDONNÉES GPS --}}
                                 <h6
                                     style="font-size: 0.78rem; font-weight: 700; color: #B45309 !important; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 16px; padding: 10px 14px; background: #FEF3C7; border-left: 3px solid #F59E0B; border-radius: 6px;">
                                     <i class="fa-solid fa-crosshairs" style="color: #F59E0B;"></i> Coordonnées GPS *
                                 </h6>
 
                                 <div class="row g-3">
-
-                                    {{-- Message d'aide --}}
                                     <div class="col-12">
                                         <div
                                             style="padding: 12px 14px; background: #EFF6FF; border-left: 3px solid #2563EB; border-radius: 6px; font-size: 0.82rem; color: #1E3A8A;">
                                             <i class="fa-solid fa-info-circle"></i>
                                             <strong>3 façons de définir la position :</strong><br>
-                                            1. Cliquez sur <strong>« Utiliser ma position actuelle »</strong> (nécessite
-                                            autorisation + HTTPS)<br>
-                                            2. <strong>Cliquez directement sur la carte</strong> pour placer le marqueur<br>
+                                            1. Cliquez sur <strong>« Utiliser ma position actuelle »</strong><br>
+                                            2. <strong>Cliquez directement sur la carte</strong><br>
                                             3. <strong>Glissez le marqueur orange</strong> pour ajuster
                                         </div>
                                     </div>
 
-                                    {{-- Bouton géolocalisation --}}
                                     <div class="col-12">
                                         <button type="button" id="btnGeoloc"
-                                            style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; background: linear-gradient(135deg, #F59E0B, #EA580C); color: #fff !important; border: none; border-radius: 10px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); width: 100%; justify-content: center;">
+                                            style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; background: linear-gradient(135deg, #F59E0B, #EA580C); color: #fff !important; border: none; border-radius: 10px; font-size: 0.85rem; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); width: 100%; justify-content: center;">
                                             <i class="fa-solid fa-location-crosshairs"></i>
                                             <span id="btnGeolocText">Utiliser ma position actuelle</span>
                                         </button>
@@ -1463,7 +1354,6 @@
                                             style="margin-top: 10px; font-size: 0.82rem; color: #64748B;"></div>
                                     </div>
 
-                                    {{-- Champs Lat/Lng --}}
                                     <div class="col-md-6">
                                         <label class="form-label"
                                             style="font-size: 0.72rem; font-weight: 700; color: #64748B; text-transform: uppercase;">Latitude
@@ -1479,21 +1369,13 @@
                                             class="form-control" placeholder="10.1815" required>
                                     </div>
 
-                                    {{-- Mini-carte --}}
                                     <div class="col-12">
                                         <label class="form-label"
                                             style="font-size: 0.72rem; font-weight: 700; color: #64748B; text-transform: uppercase;">
-                                            Position sur la carte (cliquez ou glissez le marqueur)
+                                            Position sur la carte
                                         </label>
                                         <div id="miniMapPreview"
-                                            style="height: 380px;
-                                                width: 100%;
-                                                border-radius: 12px;
-                                                border: 2px solid #E2E8F0;
-                                                background: #F8FAFC;
-                                                overflow: hidden;
-                                                position: relative;
-                                                z-index: 1;">
+                                            style="height: 380px; width: 100%; border-radius: 12px; border: 2px solid #E2E8F0; background: #F8FAFC; overflow: hidden; position: relative; z-index: 1;">
                                         </div>
                                     </div>
                                 </div>
@@ -1524,7 +1406,8 @@
                                         <select name="type_subje" class="form-select">
                                             <option value="">— Choisir —</option>
                                             <option value="Tôle plane">Tôle plane</option>
-                                            <option value="Profilés extrudés (lattes)">Profilés extrudés (lattes)</option>
+                                            <option value="Profilés extrudés (lattes)">Profilés extrudés (lattes)
+                                            </option>
                                         </select>
                                     </div>
                                     <div class="col-12">
@@ -1581,9 +1464,10 @@
                                             de film</label>
                                         <select name="type_film_retro" class="form-select">
                                             <option value="">— Choisir —</option>
-                                            <option value="Classe 1 (EG)">Classe 1 (EG) — Standard, garantie 7 ans</option>
-                                            <option value="Classe 2 (HI)">Classe 2 (HI) — Haute intensité, RN, garantie 10
-                                                ans</option>
+                                            <option value="Classe 1 (EG)">Classe 1 (EG) — Standard, garantie 7 ans
+                                            </option>
+                                            <option value="Classe 2 (HI)">Classe 2 (HI) — Haute intensité, RN, garantie
+                                                10 ans</option>
                                             <option value="Classe 3 (DG)">Classe 3 (DG) — Très haute perf., autoroutes,
                                                 garantie 12 ans</option>
                                         </select>
@@ -1721,7 +1605,7 @@
                                             style="font-size: 0.72rem; font-weight: 700; color: #64748B; text-transform: uppercase;">Implantation
                                             (m)</label>
                                         <input type="number" step="0.10" min="1" max="3"
-                                            name="implantation_m" class="form-control" placeholder="2.30 trottoir">
+                                            name="implantation_m" class="form-control" placeholder="2.30">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label"
@@ -1775,9 +1659,7 @@
         </div>
     </div>
 
-    {{-- =========================================================
-     LEAFLET + SCRIPT COMPLET (GÉOLOCALISATION + CARTE)
-========================================================= --}}
+    {{-- LEAFLET --}}
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -1785,7 +1667,129 @@
         document.addEventListener('DOMContentLoaded', function() {
 
             /* =========================================================
-               SUBMIT DU FORMULAIRE — CRÉATION
+               LIGNE CLIQUABLE (data-href)
+            ========================================================= */
+            document.querySelectorAll('tr[data-href]').forEach(function(row) {
+                const url = row.getAttribute('data-href');
+                if (!url) return;
+
+                row.addEventListener('click', function(e) {
+                    if (e.target.closest('a, button')) return;
+                    window.location.href = url;
+                });
+            });
+
+            /* =========================================================
+               CSRF TOKEN helper
+            ========================================================= */
+            const CSRF = document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}';
+
+            /* =========================================================
+               SUPPRESSION PANNEAU — MODALE + AJAX
+            ========================================================= */
+            const modalDeleteEl = document.getElementById('modalDeletePanneau');
+            const btnConfirmDelete = document.getElementById('btnConfirmDelete');
+            const delError = document.getElementById('delError');
+            let panneauToDelete = null;
+
+            if (modalDeleteEl) {
+                const bsDeleteModal = new bootstrap.Modal(modalDeleteEl);
+
+                // Ouvrir la modale
+                document.addEventListener('click', function(e) {
+                    const btn = e.target.closest('.btn-delete-panneau');
+                    if (!btn) return;
+
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    panneauToDelete = btn.dataset.id;
+
+                    document.getElementById('delCode').textContent  = btn.dataset.code  || '—';
+                    document.getElementById('delRoute').textContent = btn.dataset.route || '—';
+                    document.getElementById('delPk').textContent    = btn.dataset.pk    || '—';
+                    document.getElementById('delObs').textContent   = btn.dataset.obs   || '0';
+
+                    const nbObs = parseInt(btn.dataset.obs || '0', 10);
+                    const warning = document.getElementById('delWarning');
+                    if (nbObs > 0) {
+                        warning.classList.remove('d-none');
+                    } else {
+                        warning.classList.add('d-none');
+                    }
+
+                    delError.classList.add('d-none');
+                    delError.innerHTML = '';
+
+                    bsDeleteModal.show();
+                });
+
+                // Confirmer
+                btnConfirmDelete.addEventListener('click', function() {
+                    if (!panneauToDelete) return;
+
+                    const originalHtml = btnConfirmDelete.innerHTML;
+                    btnConfirmDelete.disabled = true;
+                    btnConfirmDelete.innerHTML =
+                        '<i class="fa-solid fa-spinner fa-spin"></i> Suppression...';
+                    delError.classList.add('d-none');
+
+                    fetch('/signalisation/' + panneauToDelete, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': CSRF,
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                        })
+                        .then(async (response) => {
+                            const data = await response.json().catch(() => ({}));
+                            if (!response.ok || !data.success) {
+                                throw new Error(data.message ||
+                                    'Erreur lors de la suppression.');
+                            }
+                            return data;
+                        })
+                        .then((data) => {
+                            // Retirer la ligne du DOM
+                            const btn = document.querySelector(
+                                '.btn-delete-panneau[data-id="' + panneauToDelete + '"]');
+                            const row = btn ? btn.closest('tr') : null;
+
+                            if (row) {
+                                row.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                                row.style.opacity = '0';
+                                row.style.transform = 'translateX(-20px)';
+                                setTimeout(() => row.remove(), 300);
+                            }
+
+                            bsDeleteModal.hide();
+
+                            // Recharger après un court délai
+                            setTimeout(() => window.location.reload(), 500);
+                        })
+                        .catch((err) => {
+                            delError.innerHTML =
+                                '<i class="fa-solid fa-triangle-exclamation"></i> ' +
+                                err.message;
+                            delError.classList.remove('d-none');
+                        })
+                        .finally(() => {
+                            btnConfirmDelete.disabled = false;
+                            btnConfirmDelete.innerHTML = originalHtml;
+                        });
+                });
+
+                // Reset à la fermeture
+                modalDeleteEl.addEventListener('hidden.bs.modal', function() {
+                    panneauToDelete = null;
+                    delError.classList.add('d-none');
+                    delError.innerHTML = '';
+                });
+            }
+
+            /* =========================================================
+               SUBMIT FORMULAIRE — CRÉATION PANNEAU
             ========================================================= */
             const form = document.getElementById('formNewPanneau');
             const btnSubmit = document.getElementById('btnSubmitNew');
@@ -1807,20 +1811,18 @@
                     fetch(form.action, {
                             method: 'POST',
                             headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                    ?.content || '{{ csrf_token() }}',
+                                'X-CSRF-TOKEN': CSRF,
                                 'Accept': 'application/json',
                             },
                             body: formData,
                         })
                         .then(async (response) => {
                             const data = await response.json();
-
                             if (!response.ok) {
                                 let messages = [];
                                 if (data.errors) {
-                                    Object.values(data.errors).forEach(arr => arr.forEach(m =>
-                                        messages.push(m)));
+                                    Object.values(data.errors).forEach(arr => arr
+                                        .forEach(m => messages.push(m)));
                                 } else if (data.message) {
                                     messages.push(data.message);
                                 } else {
@@ -1831,8 +1833,9 @@
                             return data;
                         })
                         .then((data) => {
-                            successBox.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + (data
-                                .message || 'Panneau créé !');
+                            successBox.innerHTML =
+                                '<i class="fa-solid fa-circle-check"></i> ' +
+                                (data.message || 'Panneau créé !');
                             successBox.classList.remove('d-none');
 
                             setTimeout(() => {
@@ -1844,13 +1847,15 @@
                             }, 800);
                         })
                         .catch((err) => {
-                            errorBox.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> ' +
+                            errorBox.innerHTML =
+                                '<i class="fa-solid fa-triangle-exclamation"></i> ' +
                                 err.message;
                             errorBox.classList.remove('d-none');
                         })
                         .finally(() => {
                             btnSubmit.disabled = false;
-                            btnSubmit.innerHTML = '<i class="fa-solid fa-check"></i> Créer le panneau';
+                            btnSubmit.innerHTML =
+                                '<i class="fa-solid fa-check"></i> Créer le panneau';
                         });
                 });
             }
@@ -1863,7 +1868,6 @@
             const geolocStatus = document.getElementById('geolocStatus');
             const inputLat = document.getElementById('inputLat');
             const inputLng = document.getElementById('inputLng');
-            const miniMapContainer = document.getElementById('miniMapPreview');
 
             let miniMap = null;
             let miniMarker = null;
@@ -1871,7 +1875,6 @@
             const DEFAULT_LAT = 36.8065;
             const DEFAULT_LNG = 10.1815;
 
-            /* --- Initialiser la mini-carte --- */
             function initMiniMap() {
                 if (miniMap) {
                     setTimeout(() => miniMap.invalidateSize(), 100);
@@ -1907,7 +1910,6 @@
                     })
                 }).addTo(miniMap);
 
-                // Clic sur la carte
                 miniMap.on('click', function(e) {
                     const newLat = e.latlng.lat;
                     const newLng = e.latlng.lng;
@@ -1915,7 +1917,6 @@
                     updateInputs(newLat, newLng);
                 });
 
-                // Drag du marqueur
                 miniMarker.on('dragend', function(e) {
                     const pos = e.target.getLatLng();
                     updateInputs(pos.lat, pos.lng);
@@ -1923,7 +1924,6 @@
 
                 setTimeout(() => miniMap.invalidateSize(), 200);
 
-                // Recalcul de taille sur rotation
                 window.addEventListener('orientationchange', function() {
                     setTimeout(function() {
                         miniMap && miniMap.invalidateSize(true);
@@ -1934,37 +1934,34 @@
                 });
             }
 
-            /* --- Mettre à jour les champs --- */
             function updateInputs(lat, lng) {
                 if (inputLat) inputLat.value = parseFloat(lat).toFixed(6);
                 if (inputLng) inputLng.value = parseFloat(lng).toFixed(6);
             }
 
-            /* --- Bouton géolocalisation --- */
             if (btnGeoloc) {
                 btnGeoloc.addEventListener('click', function() {
 
-                    // HTTPS check
                     const isSecure = window.location.protocol === 'https:' ||
                         window.location.hostname === 'localhost' ||
                         window.location.hostname === '127.0.0.1';
 
                     if (!isSecure) {
                         geolocStatus.innerHTML =
-                            '<span style="color: #DC2626;"><i class="fa-solid fa-triangle-exclamation"></i> La géolocalisation nécessite <strong>HTTPS</strong> (ou localhost). Utilisez les autres méthodes.</span>';
+                            '<span style="color: #DC2626;"><i class="fa-solid fa-triangle-exclamation"></i> La géolocalisation nécessite <strong>HTTPS</strong>.</span>';
                         return;
                     }
 
                     if (!navigator.geolocation) {
                         geolocStatus.innerHTML =
-                            '<span style="color: #DC2626;"><i class="fa-solid fa-triangle-exclamation"></i> La géolocalisation n\'est pas supportée.</span>';
+                            '<span style="color: #DC2626;"><i class="fa-solid fa-triangle-exclamation"></i> Non supportée.</span>';
                         return;
                     }
 
                     btnGeoloc.disabled = true;
                     btnGeolocText.textContent = 'Localisation en cours...';
                     geolocStatus.innerHTML =
-                        '<span style="color: #F59E0B;"><i class="fa-solid fa-spinner fa-spin"></i> Recherche de votre position...</span>';
+                        '<span style="color: #F59E0B;"><i class="fa-solid fa-spinner fa-spin"></i> Recherche...</span>';
 
                     navigator.geolocation.getCurrentPosition(
                         function(position) {
@@ -1981,7 +1978,7 @@
                             }
 
                             geolocStatus.innerHTML =
-                                `<span style="color: #059669;"><i class="fa-solid fa-check-circle"></i> Position détectée (précision : ±${Math.round(accuracy)} m)</span>`;
+                                `<span style="color: #059669;"><i class="fa-solid fa-check-circle"></i> Position détectée (±${Math.round(accuracy)} m)</span>`;
                             btnGeoloc.disabled = false;
                             btnGeolocText.textContent = 'Utiliser ma position actuelle';
                         },
@@ -1989,24 +1986,17 @@
                             let msg = '';
                             switch (error.code) {
                                 case error.PERMISSION_DENIED:
-                                    msg = `<strong>Vous avez refusé l'accès à votre position.</strong><br>
-                                   👉 <u>Comment autoriser :</u><br>
-                                   • <strong>Chrome/Edge :</strong> Cliquez sur l'icône 🔒 à gauche de l'URL → Autorisez « Localisation »<br>
-                                   • <strong>Firefox :</strong> Cliquez sur l'icône 🛡️ → Autorisations → Localisation<br>
-                                   • <strong>Safari :</strong> Safari → Réglages pour ce site → Localisation → Autoriser<br>
-                                   Puis rechargez la page et réessayez.<br>
-                                   <em>Ou cliquez directement sur la carte pour placer le point.</em>`;
+                                    msg =
+                                        'Vous avez refusé la localisation. Autorisez-la dans les paramètres du navigateur.';
                                     break;
                                 case error.POSITION_UNAVAILABLE:
-                                    msg =
-                                        'Position indisponible. Activez le GPS/localisation sur votre appareil.';
+                                    msg = 'Position indisponible.';
                                     break;
                                 case error.TIMEOUT:
-                                    msg =
-                                        'Délai dépassé. Utilisez la carte pour placer le point manuellement.';
+                                    msg = 'Délai dépassé. Utilisez la carte.';
                                     break;
                                 default:
-                                    msg = 'Erreur de géolocalisation. Utilisez la carte.';
+                                    msg = 'Erreur de géolocalisation.';
                             }
 
                             geolocStatus.innerHTML =
@@ -2022,7 +2012,6 @@
                 });
             }
 
-            /* --- Initialiser la carte à l'ouverture de la modale --- */
             if (modalEl) {
                 modalEl.addEventListener('shown.bs.modal', function() {
                     setTimeout(function() {
@@ -2046,7 +2035,6 @@
                 });
             }
 
-            /* --- Synchronisation manuelle des champs Lat/Lng --- */
             if (inputLat && inputLng) {
                 [inputLat, inputLng].forEach(function(input) {
                     input.addEventListener('change', function() {
