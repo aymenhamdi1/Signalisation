@@ -139,9 +139,9 @@ class CarteController extends Controller
         ];
 
         /* =========================================================
-           ✅ ZONES D'ÉTUDE — GeoJSON
+           ✅ ZONES D'ÉTUDE — FeatureCollection GeoJSON prête pour Leaflet
         ========================================================= */
-        $zones = DB::select("
+        $zonesRows = DB::select("
             SELECT
                 id,
                 id_gouv,
@@ -153,6 +153,31 @@ class CarteController extends Controller
               AND geom IS NOT NULL
             ORDER BY nom_fr ASC NULLS LAST, id ASC
         ");
+
+        $features = [];
+        foreach ($zonesRows as $row) {
+            $geometry = json_decode($row->geojson, true);
+            if (!$geometry) {
+                continue; // sécurité : géométrie invalide ou NULL
+            }
+
+            $features[] = [
+                'type'       => 'Feature',
+                'id'         => $row->id,
+                'properties' => [
+                    'id'      => $row->id,
+                    'id_gouv' => $row->id_gouv,
+                    'nom_fr'  => $row->nom_fr,
+                    'nom_ar'  => $row->nom_ar,
+                ],
+                'geometry'   => $geometry,
+            ];
+        }
+
+        $zones = [
+            'type'     => 'FeatureCollection',
+            'features' => $features,
+        ];
 
         /* =========================================================
            ✅ BOUNDS GLOBAUX DES ZONES
@@ -179,6 +204,51 @@ class CarteController extends Controller
         }
 
         return view('Backend.gestion.carte.carte', compact('panneaux', 'stats', 'listes', 'zones', 'zonesBounds'));
+    }
+
+    /* =========================================================
+       ✅ ENDPOINT OPTIONNEL — Zones en AJAX (si vous préférez ne pas
+       les injecter dans la vue initiale). À utiliser avec
+       Route::get('/carte/zones', [CarteController::class, 'zonesGeoJson'])
+    ========================================================= */
+    public function zonesGeoJson()
+    {
+        $rows = DB::select("
+            SELECT
+                id,
+                id_gouv,
+                nom_fr,
+                nom_ar,
+                ST_AsGeoJSON(ST_Transform(geom, 4326)) AS geojson
+            FROM public.\"ZONE_ETUDE\"
+            WHERE deleted_at IS NULL
+              AND geom IS NOT NULL
+            ORDER BY nom_fr ASC NULLS LAST, id ASC
+        ");
+
+        $features = [];
+        foreach ($rows as $row) {
+            $geometry = json_decode($row->geojson, true);
+            if (!$geometry) {
+                continue;
+            }
+            $features[] = [
+                'type'       => 'Feature',
+                'id'         => $row->id,
+                'properties' => [
+                    'id'      => $row->id,
+                    'id_gouv' => $row->id_gouv,
+                    'nom_fr'  => $row->nom_fr,
+                    'nom_ar'  => $row->nom_ar,
+                ],
+                'geometry'   => $geometry,
+            ];
+        }
+
+        return response()->json([
+            'type'     => 'FeatureCollection',
+            'features' => $features,
+        ]);
     }
 
     /* =========================================================
