@@ -148,7 +148,7 @@ class CarteController extends Controller
                 nom_fr,
                 nom_ar,
                 ST_AsGeoJSON(ST_Transform(geom, 4326)) AS geojson
-            FROM public.\"ZONE_ETUDE\"
+            FROM public.zone_etude
             WHERE deleted_at IS NULL
               AND geom IS NOT NULL
             ORDER BY nom_fr ASC NULLS LAST, id ASC
@@ -184,15 +184,15 @@ class CarteController extends Controller
         ========================================================= */
         $zonesBounds = null;
         $boundsRow = DB::selectOne("
-            SELECT
-                ST_YMin(ST_Transform(ST_Envelope(ST_Collect(geom)), 4326)) AS min_lat,
-                ST_XMin(ST_Transform(ST_Envelope(ST_Collect(geom)), 4326)) AS min_lng,
-                ST_YMax(ST_Transform(ST_Envelope(ST_Collect(geom)), 4326)) AS max_lat,
-                ST_XMax(ST_Transform(ST_Envelope(ST_Collect(geom)), 4326)) AS max_lng
-            FROM public.\"ZONE_ETUDE\"
-            WHERE deleted_at IS NULL
-              AND geom IS NOT NULL
-        ");
+        SELECT
+            ST_YMin(ST_Transform(ST_Envelope(ST_Collect(geom)), 4326)) AS min_lat,
+            ST_XMin(ST_Transform(ST_Envelope(ST_Collect(geom)), 4326)) AS min_lng,
+            ST_YMax(ST_Transform(ST_Envelope(ST_Collect(geom)), 4326)) AS max_lat,
+            ST_XMax(ST_Transform(ST_Envelope(ST_Collect(geom)), 4326)) AS max_lng
+        FROM public.zone_etude
+        WHERE deleted_at IS NULL
+          AND geom IS NOT NULL
+    ");
 
         if ($boundsRow && $boundsRow->min_lat !== null) {
             $zonesBounds = [
@@ -214,18 +214,17 @@ class CarteController extends Controller
     public function zonesGeoJson()
     {
         $rows = DB::select("
-            SELECT
-                id,
-                id_gouv,
-                nom_fr,
-                nom_ar,
-                ST_AsGeoJSON(ST_Transform(geom, 4326)) AS geojson
-            FROM public.\"ZONE_ETUDE\"
-            WHERE deleted_at IS NULL
-              AND geom IS NOT NULL
-            ORDER BY nom_fr ASC NULLS LAST, id ASC
-        ");
-
+        SELECT
+            id,
+            id_gouv,
+            nom_fr,
+            nom_ar,
+            ST_AsGeoJSON(ST_Transform(geom, 4326)) AS geojson
+        FROM public.zone_etude
+        WHERE deleted_at IS NULL
+          AND geom IS NOT NULL
+        ORDER BY nom_fr ASC NULLS LAST, id ASC
+    ");
         $features = [];
         foreach ($rows as $row) {
             $geometry = json_decode($row->geojson, true);
