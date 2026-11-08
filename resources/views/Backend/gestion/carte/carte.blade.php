@@ -1977,8 +1977,35 @@ document.addEventListener('DOMContentLoaded', function () {
     function initZones() {
         const legendBody = document.getElementById('zonesLegendBody');
         if (!legendBody) return;
-
-        if (ZONES.length === 0) {
+    
+        // ✅ Normalisation : accepte FeatureCollection OU tableau de lignes { geojson: "..." }
+        let zoneFeatures = [];
+    
+        if (ZONES && ZONES.type === 'FeatureCollection' && Array.isArray(ZONES.features)) {
+            zoneFeatures = ZONES.features;
+        } else if (Array.isArray(ZONES)) {
+            ZONES.forEach(function (row) {
+                try {
+                    const geom = typeof row.geojson === 'string' ? JSON.parse(row.geojson) : row.geojson;
+                    if (!geom || !geom.type) return;
+                    zoneFeatures.push({
+                        type: 'Feature',
+                        id: row.id,
+                        properties: {
+                            id: row.id,
+                            id_gouv: row.id_gouv,
+                            nom_fr: row.nom_fr,
+                            nom_ar: row.nom_ar
+                        },
+                        geometry: geom
+                    });
+                } catch (e) {
+                    console.warn('⚠️ Zone invalide ignorée', row, e);
+                }
+            });
+        }
+    
+        if (zoneFeatures.length === 0) {
             legendBody.innerHTML =
                 '<div class="zones-legend-empty">' +
                     '<i class="fa-solid fa-circle-info" style="display:block; margin-bottom:4px; opacity:0.6;"></i>' +
@@ -1986,21 +2013,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 '</div>';
             return;
         }
-
+    
         const fragment = document.createDocumentFragment();
-
-        ZONES.forEach(function (zone, index) {
+    
+        zoneFeatures.forEach(function (feature, index) {
             const color = getZoneColor(index);
-
-            let geoJsonData;
-            try {
-                geoJsonData = typeof zone.geojson === 'string'
-                    ? JSON.parse(zone.geojson)
-                    : zone.geojson;
-            } catch (e) { return; }
-            if (!geoJsonData || !geoJsonData.type) return;
-
-            const layer = L.geoJSON(geoJsonData, {
+            const props = feature.properties || {};
+            const nom   = props.nom_fr || props.nom_ar || ('Zone ' + (index + 1));
+    
+            const layer = L.geoJSON(feature, {
                 style: {
                     color: color,
                     weight: 3,
@@ -2008,13 +2029,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     fillColor: color,
                     fillOpacity: 0,
                     dashArray: '8, 5'
+                },
+                onEachFeature: function (feat, lyr) {
+                    lyr.bindTooltip(nom, { sticky: true });
                 }
             });
-
+    
             layer.addTo(carte);
             zoneLayers.push(layer);
-
-            const nom = zone.nom_fr || zone.nom_ar || ('Zone ' + (index + 1));
+    
             const item = document.createElement('div');
             item.className = 'zones-legend-item';
             item.innerHTML =
@@ -2022,27 +2045,27 @@ document.addEventListener('DOMContentLoaded', function () {
                 '<span class="zones-legend-name" title="' + nom + '">' + nom + '</span>';
             fragment.appendChild(item);
         });
-
+    
         legendBody.innerHTML = '';
         legendBody.appendChild(fragment);
-
+    
         const legendEl = document.getElementById('zonesLegend');
         const legendHeader = legendEl ? legendEl.querySelector('.zones-legend-header') : null;
         if (legendEl && legendHeader && !legendEl.dataset.bound) {
             legendEl.dataset.bound = '1';
-
+    
             if (!legendHeader.querySelector('.legend-toggle-icon')) {
                 const icon = document.createElement('i');
                 icon.className = 'fa-solid fa-chevron-down legend-toggle-icon';
                 legendHeader.appendChild(icon);
             }
-
+    
             const isMobileInit = window.matchMedia('(max-width: 768px)').matches;
             if (isMobileInit) {
                 legendEl.classList.add('expanded');
                 setTimeout(function () { legendEl.classList.remove('expanded'); }, 2500);
             }
-
+    
             legendHeader.addEventListener('click', function (e) {
                 e.stopPropagation();
                 if (!window.matchMedia('(max-width: 768px)').matches) return;
