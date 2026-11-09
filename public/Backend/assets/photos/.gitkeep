@@ -1,4 +1,6 @@
+cd /chemin/vers/votre/projet
+mkdir -p public/Backend/assets/photos
 touch public/Backend/assets/photos/.gitkeep
 git add public/Backend/assets/photos/.gitkeep
-git commit -m "fix: ensure photos directory exists"
-git push
+git commit -m "fix: add .gitkeep to preserve photos directory"
+git push origin main
