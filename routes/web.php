@@ -154,6 +154,24 @@ Route::get('all/dashboard', [DashboardController::class, 'index'])
     ->name('all.dashboard')
     ->middleware('auth');
 
+// ═══════════════════════════════════════════════════════════════════
+// ✅ NOUVELLE ROUTE POUR SERVIR LES PHOTOS (Hors du groupe signalisation)
+// ═══════════════════════════════════════════════════════════════════
+Route::get('/photos/{filename}', function ($filename) {
+    $basePath = env('PHOTOS_STORAGE_PATH', public_path('Backend/assets/photos'));
+    $path = $basePath . DIRECTORY_SEPARATOR . $filename;
+
+    // Sécurité : empêcher la traversée de répertoire (../)
+    $realPath = realpath($path);
+    $realBase = realpath($basePath);
+
+    if ($realPath === false || strpos($realPath, $realBase) !== 0 || !is_file($realPath)) {
+        abort(404);
+    }
+
+    return response()->file($realPath);
+})->name('photos.serve');
+
 Route::middleware(['auth'])->prefix('signalisation')->name('signalisation.')->group(function () {
 
     // ═══════ DIAGNOSTIC (AVANT les routes {id} pour éviter les conflits) ═══════
@@ -172,7 +190,7 @@ Route::middleware(['auth'])->prefix('signalisation')->name('signalisation.')->gr
     Route::put('/observation/{idObs}',    [SignalisationController::class, 'updateObservation'])->name('observation.update');
     Route::delete('/observation/{idObs}', [SignalisationController::class, 'destroyObservation'])->name('observation.destroy');
 
-    // ═══════ PHOTOS ═══════
+    // ═══════ PHOTOS (Suppression) ═══════
     Route::delete('/photos/{idPhoto}', [SignalisationController::class, 'destroyPhoto'])->name('photo.destroy');
 });
 
