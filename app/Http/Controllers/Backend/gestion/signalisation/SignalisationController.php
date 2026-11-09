@@ -305,13 +305,14 @@ class SignalisationController extends Controller
         foreach ($photosParObs as $idObs => $list) {
             $items = is_array($list) ? $list : $list->all();
 
-            $photosByObsJs[(string) $idObs] = array_map(function ($p) {
-                return [
-                    'id'  => $p->id_photo,
-                    'url' => asset('Backend/assets/photos/' . $p->chemin),
-                    'nom' => $p->nom_fichier ?? ('photo-' . $p->id_photo),
-                ];
-            }, $items);
+          $photosByObsJs[(string) $idObs] = array_map(function ($p) {
+    return [
+        'id'  => $p->id_photo,
+        // Utilise la route 'photos.serve' au lieu de asset()
+        'url' => route('photos.serve', ['filename' => $p->chemin]),
+        'nom' => $p->nom_fichier ?? ('photo-' . $p->id_photo),
+    ];
+}, $items);
         }
 
         $nbObservations = $observations->count();
