@@ -1,1 +1,4 @@
-
+touch public/Backend/assets/photos/.gitkeep
+git add public/Backend/assets/photos/.gitkeep
+git commit -m "fix: ensure photos directory exists"
+git push
