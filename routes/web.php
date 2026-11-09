@@ -156,6 +156,10 @@ Route::get('all/dashboard', [DashboardController::class, 'index'])
 
 Route::middleware(['auth'])->prefix('signalisation')->name('signalisation.')->group(function () {
 
+    // ═══════ DIAGNOSTIC (AVANT les routes {id} pour éviter les conflits) ═══════
+    Route::get('/debug/photos', [SignalisationController::class, 'debugPhotosDir'])
+        ->name('debug.photos');
+
     // ═══════ PANNEAUX ═══════
     Route::get('/',        [SignalisationController::class, 'index'])->name('index');
     Route::post('/',       [SignalisationController::class, 'store'])->name('store');
@@ -182,6 +186,3 @@ Route::middleware(['auth'])
         Route::post('/panneau',         [CarteController::class, 'store'])->name('panneau.store');
         Route::put('/panneau/{id}',     [CarteController::class, 'update'])->name('panneau.update');
     });
-
-
-
