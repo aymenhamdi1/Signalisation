@@ -24,10 +24,19 @@ class SignalisationController extends Controller
     /* =========================================================
        CHEMINS PHOTOS
     ========================================================= */
-    protected function photosDir(): string
-    {
-        return public_path('Backend/assets/photos');
+ protected function photosDir(): string
+{
+    // Utilise le chemin du disque persistant configuré sur Render
+    // Si la variable d'environnement n'existe pas (en local), on garde l'ancien comportement
+    $persistentPath = env('PERSISTENT_PHOTOS_PATH');
+    
+    if ($persistentPath && is_dir($persistentPath)) {
+        return $persistentPath;
     }
+
+    // Fallback pour le développement local
+    return public_path('Backend/assets/photos');
+}
 
     /**
      * Garantit que le dossier photos existe ET est writable.
