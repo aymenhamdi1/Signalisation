@@ -21,65 +21,9 @@ class SignalisationController extends Controller
     protected string $tablePho = 'photo';
     protected string $pk       = 'id_0';
 
-    /* =========================================================
-       CHEMINS PHOTOS
-    ========================================================= */
- protected function photosDir(): string
-{
-    // Utilise le chemin du disque persistant configuré sur Render
-    // Si la variable d'environnement n'existe pas (en local), on garde l'ancien comportement
-    $persistentPath = env('PERSISTENT_PHOTOS_PATH');
-    
-    if ($persistentPath && is_dir($persistentPath)) {
-        return $persistentPath;
-    }
-
-    // Fallback pour le développement local
-    return public_path('Backend/assets/photos');
-}
-
-    /**
-     * Garantit que le dossier photos existe ET est writable.
-     * Crée récursivement si nécessaire.
-     */
-    protected function ensurePhotosDir(): string
+    protected function photosDir(): string
     {
-        $dir    = $this->photosDir();
-        $parent = dirname($dir);
-
-        // Créer le parent récursivement si nécessaire
-        if (!is_dir($parent)) {
-            if (!@mkdir($parent, 0775, true) && !is_dir($parent)) {
-                throw new \RuntimeException(
-                    "Impossible de créer le dossier parent : {$parent}"
-                );
-            }
-            @chmod($parent, 0775);
-        }
-
-        // Créer le dossier photos
-        if (!is_dir($dir)) {
-            if (!@mkdir($dir, 0775, true) && !is_dir($dir)) {
-                throw new \RuntimeException(
-                    "Impossible de créer le dossier photos : {$dir}. " .
-                    "Vérifiez les permissions de : {$parent}"
-                );
-            }
-            @chmod($dir, 0775);
-        }
-
-        // Vérifier writable
-        if (!is_writable($dir)) {
-            @chmod($dir, 0775);
-            if (!is_writable($dir)) {
-                throw new \RuntimeException(
-                    "Le dossier photos n'est pas writable : {$dir}. " .
-                    "Exécutez sur le serveur : chmod -R 775 {$parent} && chown -R www-data:www-data {$parent}"
-                );
-            }
-        }
-
-        return $dir;
+        return public_path('Backend/assets/photos');
     }
 
     /* =========================================================
@@ -212,7 +156,7 @@ class SignalisationController extends Controller
     }
 
     /* =========================================================
-       SHOW
+       SHOW — ✅ CORRIGÉ : construit $photosByObsJs côté contrôleur
     ========================================================= */
     public function show($id)
     {
@@ -283,6 +227,7 @@ class SignalisationController extends Controller
             ->orderByDesc('o.date_obs')
             ->get();
 
+        /* ✅ CONSTRUCTION DE $photosParObs — clés en STRING */
         $photosParObs = [];
         if ($observations->isNotEmpty()) {
             $obsIds = $observations->pluck('id_obs')->toArray();
@@ -301,25 +246,27 @@ class SignalisationController extends Controller
             }
         }
 
+        /* ✅✅✅ CONSTRUCTION DE $photosByObsJs POUR LE JAVASCRIPT ✅✅✅ */
         $photosByObsJs = [];
         foreach ($photosParObs as $idObs => $list) {
             $items = is_array($list) ? $list : $list->all();
 
-          $photosByObsJs[(string) $idObs] = array_map(function ($p) {
-    return [
-        'id'  => $p->id_photo,
-        // Utilise la route 'photos.serve' au lieu de asset()
-        'url' => route('photos.serve', ['filename' => $p->chemin]),
-        'nom' => $p->nom_fichier ?? ('photo-' . $p->id_photo),
-    ];
-}, $items);
+            $photosByObsJs[(string) $idObs] = array_map(function ($p) {
+                return [
+                    'id'  => $p->id_photo,
+                    'url' => asset('Backend/assets/photos/' . $p->chemin),
+                    'nom' => $p->nom_fichier ?? ('photo-' . $p->id_photo),
+                ];
+            }, $items);
         }
 
         $nbObservations = $observations->count();
         $derniereObs    = $observations->first();
         $nbPhotos       = array_sum(array_map('count', $photosParObs));
 
-        Log::debug('🔍 [show] panneau_id=' . $id . ' | obs=' . $nbObservations . ' | photos=' . $nbPhotos);
+        /* ✅ LOGS DEBUG */
+        Log::info('🔍 [show] panneau_id=' . $id . ' | obs=' . $nbObservations . ' | photos=' . $nbPhotos);
+        Log::info('📸 [show] photosByObsJs: ' . json_encode($photosByObsJs));
 
         $voisins = DB::table($this->table)
             ->select("{$pk} as id", 'code_nomen', 'point_kilo')
@@ -360,7 +307,7 @@ class SignalisationController extends Controller
             'panneau',
             'observations',
             'photosParObs',
-            'photosByObsJs',
+            'photosByObsJs',   // ✅ NOUVELLE VARIABLE
             'nbObservations',
             'nbPhotos',
             'derniereObs',
@@ -563,26 +510,17 @@ class SignalisationController extends Controller
                 $validated['date_obs'] = now();
             }
 
-            // ✅ 1) Insérer l'observation D'ABORD (pour avoir id_obs)
-            $idObs = DB::table($this->tableObs)->insertGetId(
-                array_merge($validated, [
-                    'id_traffic' => $id,
-                    'created_at' => now(),
-                ]),
-                'id_obs'
-            );
-
-            if (!$idObs) {
-                throw new \RuntimeException("Impossible de créer l'observation en base.");
+            $destination = $this->photosDir();
+            if (!is_dir($destination)) {
+                if (!mkdir($destination, 0755, true) && !is_dir($destination)) {
+                    throw new \RuntimeException("Impossible de créer le dossier : {$destination}");
+                }
             }
 
-            // ✅ 2) Ensuite déplacer les fichiers
             $savedPhotos = [];
             $photoErrors = [];
 
             if (!empty($photos)) {
-                $destination = $this->ensurePhotosDir();
-
                 foreach ($photos as $file) {
                     if (!$file->isValid()) {
                         $errMsg = $file->getErrorMessage();
@@ -606,21 +544,14 @@ class SignalisationController extends Controller
                     try {
                         $file->move($destination, $filename);
                     } catch (Throwable $e) {
-                        Log::error('Erreur move() : ' . $e->getMessage(), [
-                            'destination' => $destination,
-                            'filename'    => $filename,
-                            'writable'    => is_writable($destination),
-                        ]);
-                        $photoErrors[] = "Impossible de sauvegarder : {$originalName} ({$e->getMessage()})";
+                        Log::error('Erreur move() : ' . $e->getMessage());
+                        $photoErrors[] = "Impossible de sauvegarder : {$originalName}";
                         continue;
                     }
 
                     $fullPath = $destination . DIRECTORY_SEPARATOR . $filename;
-                    $realSize = is_file($fullPath) ? @filesize($fullPath) : false;
-
-                    if ($realSize === false || $realSize === 0) {
-                        Log::error("Fichier non déplacé ou vide : {$fullPath}");
-                        @unlink($fullPath);
+                    if (!is_file($fullPath)) {
+                        Log::error("Fichier non déplacé : {$fullPath}");
                         $photoErrors[] = "Fichier perdu : {$originalName}";
                         continue;
                     }
@@ -629,14 +560,19 @@ class SignalisationController extends Controller
                         'nom_fichier' => $originalName,
                         'chemin'      => $filename,
                         'mime_type'   => $mimeType,
-                        'taille_ko'   => (int) round($realSize / 1024),
+                        'taille_ko'   => $sizeKb,
                     ];
-
-                    Log::info("✅ Photo sauvée : {$filename} (" . round($realSize / 1024) . " Ko) → {$fullPath}");
                 }
             }
 
-            // ✅ 3) Enregistrer les métadonnées photos en base
+            $idObs = DB::table($this->tableObs)->insertGetId(
+                array_merge($validated, [
+                    'id_traffic' => $id,
+                    'created_at' => now(),
+                ]),
+                'id_obs'
+            );
+
             foreach ($savedPhotos as $p) {
                 DB::table($this->tablePho)->insert([
                     'id_obs'      => $idObs,
@@ -653,12 +589,8 @@ class SignalisationController extends Controller
             }
 
             $message = 'Observation enregistrée avec succès.';
-            if (count($savedPhotos) > 0) {
-                $message .= ' (' . count($savedPhotos) . ' photo(s) sauvegardée(s))';
-            }
             if (!empty($photoErrors)) {
-                $message .= ' ⚠ ' . count($photoErrors) . ' photo(s) ignorée(s)';
-                Log::warning('Photos ignorées : ' . implode(' | ', $photoErrors));
+                $message .= ' (' . count($photoErrors) . ' photo(s) ignorée(s))';
             }
 
             if ($request->expectsJson() || $request->ajax()) {
@@ -730,27 +662,22 @@ class SignalisationController extends Controller
                     'updated_at' => now(),
                 ]));
 
-            $savedCount  = 0;
-            $photoErrors = [];
-
+            $savedCount = 0;
             if (!empty($photos)) {
-                $destination = $this->ensurePhotosDir();
+                $destination = $this->photosDir();
+                if (!is_dir($destination)) {
+                    @mkdir($destination, 0755, true);
+                }
 
                 foreach ($photos as $file) {
-                    if (!$file->isValid()) {
-                        $photoErrors[] = $file->getErrorMessage();
-                        continue;
-                    }
+                    if (!$file->isValid()) continue;
 
                     $originalName = $file->getClientOriginalName();
                     $mimeType     = $file->getClientMimeType();
                     $extension    = strtolower($file->getClientOriginalExtension());
                     $sizeKb       = (int) round($file->getSize() / 1024);
 
-                    if (!in_array($extension, ['jpg', 'jpeg', 'png', 'webp'], true)) {
-                        $photoErrors[] = "Extension non autorisée : {$extension}";
-                        continue;
-                    }
+                    if (!in_array($extension, ['jpg', 'jpeg', 'png', 'webp'], true)) continue;
 
                     $filename = Str::uuid() . '.' . $extension;
 
@@ -758,17 +685,6 @@ class SignalisationController extends Controller
                         $file->move($destination, $filename);
                     } catch (Throwable $e) {
                         Log::error('Erreur move() updateObservation : ' . $e->getMessage());
-                        $photoErrors[] = "Impossible de sauvegarder : {$originalName}";
-                        continue;
-                    }
-
-                    $fullPath = $destination . DIRECTORY_SEPARATOR . $filename;
-                    $realSize = is_file($fullPath) ? @filesize($fullPath) : false;
-
-                    if ($realSize === false || $realSize === 0) {
-                        Log::error("Fichier non déplacé updateObservation : {$fullPath}");
-                        @unlink($fullPath);
-                        $photoErrors[] = "Fichier perdu : {$originalName}";
                         continue;
                     }
 
@@ -779,7 +695,7 @@ class SignalisationController extends Controller
                         'type_photo'  => $request->input('type_photo', 'Face'),
                         'legende'     => $request->input('legende'),
                         'mime_type'   => $mimeType,
-                        'taille_ko'   => (int) round($realSize / 1024),
+                        'taille_ko'   => $sizeKb,
                         'prise_le'    => now(),
                         'uploaded_by' => Auth::id(),
                         'created_at'  => now(),
@@ -792,17 +708,12 @@ class SignalisationController extends Controller
             if ($savedCount > 0) {
                 $message .= ' (' . $savedCount . ' photo(s) ajoutée(s))';
             }
-            if (!empty($photoErrors)) {
-                $message .= ' ⚠ ' . count($photoErrors) . ' photo(s) ignorée(s)';
-                Log::warning('Photos ignorées updateObservation : ' . implode(' | ', $photoErrors));
-            }
 
             if ($request->expectsJson() || $request->ajax()) {
                 return response()->json([
                     'success'      => true,
                     'message'      => $message,
                     'photos_saved' => $savedCount,
-                    'photos_failed'=> count($photoErrors),
                 ]);
             }
 
@@ -839,8 +750,8 @@ class SignalisationController extends Controller
 
             foreach ($photos as $photo) {
                 $fullPath = $this->photosDir() . DIRECTORY_SEPARATOR . $photo->chemin;
-                if (is_file($fullPath) && !@unlink($fullPath)) {
-                    Log::warning("Impossible de supprimer : {$fullPath}");
+                if (is_file($fullPath)) {
+                    @unlink($fullPath);
                 }
             }
 
@@ -879,8 +790,8 @@ class SignalisationController extends Controller
 
                 foreach ($photos as $photo) {
                     $fullPath = $this->photosDir() . DIRECTORY_SEPARATOR . $photo->chemin;
-                    if (is_file($fullPath) && !@unlink($fullPath)) {
-                        Log::warning("Impossible de supprimer : {$fullPath}");
+                    if (is_file($fullPath)) {
+                        @unlink($fullPath);
                     }
                 }
 
@@ -932,8 +843,8 @@ class SignalisationController extends Controller
 
             if (!empty($photo->chemin)) {
                 $fullPath = $this->photosDir() . DIRECTORY_SEPARATOR . $photo->chemin;
-                if (is_file($fullPath) && !@unlink($fullPath)) {
-                    Log::warning("Impossible de supprimer : {$fullPath}");
+                if (is_file($fullPath)) {
+                    @unlink($fullPath);
                 }
             }
 
@@ -955,52 +866,6 @@ class SignalisationController extends Controller
                 'message' => 'Erreur serveur : ' . $e->getMessage(),
             ], 500);
         }
-    }
-
-    /* =========================================================
-       DIAGNOSTIC DOSSIER PHOTOS
-    ========================================================= */
-    public function debugPhotosDir()
-    {
-        $dir    = $this->photosDir();
-        $parent = dirname($dir);
-
-        $phpUser = function_exists('posix_getpwuid')
-            ? (posix_getpwuid(posix_geteuid())['name'] ?? 'unknown')
-            : get_current_user();
-
-        $info = [
-            'photos_dir'          => $dir,
-            'exists'              => is_dir($dir),
-            'writable'            => is_writable($dir),
-            'readable'            => is_readable($dir),
-            'perms'               => is_dir($dir) ? substr(sprintf('%o', fileperms($dir)), -4) : null,
-            'owner'               => is_dir($dir) ? (@posix_getpwuid(fileowner($dir))['name'] ?? fileowner($dir)) : null,
-            'parent_dir'          => $parent,
-            'parent_exists'       => is_dir($parent),
-            'parent_writable'     => is_writable($parent),
-            'parent_perms'        => is_dir($parent) ? substr(sprintf('%o', fileperms($parent)), -4) : null,
-            'php_user'            => $phpUser,
-            'upload_max_filesize' => ini_get('upload_max_filesize'),
-            'post_max_size'       => ini_get('post_max_size'),
-            'max_file_uploads'    => ini_get('max_file_uploads'),
-            'nb_files'            => is_dir($dir) ? count(glob($dir . '/*')) : 0,
-            'test_write'          => null,
-            'test_write_error'    => null,
-        ];
-
-        if (is_dir($dir) && is_writable($dir)) {
-            $testFile = $dir . '/.write_test_' . time();
-            if (@file_put_contents($testFile, 'ok') !== false) {
-                @unlink($testFile);
-                $info['test_write'] = true;
-            } else {
-                $info['test_write'] = false;
-                $info['test_write_error'] = error_get_last()['message'] ?? 'unknown';
-            }
-        }
-
-        return response()->json($info, 200, [], JSON_PRETTY_PRINT);
     }
 
     /* =========================================================
